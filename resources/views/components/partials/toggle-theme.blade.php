@@ -1,0 +1,17 @@
+<!-- Theme Toggle  -->
+<button type="button"
+    class="items-center justify-center block w-10 h-10 font-medium rounded-full hs-dark-mode-active:hidden icon-hover hs-dark-mode group hover:text-primary text-link dark:text-darklink hover:bg-lightprimary dark:hover:bg-darkprimary"
+    data-hs-theme-click-value="dark"
+    id="dark-layout">
+    <iconify-icon icon="solar:moon-line-duotone"
+        class="relative text-2xl text-link dark:text-darklink hover:text-primary"></iconify-icon>
+
+</button>
+<button type="button"
+    class="items-center justify-center hidden w-10 h-10 font-medium rounded-full hs-dark-mode-active:block icon-hover hs-dark-mode group hover:text-primary text-link dark:text-darklink hover:bg-lightprimary dark:hover:bg-darkprimary"
+    data-hs-theme-click-value="light"
+    id="light-layout">
+    <iconify-icon icon="solar:sun-2-line-duotone"
+        class="relative text-2xl text-link dark:text-darklink hover:text-primary"></iconify-icon>
+
+</button>

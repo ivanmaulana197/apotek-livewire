@@ -1,0 +1,60 @@
+/* Custom Dark Mode untuk Daterangepicker */
+.dark .daterangepicker {
+    background-color: #1f2937; /* bg-gray-800 */
+    color: white;
+    border-color: #374151; /* border-gray-600 */
+}
+.dark .daterangepicker td.available {
+    color: white;
+}
+.dark .daterangepicker td.in-range {
+    background-color: #374151; /* border-gray-600 */
+}
+.dark .daterangepicker td.active {
+    background-color: #4f46e5 !important; /* indigo-600 */
+}
+
+.dark .daterangepicker td.available:hover, .dark .daterangepicker th.available:hover {
+    background-color: #393780;
+}
+
+.dark .daterangepicker .ranges li:hover {
+    background-color: #2c44cf5b;
+}
+
+.dark .daterangepicker .drp-buttons {
+    background-color: #1f2937; /* bg-gray-800 */
+    border-top: 1px solid #374151;
+}
+.dark .daterangepicker .drp-buttons button {
+    color: white;
+}
+
+.dark .daterangepicker .drp-calendar .calendar-table {
+    border: 1px solid #0000;
+    background-color: #1f2937; /* bg-gray-800 */
+}
+
+.dark .daterangepicker td.off,
+.dark .daterangepicker td.off.in-range,
+.dark .daterangepicker td.off.start-date,
+.dark .daterangepicker td.off.end-date {
+    background-color: #1a2330;
+    border-color: transparent;
+    color: #dfdfdf;
+}
+/* Atau, jika ingin menggunakan garis merah */
+/* .daterangepicker .drp-calendar .today.available {
+    border-bottom: 2px solid red;
+} */
+
+/* Atau, jika ingin menggunakan titik merah */
+.daterangepicker .drp-calendar .today.available::after {
+    content: '';
+    display: block;
+    width: 5px;
+    height: 5px;
+    background-color: red;
+    border-radius: 50%;
+    margin: 0 auto;
+}

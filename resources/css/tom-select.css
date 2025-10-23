@@ -1,0 +1,80 @@
+.full .ts-control {
+    @apply flex  items-center h-full w-full bg-white text-gray-800 dark:bg-gray-800 dark:text-gray-100;
+}
+
+.ts-control,
+.ts-wrapper.single.input-active .ts-control {
+    @apply bg-white dark:bg-gray-800;
+}
+
+.ts-control {
+    @apply z-0  min-h-9 gap-1 h-fit rounded-md border  dark:border-none py-1 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm sm:leading-6;
+}
+
+.ts-control input {
+    @apply !pr-5 text-sm !m-0 dark:text-white;
+}
+
+.ts-wrapper.plugin-remove_button .item {
+    @apply rounded-md;
+}
+
+.ts-wrapper.multi .ts-control > div {
+    @apply p-0 m-0 pl-1;
+}
+
+.ts-wrapper.single.plugin-remove_button .item .remove {
+    @apply border-none text-lg leading-none py-1 rounded-r-lg absolute right-7 dark:text-white;
+}
+.ts-wrapper.single.plugin-remove_button:not(.rtl) .item .remove {
+    border-left: 1px solid #d0d0d0;
+    margin-left: 6px;
+}
+
+.ts-wrapper.single.plugin-remove_button .item .remove:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.ts-dropdown {
+    @apply rounded-md border border-solid border-t border-gray-300 dark:bg-gray-700 dark:text-gray-100;
+    /* z-index: 9999 !important; */
+}
+
+.ts-dropdown [data-selectable].option,
+.ts-dropdown .no-results {
+    @apply py-2;
+}
+
+.ts-dropdown [data-selectable].option:first-child {
+    @apply rounded-t-md;
+}
+
+.ts-dropdown [data-selectable].option:last-child {
+    @apply rounded-b-md;
+}
+
+.ts-dropdown .create:hover,
+.ts-dropdown .option:hover,
+.ts-dropdown .active {
+    @apply bg-indigo-100 text-indigo-900;
+}
+
+.ts-dropdown .spinner {
+    @apply h-auto w-auto;
+}
+
+.ts-dropdown .spinner:after {
+    @apply h-5 w-5 border-2 p-0 my-0 inline-block;
+}
+
+.ts-dropdown [data-selectable] .highlight {
+    @apply bg-blue-800;
+}
+
+.ts-wrapper:not(.form-control):not(.form-select).single .ts-control {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    print-color-adjust: exact;
+}

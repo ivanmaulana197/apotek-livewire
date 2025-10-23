@@ -1,0 +1,7 @@
+@source inline('{hover:,before:,}{bg,text,border,ring,stroke,fill}-{slate,gray,zinc,neutral,stone,red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose}-{50,{100..900..100},950}{,/20}');
+@source inline('{hover:,before:,}rounded-{s,e,t,r,b,l,ss,ee,es,tl,tr,br,bl,bs,be,se,se}-{none,sm,md,lg,xl,2xl,3xl,full}');
+@source inline('{hover:,before:,}rounded-{none,sm,md,lg,xl,2xl,3xl,full}');
+
+@source inline('{hover:,before:,disabled:,}{bg,text}-{primary,secondary,info,success,warning,error}{,emphasis}');
+@source inline('{w,h}-{3xs,2xs,xs,s,m,l,lg,xl,2xl,3xl,4xl,5xl,6xl,7xl,auto,full,screen,none}');
+@source inline('{max,min}-{w,h}-{3xs,2xs,xs,s,m,l,lg,xl,2xl,3xl,4xl,5xl,6xl,7xl,auto,full,screen,none}');

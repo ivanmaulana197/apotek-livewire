@@ -1,0 +1,85 @@
+@utility container {
+    width: 100%;
+    margin-right: auto;
+    margin-left: auto;
+    max-width: 1300px;
+    @media (min-width: 640px) {
+        max-width: 640px;
+    }
+
+    @media (min-width: 768px) {
+        max-width: 768px;
+    }
+
+    @media (min-width: 1024px) {
+        max-width: 1024px;
+    }
+
+    @media (min-width: 1280px) {
+        max-width: 1280px;
+    }
+
+    @media (min-width: 1536px) {
+        max-width: 1536px;
+    }
+}
+
+@utility container-xl {
+    max-width: 1600px;
+}
+
+@utility form-control {
+    width: 100%;
+    border-radius: 8px;
+    border-width: 1px;
+    border-color: var(--color-bordergray);
+    background-color: #fff;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--color-link);
+    @variant dark {
+        background-color: var(--color-dark);
+        border-color: var(--color-darkborder);
+        color: var(--color-darklink);
+    }
+    @variant focus {
+        border-color: var(--color-primary);
+        --tw-shadow: 0 0 #0000;
+        --tw-shadow-colored: 0 0 #0000;
+        box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
+            var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+        outline: 2px solid transparent;
+        outline-offset: 2px;
+        --tw-ring-color: transparent;
+        --tw-ring-offset-width: 0px;
+    }
+}
+
+@utility card-body {
+    padding: 20px 30px;
+}
+
+
+
+@utility btn {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    border-color: transparent;
+    background-color: var(--color-primary);
+    text-transform: capitalize;
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
+    @variant dark {
+        box-shadow: 0 4px 6px rgba(255, 255, 255, 0.15);
+    }
+
+    @variant hover{
+        color: rgb(255 255 255 / var(--tw-text-opacity));
+        background-color: var(--color-primary-emphasis);
+        --tw-text-opacity: 1;
+    }
+    
+}
