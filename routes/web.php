@@ -8,22 +8,18 @@ Route::get('/welcome', function () {
     dd(Barang::find('01k6a1fta6xff22vapt6kfm0xg')->toArray());
 })->name('welcome');
 
-
-Route::middleware(['guest'])->group(function(){
+Route::middleware(['guest'])->group(function () {
     Route::get('/login', Livewire\Auth\Login::class)->name('login');
     // Route::get('/register', Register::class)->name('register');
 
 });
 
-
-
-
-Route::middleware(['role:admin|pegawai'])->group(function(){
+Route::middleware(['role:admin|pegawai'])->group(function () {
     // Route::get('/dashboard', DashboardIndex::class)->name('dashboard');
-    Route::get('/',Livewire\Home\HomeIndex::class)->name('home');
+    Route::get('/', Livewire\Home\HomeIndex::class)->name('home');
     Route::get('/kasir', action: Livewire\Kasir\KasirIndex::class)->name('kasir');
     Route::get('/kasir/{id_pesanan_kasir}', action: Livewire\Kasir\KasirIndex::class)->name('kasir.show');
-    Route::middleware(['role:admin'])->group(function(){
+    Route::middleware(['role:admin'])->group(function () {
         Route::get('/data-barang', action: Livewire\Barang\BarangIndex::class)->name('data.barang');
         Route::get('/data-barang/tambah-barang', action: Livewire\Barang\BarangForm\BarangForm::class)->name('data.barang.tambah');
         Route::get('/data-barang/edit-barang/{id}', action: Livewire\Barang\BarangForm\BarangForm::class)->name('data.barang.edit');
@@ -33,7 +29,7 @@ Route::middleware(['role:admin|pegawai'])->group(function(){
         Route::get('/faktur-masuk/edit-faktur/{id}', action: Livewire\Faktur\FakturForm\FakturForm::class)->name('faktur.edit');
         Route::get('/faktur-masuk/detail-faktur/{id}', action: Livewire\Faktur\FakturDetail::class)->name('faktur.detail');
 
-         Route::get('/promo', Livewire\Promo\PromoIndex::class)->name('promo');
+        Route::get('/promo', Livewire\Promo\PromoIndex::class)->name('promo');
         Route::get('/promo/tambah-promo', Livewire\Promo\PromoForm\PromoForm::class)->name('promo.tambah');
         Route::get('/promo/edit-promo/{id}', Livewire\Promo\PromoForm\PromoForm::class)->name('promo.edit');
 
