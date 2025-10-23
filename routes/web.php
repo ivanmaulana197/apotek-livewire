@@ -22,6 +22,8 @@ Route::middleware(['role:admin|pegawai'])->group(function () {
 
     Route::get("/cetak/struk-pembayaran/{id_transaksi}", Livewire\Cetak\StrukPembayaran::class)->name('cetak.struk-pembayaran');
 
+    Route::get('/transaksi', Livewire\Transaksi\TransaksiIndex::class)->name('transaksi');
+
     Route::middleware(['role:admin'])->group(function () {
         Route::get('/data-barang', action: Livewire\Barang\BarangIndex::class)->name('data.barang');
         Route::get('/data-barang/tambah-barang', action: Livewire\Barang\BarangForm\BarangForm::class)->name('data.barang.tambah');
