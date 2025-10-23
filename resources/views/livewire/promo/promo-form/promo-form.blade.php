@@ -82,7 +82,7 @@
                         value: item.id,
                         text: item.nama + ' [' + item.stok + ']'
                     });
-
+        
                     tom.setValue(item.id);
                 });
             },
@@ -103,7 +103,7 @@
                         }
                         selected = this.barangPromo[index].id_satuan;
                         this.refs['syarat_qty_' + index]?.focus();
-
+        
                     } else if (tipe == 'barang_bonus') {
                         id = 'id_satuan_bonus_' + index;
                         if (this.barangPromo[index].id_satuan_bonus == '') {
@@ -118,7 +118,7 @@
                         selected: selected
                     });
                     $nextTick(() => {
-
+        
                         this.isLoading = false;
                     })
                 }).catch(error => {
@@ -138,7 +138,7 @@
                         this.isLoading = false;
                     })
                 })
-
+        
             },
             hapusBarangPromo(index) {
                 this.barangPromo.splice(index, 1);
@@ -149,7 +149,7 @@
                         this.setValueCustomTomSelect('#barang_promo_barang_bonus_' + i, item.id_barang_bonus);
                     }
                     $dispatch('set-value-tom-select', { id: 'tipe_promo_barang_' + i, value: item.tipe });
-
+        
                 })
             },
             tambahBarangPromo() {
@@ -249,7 +249,8 @@
                                                 </div>
                                                 <div class="col-span-6 md:col-span-4">
                                                     <x-form.input @keyup="formatForInputNumber($el)" placeholder="Masukan Jumlah" x-init="$nextTick(() => refs[`syarat_qty_${index}`] = $el)"
-                                                                  x-model='item.syarat_qty' class="join-item" error-name="form.barang_promo.${index}.syarat_qty" />
+                                                                  x-model='item.syarat_qty' class="join-item"
+                                                                  error-name="form.barang_promo.${index}.syarat_qty" />
                                                 </div>
                                                 <div class="col-span-6 md:col-span-4">
 
@@ -259,13 +260,6 @@
                                                 </div>
                                             </div>
                                         </div>
-
-                                        {{-- <x-form.input inputGroup="right" label="Syarat Qty" @keyup="formatForInputNumber($el)" ::name="'form.barang_promos.' + index + '.syarat_qty'"
-                                                      x-model="item.syarat_qty">
-                                            <x-slot:labelInputGroup>
-                                                <span x-text="item.satuan_barang ? item.satuan_barang : '-'"></span>
-                                            </x-slot:labelInputGroup>
-                                        </x-form.input> --}}
                                     </div>
                                     <div class="grid grid-cols-12 gap-3">
                                         <div :class="item.tipe === 'BARANG BONUS' ? 'col-span-12 md:col-span-4' : 'col-span-12 sm:col-span-6'">
@@ -281,6 +275,7 @@
                                         </div>
                                         <div x-show="item.tipe === 'BARANG BONUS'" class="col-span-12 md:col-span-8">
                                             <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+                                                {{-- select barang bonus --}}
                                                 <x-form.select-alpine @change="changeBarangSelected($el, index, 'barang_bonus')" name="barang_bonus"
                                                                       :x-init="'initCustomTomSelect($el)'" :init=false custom-option="" ::id="'barang_promo_barang_bonus_' + index"
                                                                       name="barang_promo_barang_bonus" ::placeholder="'Barang bonus ke-' + (index + 1)" label="Barang Bonus"
@@ -299,22 +294,15 @@
                                                                               error-name="form.barang_promo.${index}.id_satuan_bonus" class="join-item" />
                                                     </div>
                                                 </div>
-
-                                                {{-- <x-form.input inputGroup="right" name="qty" label="Bonus Qty" @keyup="formatForInputNumber($el)"
-                                                              ::name="'form.barang_promos.' + index + '.bonus_qty'" x-model="item.bonus_qty">
-                                                    <x-slot:labelInputGroup>
-                                                        <span x-text="item.satuan_barang_bonus ? item.satuan_barang_bonus : '-'"></span>
-                                                    </x-slot:labelInputGroup>
-                                                </x-form.input> --}}
                                             </div>
                                         </div>
                                         <div x-show="item.tipe === 'PERSEN'" class="col-span-12 sm:col-span-6">
-                                            <x-form.input error-name="form.barang_promo.${index}.diskon_persen" name="persen" label="Diskon (%)" @keyup="formatForInputNumber($el)" ::name="'form.barang_promos.' + index + '.diskon_persen'"
-                                                          x-model="item.diskon_persen" />
+                                            <x-form.input error-name="form.barang_promo.${index}.diskon_persen" name="persen" label="Diskon (%)"
+                                                          @keyup="formatForInputNumber($el)" ::name="'form.barang_promos.' + index + '.diskon_persen'" x-model="item.diskon_persen" />
                                         </div>
                                         <div x-show="item.tipe === 'HARGA'" class="col-span-12 sm:col-span-6">
-                                            <x-form.input error-name="form.barang_promo.${index}.diskon_nominal" label="Diskon Nominal" @keyup="formatForInputNumber($el)" ::name="'form.barang_promos.' + index + '.diskon_nominal'"
-                                                          x-model="item.diskon_nominal" />
+                                            <x-form.input error-name="form.barang_promo.${index}.diskon_nominal" label="Diskon Nominal"
+                                                          @keyup="formatForInputNumber($el)" ::name="'form.barang_promos.' + index + '.diskon_nominal'" x-model="item.diskon_nominal" />
                                         </div>
                                     </div>
 

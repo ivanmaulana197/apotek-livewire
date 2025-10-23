@@ -27,13 +27,13 @@ class BarangFactory extends Factory
             $persen_jual_utama = $this->faker->numberBetween(1, 1000);
             $harga_jual_utama  = $harga_beli_default + ($harga_beli_default * $persen_jual_utama / 100);
         } else {
-            $harga_jual_utama  = $this->faker->numberBetween($harga_beli_default, $harga_beli_default*2);
+            $harga_jual_utama  = $this->faker->numberBetween($harga_beli_default, $harga_beli_default * 2);
             $persen_jual_utama = ($harga_jual_utama - $harga_beli_default) / $harga_beli_default * 100;
         }
 
         return [
             'kode'               => $this->faker->unique()->bothify('BRG-####'),
-            'nama'               => $this->faker->word(),
+            'nama'               => $this->faker->unique()->words(2, true),
             'stok'               => $this->faker->numberBetween(10, 100),
             'stok_min'           => $this->faker->numberBetween(5, 10),
             'stok_real'          => $this->faker->numberBetween(10, 100),
@@ -83,26 +83,26 @@ class BarangFactory extends Factory
             $satuan_terpakai = $barang->all_satuan;
 
             foreach ($satuan_terpakai as $index => $satuan) {
-                $jumlah_min = fake()->numberBetween(1, 10);
-                $mode = fake()->randomElement(['PERSEN', 'HARGA']);
+                $jumlah_min       = fake()->numberBetween(1, 10);
+                $mode             = fake()->randomElement(['PERSEN', 'HARGA']);
                 $harga_beli_utama = $barang->harga_beli_default * $satuan['rasio'];
                 if ($mode === 'PERSEN') {
-                    $persen = fake()->numberBetween(1, 1000);
-                    $harga = ($harga_beli_utama) * (1 + $persen / 100);
+                    $persen             = fake()->numberBetween(1, 1000);
+                    $harga              = ($harga_beli_utama) * (1 + $persen / 100);
                     $harga_satuan_utama = $harga / $satuan['rasio'];
                 } else {
-                    $harga  = fake()->numberBetween($harga_beli_utama, $harga_beli_utama * 2);
-                    $persen = ($harga - $harga_beli_utama) / $harga_beli_utama * 100;
+                    $harga              = fake()->numberBetween($harga_beli_utama, $harga_beli_utama * 2);
+                    $persen             = ($harga - $harga_beli_utama) / $harga_beli_utama * 100;
                     $harga_satuan_utama = $harga / $satuan['rasio'];
                 }
                 HargaBarang::factory()->create([
-                    'id_barang'  => $barang->id,
-                    'id_satuan'  => $satuan['id_satuan'],
-                    'jumlah_min' => $jumlah_min,
-                    'mode'       => $mode,
-                    'persen'     => $persen,
-                    'harga'      => $harga,
-                    'harga_satuan_utama'=>$harga_satuan_utama
+                    'id_barang'          => $barang->id,
+                    'id_satuan'          => $satuan['id_satuan'],
+                    'jumlah_min'         => $jumlah_min,
+                    'mode'               => $mode,
+                    'persen'             => $persen,
+                    'harga'              => $harga,
+                    'harga_satuan_utama' => $harga_satuan_utama,
                 ]);
             }
         });

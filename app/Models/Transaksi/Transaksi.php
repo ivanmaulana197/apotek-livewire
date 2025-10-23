@@ -6,6 +6,8 @@ use App\Models\DataMaster\Member;
 use App\Models\DataMaster\MetodePembayaran;
 use App\Models\DataMaster\Pasien;
 use App\Models\HistoryBarang;
+use App\Models\Transaksi\DetailTransaksiBarang;
+use App\Models\Transaksi\TransaksiListPromo;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
@@ -38,7 +40,7 @@ class Transaksi extends Model
         return $this->belongsTo(User::class, 'id_user');
     }
 
-    public function metodePembayaran()
+    public function metode_pembayaran()
     {
         return $this->belongsTo(MetodePembayaran::class, 'id_metode_pembayaran');
     }
@@ -56,7 +58,7 @@ class Transaksi extends Model
         return $this->belongsTo(Dokter::class, 'id_dokter');
     }
 
-    public function detail_transaksi()
+    public function transaksi_barang()
     {
         return $this->morphMany(HistoryBarang::class, 'referensi');
     }
@@ -66,10 +68,15 @@ class Transaksi extends Model
         return $this->hasManyThrough(
             DetailTransaksiBarang::class,
             HistoryBarang::class,
-            'referensi_id',     // Foreign key di tabel history_barang
+            'referensi_id',      // Foreign key di tabel history_barang
             'id_history_barang', // Foreign key di tabel detail_transaksi_barang
             'id',                // Local key di tabel transaksi
             'id'                 // Local key di tabel history_barang
         )->where('history_barang.referensi_type', self::class);
+    }
+
+    public function transaksi_list_promo()
+    {
+        return $this->hasMany(TransaksiListPromo::class, 'id_transaksi');
     }
 }

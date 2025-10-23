@@ -386,19 +386,25 @@ trait KasirHelper
         if ($promo_pesanan_kasir->isNotEmpty()) {
             $data = $promo_pesanan_kasir->map(function ($item) use ($id_transaksi) {
                 if ($item->tipe_promo == 'BARANG BONUS') {
-                    $id_barang                 = $item->promo_barang->id_barang_bonus;
+                    $id_barang_bonus           = $item->promo_barang->id_barang_bonus;
                     $jumlah_dalam_satuan_utama = $item->promo_barang->barang_bonus->calculateJumlahDalamSatuanUtama($item->jumlah, $item->id_satuan);
                     $item->nominal_promo       = $item->promo_barang->barang_bonus->harga_beli_default * $jumlah_dalam_satuan_utama;
-                    $this->updateStokBarang($id_barang, $jumlah_dalam_satuan_utama);
+                    $get_tgl_expired           = $this->updateStokBarang($id_barang_bonus, $jumlah_dalam_satuan_utama);
+                }
+
+                if ($item->id_promo_barang) {
+                    $id_barang = $item->promo_barang->id_barang;
                 }
 
                 return [
-                    'id'                 => Str::ulid()->toBase32(),
+                    'id'                 => Str::ulid(),
                     'id_transaksi'       => $id_transaksi,
                     'tipe_promo'         => $item->tipe_promo,
                     'id_promo_barang'    => $item->id_promo_barang,
-                    'id_barang'          => optional($item->promo_barang)->id_barang_bonus,
+                    'id_barang'          => $id_barang ?? null,
+                    'id_barang_bonus'    => $id_barang_bonus ?? null,
                     'jumlah'             => $item->jumlah,
+                    'tgl_expired'        => $get_tgl_expired ?? null,
                     'id_satuan'          => $item->id_satuan,
                     'id_promo_transaksi' => $item->id_promo_transaksi,
                     'nominal_promo'      => $item->nominal_promo,

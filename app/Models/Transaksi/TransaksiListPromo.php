@@ -1,25 +1,27 @@
 <?php
-
 namespace App\Models\Transaksi;
 
+use App\Models\Barang\Barang;
 use App\Models\DataMaster\Satuan;
 use App\Models\Promo\PromoBarang;
-use App\Models\Transaksi\Transaksi;
 use App\Models\Promo\PromoTransaksi;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Transaksi\Transaksi;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Model;
 
 class TransaksiListPromo extends Model
 {
     use HasUlids;
 
-    protected $table = 'transaksi_list_promo';
+    protected $table    = 'transaksi_list_promo';
     protected $fillable = [
         'id_transaksi',
         'tipe_promo',
         'id_promo_barang',
-        'id_barang',
+        'id_barang', //id barang yang dapat promo
+        'id_barang_bonus',
         'jumlah',
+        'tgl_expired',
         'id_satuan',
         'id_promo_transaksi',
         'nominal_promo',
@@ -45,5 +47,15 @@ class TransaksiListPromo extends Model
     public function satuan()
     {
         return $this->belongsTo(Satuan::class, 'id_satuan');
+    }
+
+    public function barang()
+    {
+        return $this->belongsTo(Barang::class, 'id_barang');
+    }
+
+    public function barang_bonus()
+    {
+        return $this->belongsTo(Barang::class, 'id_barang_bonus');
     }
 }

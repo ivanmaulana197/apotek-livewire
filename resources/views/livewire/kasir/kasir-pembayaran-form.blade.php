@@ -58,7 +58,13 @@
                 })
                 this.hitungKembalian(this.bayar)
 
-
+                Livewire.on('struk-pembayaran', ({
+                    id_transaksi
+                }) => {
+                    let url = '{{ route('cetak.struk-pembayaran', ':id_transaksi') }}';
+                    url = url.replace(':id_transaksi', id_transaksi);
+                    window.open(url, '_blank', 'width=700,height=600');
+                })
             }
         }))
     </script>
