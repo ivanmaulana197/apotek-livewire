@@ -1,9 +1,4 @@
-@props([
-    'name',
-    'before'=>'',
-    'subtitle',
-    'button'=>null
-])
+@props(['name', 'before' => '', 'subtitle', 'button' => null])
 
 <div class="card mb-3 shadow-none">
     <div class="card-body py-3 px-8">
@@ -14,10 +9,10 @@
                     <p class="text-sm font-semibold text-gray-500">{{ $subtitle }}</p>
                 </div>
             @else
-            <div class="flex items-center gap-3">
-                {{ $button }}
-                <h4 class="font-semibold text-xl text-dark dark:text-white"> {{ $name }}</h4>
-            </div>
+                <div class="flex items-center gap-3">
+                    {{ $button }}
+                    <h4 class="font-semibold text-xl text-dark dark:text-white"> {{ $name }}</h4>
+                </div>
             @endisset
             <ol class="flex items-center " aria-label="Breadcrumb">
                 {{ $before }}

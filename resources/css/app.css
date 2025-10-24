@@ -17,9 +17,9 @@
 @plugin "@iconify/tailwind4" {
     prefix: "iconify";
     scale: 1;
-    prefixes: solar, basil, simple-icons, hugeicons, wpf, f7, eos-icons, famicons, duo-icons, iconamoon ;
+    prefixes: solar, basil, simple-icons, hugeicons, wpf, f7, eos-icons,
+        famicons, duo-icons, iconamoon, guidance, carbon;
 }
-
 
 @plugin "daisyui" {
     themes: light --default;
@@ -195,5 +195,3 @@
 [x-cloak] {
     display: none !important;
 }
-
-
