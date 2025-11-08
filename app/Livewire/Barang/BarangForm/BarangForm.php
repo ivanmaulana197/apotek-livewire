@@ -8,7 +8,6 @@ use App\Models\DataMaster\Rak;
 use App\Models\DataMaster\Satuan;
 use App\Models\Setting;
 use Illuminate\Support\Facades\DB;
-use Livewire\Attributes\Computed;
 use Livewire\Component;
 
 class BarangForm extends Component
@@ -18,7 +17,7 @@ class BarangForm extends Component
 
     public function mount($id = null)
     {
-        $this->satuans = Satuan::select('id', 'nama')->get()->toArray();
+        $this->satuans                 = Satuan::select('id', 'nama')->get()->toArray();
         $this->form->persen_jual_utama = FormatHelper::formatNumberToString(Setting::first()->persentase_jual);
         if ($id) {
             $this->edit($id);
@@ -100,7 +99,6 @@ class BarangForm extends Component
             },
 
         ])->findOrFail($id_barang)->toArray();
-        // dd($barang);
         $this->form->isEdit    = true;
         $this->form->id_barang = $id_barang;
         $this->form->setValues($barang);
@@ -110,7 +108,7 @@ class BarangForm extends Component
     {
         try {
             $this->form->formattedForm();
-            $data   = $this->validate();
+            $data = $this->validate();
             // dd($data['opsi_harga']);
             $barang = Barang::findOrFail($this->form->id_barang);
 

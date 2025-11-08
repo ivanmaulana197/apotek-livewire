@@ -2,17 +2,18 @@
 namespace App\Models\Barang;
 
 use App\Models\Faktur\DetailFakturBarang;
+use App\Traits\ScopeSearchable;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class StokBatchBarang extends Model
 {
-    use HasUlids, HasFactory;
+    use HasUlids, HasFactory, ScopeSearchable;
     protected $table    = 'stok_batch_barang';
     protected $fillable = [
         'id_barang',
-        'jumlah',  //sudah dalam satuan utama
+        'jumlah', //sudah dalam satuan utama
         'tgl_expired',
         'harga_beli',
     ];

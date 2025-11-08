@@ -14,16 +14,14 @@ return new class extends Migration
         Schema::create('detail_transaksi_barang', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->foreignUlid('id_history_barang')->constrained('history_barang')->onDelete('cascade');
+            $table->foreignUlid('id_transaksi')->constrained('transaksi')->onDelete('cascade');
             $table->integer('harga_beli');
             $table->integer('komisi');
-            // $table->decimal('jumlah_dalam_satuan_utama',15,2); // decimal()
 
-            $table->integer('harga'); //harga jual berdasarkan harga jual utama
+            $table->integer('harga');              //harga jual berdasarkan harga jual utama
             $table->integer('harga_satuan_utama'); //harga jual berdasarkan harga grosir terpilih
-            $table->bigInteger('diskon')->default(0);
-            // $table->foreignUlid('id_promo_barang')->nullable()->constrained('promo_barang')->nullOnDelete();
-            $table->bigInteger('total_harga');
-            $table->timestamps();
+            $table->integer('total_harga');
+            // $table->timestamps();
         });
     }
 

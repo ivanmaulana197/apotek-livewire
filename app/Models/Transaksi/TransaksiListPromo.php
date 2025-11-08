@@ -17,32 +17,35 @@ class TransaksiListPromo extends Model
     protected $fillable = [
         'id_transaksi',
         'tipe_promo',
-        'id_promo_barang',
+        // 'id_promo_barang',
         'id_barang', //id barang yang dapat promo
         'id_barang_bonus',
         'jumlah',
         'tgl_expired',
         'id_satuan',
-        'id_promo_transaksi',
+        // 'id_promo_transaksi',
         'nominal_promo',
         'deskripsi',
     ];
     // $table->enum('tipe_promo', ['BARANG BONUS','BARANG DISKON', 'TRANSAKSI'])->default('TRANSAKSI');
+    protected $casts = [
+        'tgl_expired' => 'array', // otomatis jadi array saat diambil dari DB
+    ];
 
     public function transaksi()
     {
         return $this->belongsTo(Transaksi::class, 'id_transaksi');
     }
 
-    public function promo_barang()
-    {
-        return $this->belongsTo(PromoBarang::class, 'id_promo_barang');
-    }
+    // public function promo_barang()
+    // {
+    //     return $this->belongsTo(PromoBarang::class, 'id_promo_barang');
+    // }
 
-    public function promo_transaksi()
-    {
-        return $this->belongsTo(PromoTransaksi::class, 'id_promo_transaksi');
-    }
+    // public function promo_transaksi()
+    // {
+    //     return $this->belongsTo(PromoTransaksi::class, 'id_promo_transaksi');
+    // }
 
     public function satuan()
     {

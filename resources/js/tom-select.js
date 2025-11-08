@@ -16,7 +16,7 @@ window.initTomSelect = function ({
     el.tomselect = new TomSelect(el, {
         plugins: [
             dropdownInput && "dropdown_input",
-            emptyOption ? "remove_button":"no_backspace_delete",
+            emptyOption ? "remove_button" : "no_backspace_delete",
         ].filter(Boolean),
         sortField: direction ? { field: "text", direction: "asc" } : null,
         dropdownParent: dropdownParent,
@@ -74,6 +74,10 @@ window.initTomSelect = function ({
             }
         }
     );
+
+    window.addEventListener("clear-select-" + name, () => {
+        el.tomselect.setValue("");
+    });
 };
 
 window.addEventListener(

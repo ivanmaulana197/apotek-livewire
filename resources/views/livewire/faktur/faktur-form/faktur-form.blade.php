@@ -27,7 +27,7 @@
 
     <div class="card mb-2">
         <div class="card-body">
-                <form x-data="fakturForm" wire:submit.prevent='{{ $form->isEdit ? 'update' : 'save' }}'>
+            <form x-data="fakturForm" wire:submit.prevent='{{ $form->isEdit ? 'update' : 'save' }}'>
                 <div class="grid grid-cols-12 gap-x-2">
                     <div class="col-span-12 sm:col-span-6">
                         <x-form.input label="No Kwitansi/No Faktur" errorName="form.no_faktur" x-model='no_faktur' />
@@ -42,7 +42,7 @@
                             <x-form.input label="Biaya Belanja" labelInputGroup="Rp" inputGroup="left" errorName="form.total_biaya"
                                           onkeyup="formatForInputNumber(this)" x-model='total_biaya' />
 
-                            <x-alpine.form.input-date label="Tanggal Jatuh Tempo:" name="tgl_jatuh_tempo" ::id="'tgl_jatuh_tempo'" :singleDatePicker=true
+                            <x-alpine.form.input-date label="Tanggal Jatuh Tempo:" nama="tgl_jatuh_tempo" ::id="'tgl_jatuh_tempo'" :singleDatePicker=true
                                                       x-model="tgl_jatuh_tempo" errorName="form.tgl_jatuh_tempo" :ranges=false></x-alpine.form.input-date>
 
                             <x-form.select-alpine name="status" label="Status" :empty-option=false x-model="status" error-name="form.status">
@@ -66,8 +66,8 @@
                     Batal
                 </a>
             </form>
-            </div>
         </div>
+    </div>
 
     <div class="card shadow-md mb-2">
         <div class="card-body">

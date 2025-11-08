@@ -2,7 +2,7 @@
 
 <tr wire:loading.class="table-row" wire:loading.remove.class="hidden" class="hidden">
     <td colspan="{{ $colspan }}" {{ $attributes->merge(['class' => 'text-center p-3']) }}>
-        <iconify-icon icon="eos-icons:loading"></iconify-icon> Loading..
+        <span class="iconify eos-icons--loading"></span> Loading..
     </td>
 </tr>
 

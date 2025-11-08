@@ -16,9 +16,8 @@ return new class extends Migration
             $table->string('no_faktur')->unique();
             $table->foreignUlid('id_supplier')->nullable()->constrained('supplier')->nullOnDelete();
             $table->integer('total_biaya');
-            $table->dateTime('tgl_masuk');
             $table->date('tgl_jatuh_tempo');
-            $table->enum('status',['LUNAS','BELUM LUNAS']);
+            $table->enum('status', ['LUNAS', 'BELUM LUNAS']);
             $table->foreignUlid('id_user')->constrained('users');
             $table->timestamps();
         });

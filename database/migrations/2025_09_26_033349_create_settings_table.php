@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('setting', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->string('nama');
-            $table->text('alamat');
+            $table->string('alamat');
             $table->string('kabupaten');
             $table->string('email')->nullable();
             $table->string('no_telp');
@@ -24,12 +24,12 @@ return new class extends Migration
             $table->string('link_facebook')->nullable();
             $table->text('link_google_map')->nullable();
             $table->text('logo')->nullable();
-            $table->integer('pembulatan_resep')->nullable();
-            $table->integer('pembulatan_harga_barang')->nullable();
-            $table->integer('pembulatan_total')->nullable();
-            $table->integer('persentase_jual')->nullable();
-            $table->integer('persentase_jual_resep')->nullable();
-            $table->text('footer_struk')->nullable();
+            $table->smallInteger('pembulatan_resep')->nullable();
+            $table->smallInteger('pembulatan_harga_barang')->nullable();
+            $table->smallInteger('pembulatan_total')->nullable();
+            $table->smallInteger('persentase_jual')->nullable();
+            $table->smallInteger('persentase_jual_resep')->nullable();
+            $table->string('footer_struk')->nullable();
             $table->timestamps();
         });
     }

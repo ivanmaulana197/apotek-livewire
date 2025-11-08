@@ -4,7 +4,7 @@
     <x-breadcrumb name="{{ $isEdit ? 'Edit' : 'Tambah' }} Promo">
         <x-slot:button>
             <a class="btn btn-xs bg-secondary hover:bg-secondaryemphasis" href="{{ route('promo') }}" wire:navigate>
-                <iconify-icon icon="famicons:caret-back"></iconify-icon>
+                <span class="iconify famicons--caret-back"></span>
                 Kembali
             </a>
         </x-slot:button>
@@ -198,9 +198,9 @@
                         </div>
 
                         <div class="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
-                            <x-alpine.form.input-date label="Tanggal Mulai:" name="start_date" ::id="'start_date'" :singleDatePicker=true x-model="start"
+                            <x-alpine.form.input-date label="Tanggal Mulai:" nama="start_date" ::id="'start_date'" :singleDatePicker=true x-model="start"
                                                       errorName="form.start_date" :ranges=false></x-alpine.form.input-date>
-                            <x-alpine.form.input-date label="Tanggal Berakhir:" name="end_date" ::id="'end_date'" :singleDatePicker=true x-model="end"
+                            <x-alpine.form.input-date label="Tanggal Berakhir:" nama="end_date" ::id="'end_date'" :singleDatePicker=true x-model="end"
                                                       errorName="form.end_date" :ranges=false></x-alpine.form.input-date>
                         </div>
 

@@ -9,6 +9,6 @@
 
     <livewire:transaksi.transaksi-card-info :$shift_transaksi :$filter_date />
 
-    {{-- <livewire:transaksi.transaksi-list :$shift_transaksi :$filter_date /> --}}
+    <livewire:transaksi.transaksi-list :$shift_transaksi :$filter_date />
 
 </div>

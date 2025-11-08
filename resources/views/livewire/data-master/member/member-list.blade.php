@@ -6,9 +6,9 @@
         </div>
 
         <x-datatable nama_table="member">
-             <div class="w-svw sm:w-56" wire:ignore>
+            <div class="w-svw sm:w-56" wire:ignore>
                 <x-form.select label="Profesi :" name="filterprofesi" mainSelect="profesi" wire:model.live='filters.id_profesi' :dataOption="$this->profesies" optionValue="id"
-                    optionLabel="nama">
+                               optionLabel="nama">
                 </x-form.select>
             </div>
         </x-datatable>
@@ -44,11 +44,11 @@
                         </x-table.td>
                         <x-table.td class="text-center">
                             <x-table.action-button tooltip="Edit" color="warning" @click="$dispatch('edit-member',{member:'{{ $member->id }}'})">
-                                <i class="ti ti-edit-circle"></i>
+                                <span class="iconify tabler--edit-circle text-lg"></span>
                             </x-table.action-button>
                             <x-table.action-button tooltip="Hapus" color="error"
                                                    @click="$wire.dispatch('alert-confirm', { id: '{{ $member->id }}', method: 'delete-member' });">
-                                <i class="ti ti-trash-x-filled"></i>
+                                <span class="iconify tabler--trash-x-filled text-lg"></span>
                             </x-table.action-button>
                         </x-table.td>
                     </x-table.tr>

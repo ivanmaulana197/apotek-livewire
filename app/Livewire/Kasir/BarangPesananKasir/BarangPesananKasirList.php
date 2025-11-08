@@ -117,9 +117,10 @@ class BarangPesananKasirList extends Component
 
     public function listBarangPesanan()
     {
+        // $this->pesanan_kasir->loadMissing('barang_pesanan_kasir');
         // 1. Eager Load semua relasi yang dibutuhkan di Blade
         $items = $this->pesanan_kasir->barang_pesanan_kasir()
-            ->with(['satuan',
+            ->with(['satuan:id,nama',
                 'barang.kategories',
                 'barang.opsi_satuan',
                 'barang.raks',
@@ -172,6 +173,7 @@ class BarangPesananKasirList extends Component
 
     public function render()
     {
+        $this->pesanan_kasir->load('promo_pesanan_kasir');
         foreach ($this->pesanan_kasir->promo_pesanan_kasir as $promo_pesanan_kasir) {
             if ($promo_pesanan_kasir->tipe_promo == 'BARANG BONUS' || $promo_pesanan_kasir->tipe_promo == 'BARANG DISKON') {
                 $this->setPromoBarangKasir($promo_pesanan_kasir->promo_barang->id_barang, $promo_pesanan_kasir->id_promo_barang);

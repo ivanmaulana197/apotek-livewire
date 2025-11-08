@@ -20,39 +20,42 @@ class BarangList extends Component
         'id_raks'       => [],
     ];
 
+    public function mount()
+    {
+        $this->sortBy  = 'barang.updated_at';
+        $this->sortDir = 'desc';
+    }
+
     public function getDataBarang()
     {
-        try {
-            return Barang::with(['kategories', 'raks', 'opsi_harga', 'opsi_satuan', 'satuan_utama', 'opsi_harga.satuan'])
-                ->select('barang.*')
-                ->join('kategori_barang', 'barang.id', '=', 'kategori_barang.id_barang')
-                ->join('kategori', 'kategori_barang.id_kategori', '=', 'kategori.id')
-                ->join('satuan', 'barang.id_satuan_utama', '=', 'satuan.id')
-                ->join('rak_barang', 'barang.id', '=', 'rak_barang.id_barang')
-                ->join('rak', 'rak_barang.id_rak', '=', 'rak.id')
-                ->search($this->search, ['barang.kode', 'barang.nama', 'barang.stok', 'barang.harga_beli_default'], ['kategories' => ['kategori.nama'], 'raks' => ['rak.nama'], 'satuan_utama' => ['satuan.nama']])
-                ->filter($this->filters)
-                ->orderBy($this->sortBy, $this->sortDir)
-                ->groupBy('barang.id')
-                ->paginate($this->perPage);
-        } catch (\Exception $e) {
-            $this->dispatch('alert', message: 'Gagal Mengambil Data Barang', status: 'error');
-            $this->sortBy  = 'updated_at';
-            $this->sortDir = 'desc';
-
-            return Barang::with(['kategories', 'raks', 'opsi_harga', 'opsi_satuan', 'satuan_utama', 'opsi_harga.satuan'])
-                ->select('barang.*')
-                ->join('kategori_barang', 'barang.id', '=', 'kategori_barang.id_barang')
-                ->join('kategori', 'kategori_barang.id_kategori', '=', 'kategori.id')
-                ->join('satuan', 'barang.id_satuan_utama', '=', 'satuan.id')
-                ->join('rak_barang', 'barang.id', '=', 'rak_barang.id_barang')
-                ->join('rak', 'rak_barang.id_rak', '=', 'rak.id')
-                ->search($this->search, ['barang.kode', 'barang.nama', 'barang.stok', 'barang.harga_beli_default'], ['kategories' => ['kategori.nama'], 'raks' => ['rak.nama'], 'satuan_utama' => ['satuan.nama']])
-                ->filter($this->filters)
-                ->orderBy($this->sortBy, $this->sortDir)
-                ->groupBy('barang.id')
-                ->paginate($this->perPage);
-        }
+        return Barang::query()
+            ->with([
+                'kategories:id,nama',
+                'raks:id,nama',
+                'opsi_harga:id,id_barang,harga,jumlah_min,id_satuan',
+                'opsi_harga.satuan:id,nama',
+                'opsi_satuan',
+                'satuan_utama:id,nama',
+            ])
+            ->select('barang.*')
+            ->leftjoin('kategori_barang', 'kategori_barang.id_barang', '=', 'barang.id')
+            ->leftjoin('kategori', 'kategori.id', '=', 'kategori_barang.id_kategori')
+            ->leftjoin('rak_barang', 'rak_barang.id_barang', '=', 'barang.id')
+            ->leftjoin('rak', 'rak.id', '=', 'rak_barang.id_rak')
+            ->leftjoin('satuan as satuan_utama', 'satuan_utama.id', '=', 'barang.id_satuan_utama')
+            ->leftjoin('satuan_barang', 'satuan_barang.id_barang', '=', 'barang.id')
+            ->leftjoin('satuan as opsi_satuan', 'opsi_satuan.id', '=', 'satuan_barang.id_satuan')
+            ->search($this->search,
+                ['barang.kode', 'barang.nama', 'barang.stok', 'barang.harga_beli_default'],
+                [
+                    'kategories'   => ['kategori.nama'],
+                    'raks'         => ['rak.nama'],
+                    'satuan_utama' => ['satuan_utama.nama'],
+                    'opsi_satuan'  => ['opsi_satuan.nama'],
+                ])
+            ->filter($this->filters)
+            ->groupBy('barang.id')
+            ->orderBy($this->sortBy, $this->sortDir)->paginate($this->perPage);
     }
 
     #[On('delete-barang')]
@@ -86,6 +89,7 @@ class BarangList extends Component
     public function render()
     {
         $data = $this->getDataBarang();
+        // dd($data->toArray());
         return view('livewire.barang.barang-list', [
             'barangs' => $data,
         ]);

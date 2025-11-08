@@ -10,7 +10,7 @@
         <x-table nama="kategori">
 
             <x-table.thead>
-                <x-table.th label="No"  />
+                <x-table.th label="No" />
                 <x-table.th-sortable :sortBy="$sortBy" :sortDir="$sortDir" label="Nama Kategori" name="nama" class="justify-center" />
                 <x-table.th label='Aksi' class="flex justify-center" />
             </x-table.thead>
@@ -26,10 +26,11 @@
                         </x-table.td>
                         <x-table.td class="text-center">
                             <x-table.action-button tooltip="Edit" color="warning" @click="$dispatch('edit-kategori',{kategori:'{{ $kategori->id }}'})">
-                                <i class="ti ti-edit-circle"></i>
+                                <span class="iconify tabler--edit-circle text-lg"></span>
                             </x-table.action-button>
-                            <x-table.action-button tooltip="Hapus" color="error" @click="$wire.dispatch('alert-confirm', { id: '{{ $kategori->id }}', method: 'delete-kategori' });">
-                                <i class="ti ti-trash-x-filled"></i>
+                            <x-table.action-button tooltip="Hapus" color="error"
+                                                   @click="$wire.dispatch('alert-confirm', { id: '{{ $kategori->id }}', method: 'delete-kategori' });">
+                                <span class="iconify tabler--trash-x-filled text-lg"></span>
                             </x-table.action-button>
                         </x-table.td>
                     </x-table.tr>
@@ -45,7 +46,6 @@
         <div class="overflow-y-hidden mt-3">
             {{ $kategories->onEachSide(1)->links(data: ['scrollTo' => '#table-kategori']) }}
         </div>
-
 
     </div>
 </div>

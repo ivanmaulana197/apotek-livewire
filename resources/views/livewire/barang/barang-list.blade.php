@@ -24,13 +24,13 @@
             <x-table.thead>
                 <x-table.th label="NO." />
                 <x-table.th-sortable :sortBy="$sortBy" :sortDir="$sortDir" label="KODE Barang" name="kode" />
-                <x-table.th-sortable :sortBy="$sortBy" :sortDir="$sortDir" label="Nama Barang" name="nama" />
-                <x-table.th-sortable :sortBy="$sortBy" :sortDir="$sortDir" label="Kategori" name="kategori.nama" />
+                <x-table.th-sortable :sortBy="$sortBy" :sortDir="$sortDir" label="Nama Barang" name="barang.nama" />
+                <x-table.th label="Kategori" />
                 <x-table.th label="Rak" />
                 <x-table.th-sortable :sortBy="$sortBy" :sortDir="$sortDir" label="Stok" name="stok" />
-                <x-table.th-sortable :sortBy="$sortBy" :sortDir="$sortDir" label="Satuan" name="satuan.nama" />
-                <x-table.th-sortable :sortBy="$sortBy" :sortDir="$sortDir" label="H.Beli" name="harga_beli" />
-                <x-table.th-sortable :sortBy="$sortBy" :sortDir="$sortDir" label="H.Jual" name="harga_jual_markup_utama" />
+                <x-table.th label="Satuan" />
+                <x-table.th-sortable :sortBy="$sortBy" :sortDir="$sortDir" label="H.Beli" name="barang.harga_beli_default" />
+                <x-table.th-sortable :sortBy="$sortBy" :sortDir="$sortDir" label="H.Jual" name="barang.harga_jual_utama" />
                 <x-table.th label="H.Grosir" />
                 <x-table.th label="Aksi" />
             </x-table.thead>
@@ -38,70 +38,65 @@
                 @forelse ($barangs as $index => $barang)
                     <x-table.tr wire:key="table-barang-{{ $barang->id }}">
                         <x-table.td class="text-center">{{ $barangs->firstItem() + $index }}</x-table.td>
-                        <x-table.td>
-                            <h6 class="text-sm whitespace-normal line-clamp-2">
-                                {!! $this->highlight($barang->kode) !!}
-                            </h6>
-                        </x-table.td>
+                        <x-table.td>{{ $barang->kode }}</x-table.td>
                         <x-table.td>
                             <h6 class="text-sm whitespace-normal line-clamp-3 w-32">
-                                {!! $this->highlight($barang->nama) !!}
+                                {{ $barang->nama }}
                             </h6>
                         </x-table.td>
                         <x-table.td>
                             @foreach ($barang->kategories as $index => $kategori)
-                                <p>- {!! $this->highlight($kategori->nama) !!}</p>
+                                <p>- {{ $kategori->nama }}</p>
                             @endforeach
                         </x-table.td>
                         <x-table.td>
                             @foreach ($barang->raks as $index => $rak)
-                                <p>- {!! $this->highlight($rak->nama) !!}</p>
+                                <p>- {{ $rak->nama }}</p>
                             @endforeach
                         </x-table.td>
                         <x-table.td>
-                            {{ $barang->formattedStok }}
+                            {{ $barang->konversi_stok() }}
                             <p class="text-xs">
-                                Min: {{ FormatHelper::formatNumberToString($barang->stok_min) }}
+                                Min: @nominal($barang->stok_min, '0')
                             </p>
                         </x-table.td>
                         <x-table.td>
                             <span class="font-normal">Utama:</span>
-                            <span class="font-semibold text-dark dark:text-white">{!! $this->highlight($barang->satuan_utama->nama) !!}</span>
+                            <span class="font-semibold text-dark dark:text-white">{{ $barang->satuan_utama->nama }}</span>
                             @foreach ($barang->opsi_satuan as $index => $opsi_satuan)
                                 <p class="text-xs">- {{ $opsi_satuan->nama }}</p>
                             @endforeach
                         </x-table.td>
                         <x-table.td>
-                            Rp. {{ FormatHelper::formatNumberToString($barang->harga_beli_default) }}
+                            Rp. @nominal($barang->harga_beli_default)
                         </x-table.td>
                         <x-table.td>
-                            {{-- Rp. {{ FormatHelper::formatNumberToString($barang->harga_barang->first()->harga) }} --}}
-                            Rp. {{ FormatHelper::formatNumberToString($barang->harga_jual_utama) }}
+                            Rp. @nominal($barang->harga_jual_utama)
                         </x-table.td>
                         <x-table.td>
                             @foreach ($barang->opsi_harga as $index => $opsi_harga)
                                 <div class="mb-2">
                                     <p class="text-xs">H.Jual: Rp.
-                                        {{ FormatHelper::formatNumberToString($opsi_harga->harga) }}</p>
+                                        @nominal($opsi_harga->harga)</p>
                                     <p class="text-xs">Min:
-                                        {{ FormatHelper::formatNumberToString($opsi_harga->jumlah_min) }}/{{ $opsi_harga->satuan->nama }}
+                                        @nominal($opsi_harga->jumlah_min)/{{ $opsi_harga->satuan->nama }}
                                     </p>
                                 </div>
                             @endforeach
                         </x-table.td>
 
                         <x-table.td class="text-center">
-                            {{-- <x-table.action-button tooltip="Detail" color="secondary" type="href" href="{{ route('data.barang.detail', $barang->id) }}"
+                            <x-table.action-button tooltip="Detail" color="secondary" type="href" href="{{ route('data.barang.detail', $barang->id) }}"
                                                    wire:navigate>
-                                <i class="ti ti-eye"></i>
-                            </x-table.action-button> --}}
+                                <span class="iconify tabler--eye text-lg"></span>
+                            </x-table.action-button>
                             <x-table.action-button tooltip="Edit" color="warning" type="href" href="{{ route('data.barang.edit', $barang->id) }}"
                                                    wire:navigate>
-                                <i class="ti ti-edit-circle"></i>
+                                <span class="iconify tabler--edit-circle text-lg"></span>
                             </x-table.action-button>
                             <x-table.action-button tooltip="Hapus" color="error"
                                                    @click="$wire.dispatch('alert-confirm', { id: '{{ $barang->id }}', method: 'delete-barang' });">
-                                <i class="ti ti-trash-x-filled"></i>
+                                <span class="iconify tabler--trash-x-filled text-lg"></span>
                             </x-table.action-button>
                         </x-table.td>
                     </x-table.tr>

@@ -10,9 +10,9 @@ use App\Models\Promo\Promo;
 use App\Models\Promo\PromoBarang;
 use App\Models\Promo\PromoTransaksi;
 use App\Models\Transaksi\DetailTransaksiBarang;
-use App\Models\Transaksi\Transaksi;
 use App\Models\Transaksi\TransaksiListPromo;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 trait KasirHelper
@@ -325,18 +325,21 @@ trait KasirHelper
     public function saveDetailTransaksi($barang_pesanan, $id_transaksi)
     {
         $history_barang = HistoryBarang::create([
-            'referensi_id'   => $id_transaksi,
-            'referensi_type' => Transaksi::class,
-            'id_barang'      => $barang_pesanan->id_barang,
-            'jumlah'         => $barang_pesanan->jumlah,
-            'id_satuan'      => $barang_pesanan->id_satuan,
-            'status'         => 'TERJUAL',
+            // 'referensi_id'   => $id_transaksi,
+            // 'referensi_type' => Transaksi::class,
+            'id_barang' => $barang_pesanan->id_barang,
+            'jumlah'    => $barang_pesanan->jumlah,
+            'id_satuan' => $barang_pesanan->id_satuan,
+            'status'    => 'TERJUAL',
+            'id_user'   => Auth::user()->id,
         ]);
         $rasio      = $barang_pesanan->barang->calculateJumlahDalamSatuanUtama(1, $barang_pesanan->id_satuan);
         $harga_beli = $barang_pesanan->barang->harga_beli_default * $rasio;
-        $komisi     = $barang_pesanan->harga - ($harga_beli * $barang_pesanan->jumlah);
+        $komisi     = $barang_pesanan->sub_total - ($harga_beli * $barang_pesanan->jumlah_dalam_satuan_utama);
+
         DetailTransaksiBarang::create([
             'id_history_barang'  => $history_barang->id,
+            'id_transaksi'       => $id_transaksi,
             'harga_beli'         => $harga_beli,
             'komisi'             => $komisi,
             'harga'              => $barang_pesanan->harga,
@@ -376,7 +379,8 @@ trait KasirHelper
             }
         }
         // update stok barang
-        $barang->decrement('stok', $jumlah_keluar);
+        // $barang->decrement('stok', $jumlah_keluar);
+        $barang->update(['stok' => $barang->stok - $jumlah_keluar]);
 
         return $tgl_expired;
     }
@@ -397,18 +401,16 @@ trait KasirHelper
                 }
 
                 return [
-                    'id'                 => Str::ulid(),
-                    'id_transaksi'       => $id_transaksi,
-                    'tipe_promo'         => $item->tipe_promo,
-                    'id_promo_barang'    => $item->id_promo_barang,
-                    'id_barang'          => $id_barang ?? null,
-                    'id_barang_bonus'    => $id_barang_bonus ?? null,
-                    'jumlah'             => $item->jumlah,
-                    'tgl_expired'        => $get_tgl_expired ?? null,
-                    'id_satuan'          => $item->id_satuan,
-                    'id_promo_transaksi' => $item->id_promo_transaksi,
-                    'nominal_promo'      => $item->nominal_promo,
-                    'deskripsi'          => $item->deskripsi,
+                    'id'              => Str::ulid(),
+                    'id_transaksi'    => $id_transaksi,
+                    'tipe_promo'      => $item->tipe_promo,
+                    'id_barang'       => $id_barang ?? null,
+                    'id_barang_bonus' => $id_barang_bonus ?? null,
+                    'jumlah'          => $item->jumlah,
+                    'tgl_expired'     => isset($get_tgl_expired) ? json_encode($get_tgl_expired) : null,
+                    'id_satuan'       => $item->id_satuan,
+                    'nominal_promo'   => $item->nominal_promo,
+                    'deskripsi'       => $item->deskripsi,
                 ];
             })->toArray();
 

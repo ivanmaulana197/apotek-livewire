@@ -7,8 +7,7 @@
         <h5 class="card-title">List Promo</h5>
         <div class="flex flex-row flex-wrap items-center gap-3">
             <div wire:ignore>
-                <x-form.select label="Show :" name="perPage" :empty-option=false :direction=false wire:model.live='perPage'
-                    class="min-w-14">
+                <x-form.select label="Show :" name="perPage" :empty-option=false :direction=false wire:model.live='perPage' class="min-w-14">
                     <x-slot:custom-option>
                         <option value="5" selected>5</option>
                         <option value="10">10</option>
@@ -18,8 +17,7 @@
                 </x-form.select>
             </div>
             <div class="w-svw sm:w-56" wire:ignore>
-                <x-form.select label="Aktif :" placeholder='Status' name="is_aktif" :direction=false
-                    wire:model.live='filters.is_aktif'>
+                <x-form.select label="Aktif :" placeholder='Status' name="is_aktif" :direction=false wire:model.live='filters.is_aktif'>
                     <x-slot:custom-option>
                         <option value="AKTIF">AKTIF</option>
                         <option value="NON_AKTIF">TIDAK AKTIF</option>
@@ -27,20 +25,21 @@
                 </x-form.select>
             </div>
             <div class="w-svw sm:w-56" wire:ignore>
-                <x-form.select label="Profesi :" placeholder='Profesi' name="filters_profesi" :direction=false multiple wire:model.live='filters.id_profesies' :dataOption="$this->profesies" option-value="id" option-label="nama">
+                <x-form.select label="Profesi :" placeholder='Profesi' name="filters_profesi" :direction=false multiple wire:model.live='filters.id_profesies'
+                               :dataOption="$this->profesies" option-value="id" option-label="nama">
                 </x-form.select>
             </div>
             <div class="w-svw sm:w-56" wire:ignore>
                 <x-form.label label="Tanggal Promo :"></x-form.label>
-                <x-form.input-date nama="filter_date" model="filters.date" :singleDatePicker=true ></x-form.input-date>
+                <x-form.input-date nama="filter_date" model="filters.date" :singleDatePicker=true></x-form.input-date>
             </div>
 
         </div>
         <div class="mb-2">
             <x-form.input wire:model.live.debounce300ms='search' placeholder="Pencarian Diskon" inputGroup="left" rounded='full'>
                 <x-slot:labelInputGroup>
-                    <iconify-icon icon="solar:magnifer-linear" class=" text-lg leading-tight">
-                    </iconify-icon> <span class="text-md ms-1"> Search</span>
+                    <span class="iconify solar--magnifer-linear text-lg leading-tight">
+                    </span> <span class="text-md ms-1"> Search</span>
                 </x-slot:labelInputGroup>
             </x-form.input>
         </div>
@@ -70,31 +69,31 @@
                         <x-table.td>{{ FormatHelper::formatDate($item->end_date) ?? '-' }}</x-table.td>
                         <x-table.td>
                             @if ($item->is_aktif == 1)
-                                <x-badge message="Aktif" status="success" icon="gg:check-r" />
+                                <x-badge message="Aktif" status="success" icon="tabler--checkbox" />
                             @else
-                                <x-badge message="Tidak Aktif" status="warning" icon="gg:close-r" />
+                                <x-badge message="Tidak Aktif" status="warning" icon="solar--bill-cross-line-duotone" />
                             @endif
                         </x-table.td>
                         <x-table.td>
                             @if ($item->is_member == 1)
-                                <x-badge message="Member" status="warning" icon="ic:round-key" />
+                                <x-badge message="Member" status="warning" icon="solar--key-minimalistic-square-2-line-duotone" />
                             @else
-                                <x-badge message="Public" status="success" icon="ic:sharp-public" />
+                                <x-badge message="Public" status="success" icon="nrk--globe" />
                             @endif
                         </x-table.td>
                         <x-table.td class="text-center">
                             {{-- <x-table.action-button tooltip="Detail" color="secondary" type="href" href="{{ route('promo.detail', $item->id) }}" wire:navigate> --}}
                             <x-table.action-button tooltip="Detail" color="info"
-                                @click="$dispatch('toggle-modal-detailpromo', { detailpromoModal: true }); $dispatch('detail-promo',{id_promo: '{{ $item->id }}'})">
-                                <i class="ti ti-eye"></i>
+                                                   @click="$dispatch('toggle-modal-detailpromo', { detailpromoModal: true }); $dispatch('detail-promo',{id_promo: '{{ $item->id }}'})">
+                                <span class="iconify tabler--eye text-lg"></span>
                             </x-table.action-button>
-                            <x-table.action-button tooltip="Edit" color="warning" type="href"
-                                href="{{ route('promo.edit', $item->id) }}" wire:navigate>
+                            <x-table.action-button tooltip="Edit" color="warning" type="href" href="{{ route('promo.edit', $item->id) }}" wire:navigate>
                                 {{-- <x-table.action-button tooltip="Edit" color="warning" @click="$dispatch('toggle-modal-promo', { promoModal: true }); $dispatch('edit-promo',{promo: '{{ $item->id }}'})"> --}}
-                                <i class="ti ti-edit-circle"></i>
+                                <span class="iconify tabler--edit-circle text-lg"></span>
                             </x-table.action-button>
-                            <x-table.action-button tooltip="Hapus" color="error" @click="$wire.dispatch('alert-confirm', { id: '{{ $item->id }}', method: 'delete-promo' });">
-                                <i class="ti ti-trash-x-filled"></i>
+                            <x-table.action-button tooltip="Hapus" color="error"
+                                                   @click="$wire.dispatch('alert-confirm', { id: '{{ $item->id }}', method: 'delete-promo' });">
+                                <span class="iconify tabler--trash-x-filled text-lg"></span>
                             </x-table.action-button>
                         </x-table.td>
                     </x-table.tr>

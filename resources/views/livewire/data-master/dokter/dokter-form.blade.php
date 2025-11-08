@@ -14,7 +14,6 @@
             <x-form.input label="No. Telepon Dokter" wire:model='no_hp' error-name="no_hp" />
             <x-form.input label="Spesialis" wire:model='spesialis' error-name="spesialis" />
 
-
             <div class="flex gap-3 justify-end mt-6">
                 <button type="submit" class="btn btn-sm ">
                     {{ $isEdit ? 'Update' : 'Simpan' }}

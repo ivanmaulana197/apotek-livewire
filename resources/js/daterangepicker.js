@@ -3,12 +3,10 @@ window.initDateRangePicker = function ({
     ranges = true,
     singleDatePicker = false,
     minDate = null,
-    parentEl = "body"
+    parentEl = "body",
 }) {
-    console.log("jQuery version:", $.fn.jquery);
-    console.log("Has daterangepicker?", typeof $.fn.daterangepicker);
-    console.log("Has daterangepicker?", typeof moment);
     const model = el.getAttribute("x-model"); // ambil nama x-model (misal: 'form.tipe')
+    let nama = el.nama;
     var select_date = Alpine.evaluate(el, model);
     if (ranges) {
         ranges = {
@@ -76,6 +74,8 @@ window.initDateRangePicker = function ({
                     : setDateRange(picker.startDate, picker.endDate);
             })
             .on("cancel.daterangepicker", function (ev, picker) {
+                picker.setStartDate(moment());
+                picker.setEndDate(moment());
                 $(this).val("");
                 this.dispatchEvent(new Event("input"));
             });
@@ -89,7 +89,6 @@ window.initDateRangePicker = function ({
         // Update x-model
         let data = Alpine.$data(el);
         data[model] = formatted; //update data berdasarkan x-model
-
     }
 
     function setDateRange(startDate, endDate) {
@@ -98,6 +97,7 @@ window.initDateRangePicker = function ({
             " - " +
             endDate.format("D MMMM YYYY");
         $(el).val(formatted);
+        // console.log(formatted);
         el.dispatchEvent(new Event("input"));
         let data = Alpine.$data(el);
         data[model] = formatted; //update data berdasarkan x-model
@@ -105,30 +105,26 @@ window.initDateRangePicker = function ({
 
     initial();
 
-    window.addEventListener("clear-input-date-" + el.id, () => {
-        $(el).val('');
-        settings['startDate'] = moment();
+    window.addEventListener("clear-" + nama, () => {
+        $(el).val("");
+        settings["startDate"] = moment();
         initial();
     });
-    window.addEventListener(
-        "set-input-date-" + el.id,
-        ({ detail: { value } }) => {
-            // console.log(value);
-            if (singleDatePicker) {
-                let date = moment(value);
-                settings["startDate"] = date;
-                setSingleDate(date);
-            } else {
-                let start = moment(value["start"]);
-                let end = moment(value["end"]);
-                settings["startDate"] = start;
-                settings["endDate"] = end;
-                setDateRange(start, end);
-            }
-            initial();
+    window.addEventListener("set-" + nama, ({ detail: { value } }) => {
+        // console.log(value);
+        if (singleDatePicker) {
+            let date = moment(value);
+            settings["startDate"] = date;
+            setSingleDate(date);
+        } else {
+            let start = moment(value["start"]);
+            let end = moment(value["end"]);
+            settings["startDate"] = start;
+            settings["endDate"] = end;
+            setDateRange(start, end);
         }
-    );
+        initial();
+    });
 
     // console.log(el.id); // el.id;
 };
-

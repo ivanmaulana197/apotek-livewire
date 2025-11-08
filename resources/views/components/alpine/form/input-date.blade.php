@@ -13,7 +13,7 @@
 
         <!-- Icon di awal (Date) -->
         <span class="absolute inset-y-0 left-3 flex items-center text-gray-400">
-            <i class="ti ti-calendar"></i>
+            <span class="iconify tabler--calendar"></span>
         </span>
 
         <input x-init="initDateRangePicker({ el: $el, ranges: ranges, singleDatePicker: singleDatePicker, minDate: minDate, parentEl: parentEl })" autocomplete="off" type="text" placeholder="{{ $placeholder ?? 'Pilih Tanggal' }}"
@@ -21,7 +21,7 @@
 
         <!-- Icon di akhir (Arrow Down) -->
         <span class="absolute inset-y-0 right-3 flex items-center text-gray-400">
-            <i class="ti ti-chevron-down"></i>
+            <span class="iconify tabler--chevron-down"></span>
         </span>
     </div>
     @if ($errorName)

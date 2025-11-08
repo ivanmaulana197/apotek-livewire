@@ -1,7 +1,7 @@
 <?php
-
 namespace App\Models\DataMaster;
 
+use App\Models\Transaksi\Transaksi;
 use App\Traits\ScopeSearchable;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,7 +12,12 @@ class Dokter extends Model
     /** @use HasFactory<\Database\Factories\DataMaster\DokterFactory> */
     use HasFactory, HasUlids, ScopeSearchable;
 
-    protected $table = 'dokter';
-    protected $fillable = ['nama','alamat','no_hp','spesialis'];
+    protected $table    = 'dokter';
+    protected $fillable = ['nama', 'alamat', 'no_hp', 'spesialis'];
+
+    public function transaksi()
+    {
+        return $this->hasMany(Transaksi::class, 'id_dokter');
+    }
 
 }

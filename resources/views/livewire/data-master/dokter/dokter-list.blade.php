@@ -5,12 +5,12 @@
             <h5 class="card-title text-md">List Dokter</h5>
         </div>
 
-        <x-datatable nama_table="dokter"></x-datatable>
+        <x-datatable nama_table="dokter" :$perPage></x-datatable>
 
         <x-table nama="dokter">
 
             <x-table.thead>
-                <x-table.th label="No"  />
+                <x-table.th label="No" />
                 <x-table.th-sortable :sortBy="$sortBy" :sortDir="$sortDir" label="Nama Dokter" name="nama" class="justify-center" />
                 <x-table.th-sortable :sortBy="$sortBy" :sortDir="$sortDir" label="Alamat" name="alamat" class="justify-center" />
                 <x-table.th-sortable :sortBy="$sortBy" :sortDir="$sortDir" label="No. HP" name="no_hp" class="justify-center" />
@@ -37,16 +37,21 @@
                             {!! $this->highlight($dokter->spesialis ?? '-') !!}
                         </x-table.td>
                         <x-table.td class="text-center">
-                            <x-table.action-button tooltip="Edit" color="warning" @click="$dispatch('edit-dokter',{dokter:'{{ $dokter->id }}'})">
-                                <i class="ti ti-edit-circle"></i>
+                            <x-table.action-button tooltip="Detail" color="info" type="href" wire:navigate
+                                                   href="{{ route('data-master.dokter.detail', $dokter->id) }}">
+                                <span class="iconify tabler--info-circle text-lg"></span>
                             </x-table.action-button>
-                            <x-table.action-button tooltip="Hapus" color="error" @click="$wire.dispatch('alert-confirm', { id: '{{ $dokter->id }}', method: 'delete-dokter' });">
-                                <i class="ti ti-trash-x-filled"></i>
+                            <x-table.action-button tooltip="Edit" color="warning" @click="$dispatch('edit-dokter',{dokter:'{{ $dokter->id }}'})">
+                                <span class="iconify tabler--edit-circle text-lg"></span>
+                            </x-table.action-button>
+                            <x-table.action-button tooltip="Hapus" color="error"
+                                                   @click="$wire.dispatch('alert-confirm', { id: '{{ $dokter->id }}', method: 'delete-dokter' });">
+                                <span class="iconify tabler--trash-x-filled text-lg"></span>
                             </x-table.action-button>
                         </x-table.td>
                     </x-table.tr>
                 @empty
-                    <x-table.tr-empty colspan="3" />
+                    <x-table.tr-empty colspan="6" />
                 @endforelse
                 <x-table.loading-spin />
 
@@ -57,7 +62,6 @@
         <div class="overflow-y-hidden mt-3">
             {{ $dokters->onEachSide(1)->links(data: ['scrollTo' => '#table-dokter']) }}
         </div>
-
 
     </div>
 </div>

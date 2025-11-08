@@ -16,9 +16,12 @@ class FakturDetail extends Component
     {
         $this->sortBy  = 'history_barang.updated_at';
         $this->sortDir = 'desc';
-        $this->faktur  = Faktur::with(['faktur_barang.detail_faktur','faktur_barang.barang', 'supplier:id,nama'])
+        $this->faktur  = Faktur::with(['detail_faktur.detail_barang' => function ($q) {
+            $q->with(['barang:id,kode,nama,id_satuan_utama', 'barang.satuan_utama:id,nama', 'satuan:id,nama']);
+        },
+            'supplier:id,nama'])
             ->findOrFail($id);
-        // dd($this->faktur);
+        // dd($this->faktur->toArray());
     }
 
     #[On('update-status-faktur')]

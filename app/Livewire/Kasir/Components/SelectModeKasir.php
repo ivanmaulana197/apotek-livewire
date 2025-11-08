@@ -9,7 +9,7 @@ use Livewire\Component;
 class SelectModeKasir extends Component
 {
     use KasirHelper;
-    public $id_pesanan_kasir, $mode_kasir, $setting;
+    public $id_pesanan_kasir, $mode_kasir, $persen_resep;
 
     public function updatedModeKasir($value)
     {
@@ -23,8 +23,8 @@ class SelectModeKasir extends Component
                 $total_jumlah                                                             = $pesanan_kasir->barang_pesanan_kasir()->totalJumlahDalamSatuanUtama($barang_pesanan_kasir->id_barang);
                 [$barang_pesanan_kasir->harga, $barang_pesanan_kasir->harga_satuan_utama] = $barang_pesanan_kasir->barang->hargaJual($total_jumlah, $barang_pesanan_kasir->id_satuan);
                 if ($pesanan_kasir->mode_kasir == 'RESEP') {
-                    $barang_pesanan_kasir->harga              = $this->hargaJualResep($barang_pesanan_kasir->harga, $this->setting->persentase_jual_resep);
-                    $barang_pesanan_kasir->harga_satuan_utama = $this->hargaJualResep($barang_pesanan_kasir->harga_satuan_utama, $this->setting->persentase_jual_resep);
+                    $barang_pesanan_kasir->harga              = $this->hargaJualResep($barang_pesanan_kasir->harga, $this->persen_resep);
+                    $barang_pesanan_kasir->harga_satuan_utama = $this->hargaJualResep($barang_pesanan_kasir->harga_satuan_utama, $this->persen_resep);
                 }
                 $barang_pesanan_kasir->sub_total = $barang_pesanan_kasir->jumlah * $barang_pesanan_kasir->harga;
                 $barang_pesanan_kasir->save();

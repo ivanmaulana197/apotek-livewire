@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignUlid('id_member')->nullable()->constrained('member')->onDelete('cascade');
             $table->string('mode_kasir');
             $table->string('mode_shift');
-            $table->bigInteger('total_harga');
+            $table->integer('total_harga');
             $table->foreignUlid("id_metode_pembayaran")->constrained('metode_pembayaran');
             $table->foreignUlid('id_user')->constrained('users')->onDelete('cascade');
 

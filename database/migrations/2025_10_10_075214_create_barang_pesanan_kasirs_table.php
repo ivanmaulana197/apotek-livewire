@@ -15,13 +15,13 @@ return new class extends Migration
             $table->ulid('id')->primary();
             $table->foreignUlid('id_pesanan_kasir')->constrained('pesanan_kasir')->onDelete('cascade');
             $table->foreignUlid('id_barang')->constrained('barang')->onDelete('cascade');
-            $table->integer('jumlah');
+            $table->smallInteger('jumlah');
             $table->foreignUlid('id_satuan')->constrained('satuan')->onDelete('cascade');
-            $table->bigInteger('diskon')->default(0);
+            $table->mediumInteger('diskon')->default(0);
             // $table->foreignUlid('id_promo_barang')->nullable()->constrained('promo_barang')->nullOnDelete();
-            $table->bigInteger('harga');
-            $table->bigInteger('harga_satuan_utama');
-            $table->bigInteger('sub_total');
+            $table->unsignedMediumInteger('harga');
+            $table->unsignedMediumInteger('harga_satuan_utama');
+            $table->integer('sub_total');
             $table->timestamps();
         });
     }

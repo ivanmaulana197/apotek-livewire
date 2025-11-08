@@ -1,23 +1,16 @@
 <!DOCTYPE html>
-<html lang="en"
-    dir="ltr"
-    class="light"
-    data-boxed-layout="full"
-    data-card="shadow"
-    data-layout="vertical">
+<html lang="en" dir="ltr" class="light" data-boxed-layout="full" data-card="shadow" data-layout="vertical">
 
 <head>
     @include('partials.head', ['title' => $title])
     @stack('script-head')
     @livewireStyles
 </head>
+
 <body class="DEFAULT_THEME bg-lightprimary dark:bg-darkbody">
 
     <x-sweet-alert />
     {{ $slot }}
-
-
-
 
     @if (request()->is('kasir*'))
         <style>
@@ -58,7 +51,6 @@
 
     @include('partials.navbar.navbar-mobile-menu-canvas')
 
-
     @include('partials.customize')
     <script>
         function handleColorTheme(e) {
@@ -69,4 +61,5 @@
     @livewireScriptConfig
     @stack('script-body')
 </body>
+
 </html>

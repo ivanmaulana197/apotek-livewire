@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('promo_transaksi', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->foreignUlid('id_promo')->constrained('promo')->onDelete('cascade');
-            $table->decimal('minimal_belanja', 15, 2)->default(0);
+            $table->decimal('minimal_belanja', 8, 0)->default(0);
             $table->enum('tipe_transaksi', ['PERSEN', 'HARGA'])->default('PERSEN');
             $table->decimal('diskon_persen', 5, 2)->nullable();
-            $table->decimal('diskon_nominal', 15, 2)->nullable();
+            $table->decimal('diskon_nominal', 10, 2)->nullable();
             $table->timestamps();
         });
     }

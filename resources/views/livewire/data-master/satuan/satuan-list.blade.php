@@ -24,11 +24,11 @@
                         </x-table.td>
                         <x-table.td class="text-center">
                             <x-table.action-button tooltip="Edit" color="warning" @click="$dispatch('edit-satuan',{satuan:'{{ $satuan->id }}'})">
-                                <i class="ti ti-edit-circle"></i>
+                                <span class="iconify tabler--edit-circle text-lg"></span>
                             </x-table.action-button>
                             <x-table.action-button tooltip="Hapus" color="error"
                                                    @click="$wire.dispatch('alert-confirm', { id: '{{ $satuan->id }}', method: 'delete-satuan' });">
-                                <i class="ti ti-trash-x-filled"></i>
+                                <span class="iconify tabler--trash-x-filled text-lg"></span>
                             </x-table.action-button>
                         </x-table.td>
                     </x-table.tr>

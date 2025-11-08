@@ -1,6 +1,6 @@
-@props(['perPage' => '5', 'nama_table' => '', 'search'=>true])
+@props(['perPage' => '5', 'nama_table' => '', 'search' => true, 'placeholder_search' => 'Search ...'])
 <div class="">
-    <div class="flex flex-row flex-wrap items-center gap-3">
+    <div class="flex flex-row flex-wrap items-end gap-3">
         <div wire:ignore class="{{ !trim($slot) ? 'flex flex-row flex-wrap items-center' : '' }}">
             @if (!trim($slot))
                 <label class="me-2">Show :</label>
@@ -11,7 +11,7 @@
         @if (!trim($slot))
             <div class="flex-auto">
                 @if ($search)
-                    <x-datatable.search placeholder_search="Search ..." class="font-medium" />
+                    <x-datatable.search placeholder_search="{{ $placeholder_search }}" class="font-medium" />
                 @endif
             </div>
         @endif

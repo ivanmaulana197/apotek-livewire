@@ -128,7 +128,6 @@ class KasirPembayaranForm extends Component
                 'id_dokter'            => $id_dokter,
                 'id_pasien'            => $id_pasien,
             ]);
-
             $barang_pesanan_kasir = $this->pesanan_kasir->load(['barang_pesanan_kasir.barang'])->barang_pesanan_kasir;
 
             foreach ($barang_pesanan_kasir as $barang_pesanan_kasir) {

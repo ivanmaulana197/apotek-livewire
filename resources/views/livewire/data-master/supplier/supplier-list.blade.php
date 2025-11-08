@@ -10,12 +10,12 @@
         <x-table nama="supplier">
 
             <x-table.thead>
-                <x-table.th label="No"  />
+                <x-table.th label="No" />
                 <x-table.th-sortable :sortBy="$sortBy" :sortDir="$sortDir" label="Nama Supplier" name="nama" class="justify-center" />
-                <x-table.th-sortable :sortBy="$sortBy" :sortDir="$sortDir" label="Asal" name="asal"  />
-                <x-table.th-sortable :sortBy="$sortBy" :sortDir="$sortDir" label="Alamat" name="alamat"  />
-                <x-table.th-sortable :sortBy="$sortBy" :sortDir="$sortDir" label="No. Telp" name="no_hp"  />
-                <x-table.th-sortable :sortBy="$sortBy" :sortDir="$sortDir" label="Include Pajak" name="is_pajak"  />
+                <x-table.th-sortable :sortBy="$sortBy" :sortDir="$sortDir" label="Asal" name="asal" />
+                <x-table.th-sortable :sortBy="$sortBy" :sortDir="$sortDir" label="Alamat" name="alamat" />
+                <x-table.th-sortable :sortBy="$sortBy" :sortDir="$sortDir" label="No. Telp" name="no_hp" />
+                <x-table.th-sortable :sortBy="$sortBy" :sortDir="$sortDir" label="Include Pajak" name="is_pajak" />
                 <x-table.th label='Aksi' class="flex justify-center" />
             </x-table.thead>
 
@@ -29,24 +29,25 @@
                             </h6>
                         </x-table.td>
                         <x-table.td>
-                                {!! $this->highlight($supplier->asal) !!}
+                            {!! $this->highlight($supplier->asal) !!}
                         </x-table.td>
                         <x-table.td>
-                                {!! $this->highlight($supplier->alamat ?? '-') !!}
+                            {!! $this->highlight($supplier->alamat ?? '-') !!}
                         </x-table.td>
                         <x-table.td>
-                                {!! $this->highlight($supplier->no_hp ?? '-') !!}
+                            {!! $this->highlight($supplier->no_hp ?? '-') !!}
                         </x-table.td>
                         <x-table.td>
-                                {{ $supplier->is_pajak ? 'Ya' : 'Tidak' }}
+                            {{ $supplier->is_pajak ? 'Ya' : 'Tidak' }}
                         </x-table.td>
 
                         <x-table.td class="text-center">
                             <x-table.action-button tooltip="Edit" color="warning" @click="$dispatch('edit-supplier',{supplier:'{{ $supplier->id }}'})">
-                                <i class="ti ti-edit-circle"></i>
+                                <span class="iconify tabler--edit-circle text-lg"></span>
                             </x-table.action-button>
-                            <x-table.action-button tooltip="Hapus" color="error" @click="$wire.dispatch('alert-confirm', { id: '{{ $supplier->id }}', method: 'delete-supplier' });">
-                                <i class="ti ti-trash-x-filled"></i>
+                            <x-table.action-button tooltip="Hapus" color="error"
+                                                   @click="$wire.dispatch('alert-confirm', { id: '{{ $supplier->id }}', method: 'delete-supplier' });">
+                                <span class="iconify tabler--trash-x-filled text-lg"></span>
                             </x-table.action-button>
                         </x-table.td>
                     </x-table.tr>
@@ -61,7 +62,6 @@
         <div class="overflow-y-hidden mt-3">
             {{ $suppliers->onEachSide(1)->links(data: ['scrollTo' => '#table-supplier']) }}
         </div>
-
 
     </div>
 </div>

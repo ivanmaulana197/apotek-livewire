@@ -53,19 +53,19 @@ class TransaksiCardInfo extends Component
 
     public function getDataTransaksi()
     {
-        $query = Transaksi::query()
+        $rekap = Transaksi::query()
+            ->join('metode_pembayaran', 'metode_pembayaran.id', '=', 'transaksi.id_metode_pembayaran')
             ->when($this->filter_date ?? null, function ($query, $item) {
-                $query->whereBetween('created_at', ["{$item['start']} 00:00:00", "{$item['end']} 23:59:59"]);
+                $query->whereBetween('transaksi.created_at', ["{$item['start']} 00:00:00", "{$item['end']} 23:59:59"]);
             })
             ->when(in_array($this->shift_transaksi, ['MALAM', 'PAGI']), function ($query) {
                 $query->where('shift_transaksi', $this->shift_transaksi);
             })
-            ->where('status', 'TERJUAL');
-        $rekap = $query
+            ->where('status', 'TERJUAL')
             ->selectRaw("
                 SUM(total_bayar) AS total_bayar,
-                SUM(CASE WHEN id_metode_pembayaran = 1 THEN total_bayar ELSE 0 END) AS total_bayar_tunai,
-                SUM(CASE WHEN id_metode_pembayaran != 1 THEN total_bayar ELSE 0 END) AS total_bayar_non_tunai,
+                SUM(CASE WHEN metode_pembayaran.nama LIKE 'TUNAI' THEN total_bayar ELSE 0 END) AS total_bayar_tunai,
+                SUM(CASE WHEN metode_pembayaran.nama NOT LIKE 'TUNAI' THEN total_bayar ELSE 0 END) AS total_bayar_non_tunai,
                 SUM(CASE WHEN jenis_transaksi LIKE '%RESEP%' THEN total_bayar ELSE 0 END) AS total_bayar_resep,
                 SUM(CASE WHEN jenis_transaksi NOT LIKE '%RESEP%' THEN total_bayar ELSE 0 END) AS total_bayar_non_resep,
                 COUNT(*) AS total_transaksi")

@@ -15,9 +15,8 @@ return new class extends Migration
             $table->foreignUlid('id_barang')->constrained('barang')->onDelete('cascade');
             $table->foreignUlid('id_satuan')->nullable()->constrained('satuan')->nullOnDelete();
             // kenapa tidak menjadi konversi saja: karena jika satuan utamanya lebih > dari satuan_alternatifnya,
-            $table->integer('rasio_satuan_utama');
-            $table->integer('rasio_satuan_opsi');
-            $table->timestamps();
+            $table->smallInteger('rasio_satuan_utama');
+            $table->smallInteger('rasio_satuan_opsi');
         });
     }
 

@@ -1,15 +1,14 @@
 <?php
 namespace App\Livewire\Kasir;
 
-use App\Models\Setting;
-use Livewire\Component;
-use Illuminate\Support\Carbon;
 use App\Helpers\GenerateHelper;
-use App\Models\Kasir\PesananKasir;
-use Illuminate\Support\Facades\Auth;
 use App\Livewire\Kasir\Helpers\KasirHelper;
 use App\Models\DataMaster\MetodePembayaran;
-use Livewire\Attributes\On;
+use App\Models\Kasir\PesananKasir;
+use App\Models\Setting;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 
 class KasirIndex extends Component
 {
@@ -21,18 +20,18 @@ class KasirIndex extends Component
     {
         if ($id_pesanan_kasir) {
             $this->pesanan_kasir = PesananKasir::query()
-            ->findOrFail($id_pesanan_kasir);
+                ->findOrFail($id_pesanan_kasir);
         } else {
             $this->pesanan_kasir = PesananKasir::query()
                 ->where('id_user', Auth::id())
-                ->where('mode_shift', $this->checkModeShift())
+            // ->where('mode_shift', $this->checkModeShift())
                 ->whereDate('created_at', Carbon::today())
                 ->latest()->first();
             if (! $this->pesanan_kasir) {
                 $this->pesanan_kasir = $this->createPesananKasir();
             }
         }
-        $this->setting = Setting::first();
+        $this->setting = Setting::select(['id', 'persentase_jual_resep'])->first();
         // dd($this->pesanan_kasir->promo_pesanan_kasir);
 
     }
@@ -50,7 +49,8 @@ class KasirIndex extends Component
         ]);
     }
 
-    public function tambahPesananKasir(){
+    public function tambahPesananKasir()
+    {
         $this->createPesananKasir();
         session()->flash('alert', [
             'title'   => 'Berhasil!',

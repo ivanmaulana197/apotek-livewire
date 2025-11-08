@@ -1,5 +1,5 @@
 <header
-    class="sticky top-0 inset-x-0 z-[60] flex flex-wrap md:justify-start md:flex-nowrap text-sm py-3 lg:py-0 mb-3 bg-white dark:bg-dark rounded-2xl shadow-md">
+        class="sticky top-0 inset-x-0 z-[60] flex flex-wrap md:justify-start md:flex-nowrap text-sm py-3 lg:py-0 mb-3 bg-white dark:bg-dark rounded-2xl shadow-md">
     <div class="w-full with-vertical">
         <div class="w-full px-4 mx-auto lg:px-6" aria-label="Global">
             <div class="relative md:flex md:items-center md:justify-between">
@@ -11,7 +11,7 @@
                                 @if (!request()->is('kasir*'))
                                     <a class="items-center justify-center hidden w-10 h-10 text-xl rounded-full cursor-pointer xl:flex icon-hover text-link dark:text-darklink sidebartoggler hover:text-primary hover:bg-lightprimary dark:hover:bg-darkprimary"
                                        id="headerCollapse" href="javascript:void(0)">
-                                        <iconify-icon icon="solar:list-bold-duotone" class="text-2xl relative z-[1]"></iconify-icon>
+                                        <span class="iconify solar--list-bold-duotone text-2xl relative z-[1]"></span>
                                     </a>
                                 @endif
                                 <!--Mobile Sidebar Toggle -->
@@ -22,7 +22,7 @@
                                         <a class="flex items-center justify-center w-10 h-10 text-xl rounded-full cursor-pointer icon-hover text-link dark:text-darklink sidebartoggler hover:text-primary hover:bg-lightprimary dark:hover:bg-darkprimary"
                                            data-hs-overlay="#application-sidebar-brand" aria-controls="application-sidebar-brand"
                                            aria-label="Toggle navigation">
-                                            <iconify-icon icon="solar:list-bold-duotone" class="text-2xl relative z-[1]"></iconify-icon>
+                                            <span class="iconify solar--list-bold-duotone text-2xl relative z-[1]"></span>
                                         </a>
                                         {{-- @else
                                             <button type="button"
@@ -30,7 +30,7 @@
                                                 data-hs-overlay="#navbar-offcanvas-example-menu"
                                                 aria-controls="navbar-offcanvas-example-menu"
                                                 aria-label="Toggle navigation">
-                                                <i class="text-2xl ti ti-align-justified "></i>
+                                                <i class="text-2xl iconify tabler--align-justified "></i>
                                             </button> --}}
                                         {{-- @endif --}}
                                         <!-- End Navigation Toggle -->
@@ -49,7 +49,7 @@
                                 {{-- <button type="button"
                                     class="inline-flex items-center justify-center w-10 h-10 p-2 rounded-full hs-collapse-toggle text-link dark:text-darklink hover:text-primary hover:bg-lightprimary dark:hover:bg-darkprimary"
                                     data-hs-collapse="#hs-basic-collapse-heading" aria-label="Toggle navigation">
-                                    <i class="text-xl ti ti-dots"></i>
+                                    <i class="text-xl iconify tabler--dots"></i>
                                 </button> --}}
                                 @include('partials.navbar.items.profile')
                             </div>
@@ -70,8 +70,8 @@
                                                  class="hs-dropdown h-[70px] flex items-center  [--strategy:static] lg:[--strategy:absolute] [--adaptive:none] sm:[--trigger:hover]  relative group/menu">
                                                 <button type="button"
                                                         class="flex items-center w-full gap-2 text-base lg:w-auto text-link dark:text-darklink hover:text-primary dark:hover:text-primary group-hover/menu:text-primary">
-                                                    <i class="text-xl ti ti-api-app lg:hidden lg:text-sm"></i>Apps
-                                                    <i class="text-lg ti ti-chevron-down ms-auto lg:text-sm"></i>
+                                                    <i class="text-xl iconify tabler--api-app lg:hidden lg:text-sm"></i>Apps
+                                                    <i class="text-lg iconify tabler--chevron-down ms-auto lg:text-sm"></i>
                                                 </button>
 
                                                 <div
@@ -130,7 +130,7 @@
                                                                     <div class="flex items-center justify-between w-full">
                                                                         <div class="flex items-center text-dark dark:text-white group ">
                                                                             <i
-                                                                               class="text-lg ti ti-help text-dark dark:text-darklink group-hover:text-primary"></i>
+                                                                               class="text-lg iconify tabler--help text-dark dark:text-darklink group-hover:text-primary"></i>
                                                                             <a href="main/page-faq.html"
                                                                                class="ml-2 font-bold text-fs_15 text-dark dark:text-darklink group-hover:text-primary">
                                                                                 Frequently Asked Questions
@@ -164,7 +164,7 @@
                                         <div>
                                             <a href="{{ route('home') }}" wire:navigate
                                                class="flex items-center w-full gap-3 px-2 py-2 rounded-md lg:w-auto lg:py-1 lg:px-2 lg:text-base text-md lg:gap-0 header-link text-link dark:text-darklink hover:text-primary dark:hover:text-primary">
-                                                <iconify-icon icon="solar:screencast-2-line-duotone" class="text-xl me-1"></iconify-icon>
+                                                <span class="iconify solar--screencast-2-line-duotone text-xl me-1"></span>
                                                 Home
                                             </a>
                                         </div>
@@ -173,13 +173,13 @@
                                                 <iconify-icon icon="solar:chart-line-duotone" class="text-xl me-1"></iconify-icon>
                                                 Home-Full
                                             </a>
-                                        </div>
+                                        </div> --}}
                                         <div>
                                             <a href="{{ route('transaksi') }}" wire:navigate class="flex items-center w-full gap-3 px-2 py-2 rounded-md lg:w-auto lg:py-1 lg:px-2 lg:text-base text-md lg:gap-0 header-link text-link dark:text-darklink hover:text-primary dark:hover:text-primary">
-                                                <iconify-icon icon="f7:list-bullet-below-rectangle" class="text-xl me-1"></iconify-icon>
+                                                <span class="iconify f7--list-bullet-below-rectangle text-xl me-1"></span>
                                                 Transaksi
                                             </a>
-                                        </div> --}}
+                                        </div>
                                     </div>
                                 </div>
                             </div>

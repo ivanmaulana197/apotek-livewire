@@ -17,14 +17,14 @@
 @plugin "@iconify/tailwind4" {
     prefix: "iconify";
     scale: 1;
-    prefixes: solar, basil, simple-icons, hugeicons, wpf, f7, eos-icons,
-        famicons, duo-icons, iconamoon, guidance, carbon;
+    prefixes: solar, basil, simple-icons, hugeicons, wpf, f7, eos-icons, mdi,
+        streamline-pixel, stash, famicons, duo-icons, iconamoon, guidance,
+        carbon, tabler, fluent, nrk;
 }
 
 @plugin "daisyui" {
     themes: light --default;
 }
-
 @layer theme;
 @import "./custom/theme.css" layer(theme);
 

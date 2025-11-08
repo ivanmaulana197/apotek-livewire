@@ -9,12 +9,13 @@ use App\Models\HistoryBarang;
 use App\Models\Transaksi\DetailTransaksiBarang;
 use App\Models\Transaksi\TransaksiListPromo;
 use App\Models\User;
+use App\Traits\ScopeSearchable;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 
 class Transaksi extends Model
 {
-    use HasUlids;
+    use HasUlids, ScopeSearchable;
 
     protected $table    = 'transaksi';
     protected $fillable = [
@@ -58,22 +59,40 @@ class Transaksi extends Model
         return $this->belongsTo(Dokter::class, 'id_dokter');
     }
 
-    public function transaksi_barang()
+    // public function transaksi_barang()
+    // {
+    //     return $this->morphMany(HistoryBarang::class, 'referensi');
+    // }
+
+    public function detail_transaksi()
     {
-        return $this->morphMany(HistoryBarang::class, 'referensi');
+        return $this->hasMany(DetailTransaksiBarang::class, 'id_transaksi');
     }
 
-    public function detailTransaksiBarang()
+    public function detail_transaksi_barang()
     {
         return $this->hasManyThrough(
-            DetailTransaksiBarang::class,
             HistoryBarang::class,
-            'referensi_id',      // Foreign key di tabel history_barang
-            'id_history_barang', // Foreign key di tabel detail_transaksi_barang
-            'id',                // Local key di tabel transaksi
-            'id'                 // Local key di tabel history_barang
-        )->where('history_barang.referensi_type', self::class);
+            DetailTransaksiBarang::class,
+            'id_transaksi',     // Foreign key di tabel detail_transaksis
+            'id',               // Foreign key di tabel history_barangs
+            'id',               // Local key di tabel transaksis
+            'id_history_barang' // Local key di tabel detail_transaksis
+        );
+
     }
+
+    // public function detailTransaksiBarang()
+    // {
+    //     return $this->hasManyThrough(
+    //         DetailTransaksiBarang::class,
+    //         HistoryBarang::class,
+    //         'referensi_id',      // Foreign key di tabel history_barang
+    //         'id_history_barang', // Foreign key di tabel detail_transaksi_barang
+    //         'id',                // Local key di tabel transaksi
+    //         'id'                 // Local key di tabel history_barang
+    //     )->where('history_barang.referensi_type', self::class);
+    // }
 
     public function transaksi_list_promo()
     {

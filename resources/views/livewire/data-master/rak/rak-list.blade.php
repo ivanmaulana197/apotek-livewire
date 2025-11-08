@@ -25,11 +25,11 @@
                                 Rak Barang
                             </x-table.action-button>
                             <x-table.action-button tooltip="Edit" color="warning" @click="$dispatch('edit-rak',{rak:'{{ $rak->id }}'})">
-                                <i class="ti ti-edit-circle"></i>
+                                <span class="iconify tabler--edit-circle text-lg"></span>
                             </x-table.action-button>
                             <x-table.action-button tooltip="Hapus" color="error"
                                                    @click="$wire.dispatch('alert-confirm', { id: '{{ $rak->id }}', method: 'delete-rak' });">
-                                <i class="ti ti-trash-x-filled"></i>
+                                <span class="iconify tabler--trash-x-filled text-lg"></span>
                             </x-table.action-button>
                             {{-- </div> --}}
                         </x-table.td>

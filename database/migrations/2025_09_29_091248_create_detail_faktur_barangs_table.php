@@ -14,9 +14,10 @@ return new class extends Migration
         Schema::create('detail_faktur_barang', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->foreignUlid('id_history_barang')->constrained('history_barang')->onDelete('cascade');
-            $table->foreignUlid('id_stok_batch_barang')->nullable()->constrained('stok_batch_barang')->nullOnDelete();
-            $table->bigInteger('harga_beli')->nullable();
-            $table->timestamps();
+            $table->foreignUlid('id_faktur')->constrained('faktur')->onDelete('cascade');
+            // $table->foreignUlid('id_stok_batch_barang')->nullable()->constrained('stok_batch_barang')->nullOnDelete();
+            $table->mediumInteger('harga_beli')->nullable();
+            // $table->timestamps();
         });
     }
 

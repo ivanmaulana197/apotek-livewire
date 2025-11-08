@@ -1,16 +1,14 @@
 <?php
-
 namespace App\Models\Faktur;
 
-use App\Models\Barang\Barang;
+use App\Models\DataMaster\Supplier;
+use App\Models\Faktur\DetailFakturBarang;
+use App\Models\HistoryBarang;
 use App\Models\User;
 use App\Traits\ScopeSearchable;
-use App\Models\DataMaster\Supplier;
-use App\Models\HistoryBarang;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
 class Faktur extends Model
@@ -18,7 +16,7 @@ class Faktur extends Model
     use HasFactory, HasUlids, ScopeSearchable;
     protected $table = 'faktur';
 
-    protected $fillable = ['no_faktur', 'id_supplier', 'total_biaya', 'tgl_jatuh_tempo', 'status', 'tgl_masuk', 'id_user'];
+    protected $fillable = ['no_faktur', 'id_supplier', 'total_biaya', 'tgl_jatuh_tempo', 'status', 'id_user'];
 
     public function supplier()
     {
@@ -30,16 +28,32 @@ class Faktur extends Model
         return $this->belongsTo(User::class, 'id_user');
     }
 
-    public function faktur_barang()
+    public function detail_faktur()
     {
-        return $this->morphMany(HistoryBarang::class, 'referensi');
+        return $this->hasMany(DetailFakturBarang::class, 'id_faktur');
     }
+
+    public function detail_faktur_barang()
+    {
+        return $this->hasManyThrough(
+            HistoryBarang::class,
+            DetailFakturBarang::class,
+            'id_faktur',        // Foreign key di tabel detail_transaksis
+            'id',               // Foreign key di tabel history_barangs
+            'id',               // Local key di tabel transaksis
+            'id_history_barang' // Local key di tabel detail_transaksis
+        );
+    }
+
+    // public function faktur_barang()
+    // {
+    //     return $this->morphMany(HistoryBarang::class, 'referensi');
+    // }
 
     protected static function booted()
     {
         static::creating(function ($faktur) {
             $faktur->id_user = Auth::user()->id;
-            $faktur->tgl_masuk = now();
             if ($faktur->tgl_jatuh_tempo == null) {
                 $faktur->tgl_jatuh_tempo = now();
             }
@@ -62,6 +76,6 @@ class Faktur extends Model
                 }
             });
         }
-        
+
     }
 }

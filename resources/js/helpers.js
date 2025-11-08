@@ -50,19 +50,47 @@ window.formatToStringNumber = function (value) {
     }
 };
 
-window.formatNumberToString = function (value) {
+window.formatNumberToString = function (number) {
+    // if (!value) {
+    //     return null;
+    // }
+    // let [integer, decimal] = value.toString().split(".");
 
-    let [integer, decimal] = value.toString().split(".");
+    // // Format integer dengan tanda titik sebagai pemisah ribuan
+    // integer = integer.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 
-    // Format integer dengan tanda titik sebagai pemisah ribuan
-    integer = integer.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-
-    // Jika ada bagian desimal, tambahkan koma sebagai pemisah desimal
-    if (decimal) {
-        return `${integer},${decimal}`;
+    // // Jika ada bagian desimal, tambahkan koma sebagai pemisah desimal
+    // if (decimal) {
+    //     return `${integer},${decimal}`;
+    // }
+    // // Jika tidak ada bagian desimal, kembalikan hanya bagian integer
+    // return integer;
+    if (number === null || number === undefined || number === "") {
+        return null;
     }
-    // Jika tidak ada bagian desimal, kembalikan hanya bagian integer
-    return integer;
+
+    // Ubah ke string agar tidak kehilangan presisi desimal
+    let numberStr = String(number).replace(",", "."); // jaga-jaga kalau input pakai koma
+
+    // Pisahkan integer dan desimal
+    let parts = numberStr.split(".");
+
+    // Format bagian integer pakai titik untuk ribuan
+    let integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+    // Jika ada desimal
+    if (parts[1] && parts[1] !== "") {
+        // Hilangkan nol di akhir desimal
+        let decimalPart = parts[1].replace(/0+$/, "");
+
+        // Jika setelah di-trim masih ada angka desimal
+        if (decimalPart !== "") {
+            return `${integerPart},${decimalPart}`;
+        }
+    }
+
+    // Jika tidak ada desimal atau desimalnya cuma nol semua
+    return integerPart;
 };
 
 window.formatForInputNumber = function (input) {
@@ -73,13 +101,28 @@ window.formatToUpperCase = function (input) {
     input.value = input.value.toUpperCase();
 };
 
-window.formatDate = function(date, showTime = false, withSecond = false, mode = 'full') {
+window.formatDate = function (
+    date,
+    showTime = false,
+    withSecond = false,
+    mode = "full"
+) {
     if (!date) return null;
 
     const bulan = [
-        '', // supaya index 1 = Januari
-        'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-        'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+        "", // supaya index 1 = Januari
+        "Januari",
+        "Februari",
+        "Maret",
+        "April",
+        "Mei",
+        "Juni",
+        "Juli",
+        "Agustus",
+        "September",
+        "Oktober",
+        "November",
+        "Desember",
     ];
 
     const m = moment(date);
@@ -89,41 +132,43 @@ window.formatDate = function(date, showTime = false, withSecond = false, mode = 
     const bulanIndo = bulan[m.month() + 1]; // moment bulan dari 0-11
     const tahun = m.year();
 
-    let formattedDate = '';
+    let formattedDate = "";
 
     switch (mode) {
-        case 'bulan':
+        case "bulan":
             formattedDate = bulanIndo;
             break;
-        case 'tahun':
+        case "tahun":
             formattedDate = tahun;
             break;
         default: // 'full'
             formattedDate = `${tanggal} ${bulanIndo} ${tahun}`;
     }
 
-    if (showTime && mode === 'full') {
-        const jam = m.format(withSecond ? 'HH:mm:ss' : 'HH:mm');
+    if (showTime && mode === "full") {
+        const jam = m.format(withSecond ? "HH:mm:ss" : "HH:mm");
         formattedDate = `${jam}, ${formattedDate}`;
     }
 
     return formattedDate;
-}
+};
 
-
-window.formatDateStringToDate = function (tanggal, format = 'YYYY-MM-DD') {
+window.formatDateStringToDate = function (tanggal, format = "YYYY-MM-DD") {
     if (!tanggal) return null;
 
-    const parsed = moment(tanggal, ['D MMMM YYYY', 'DD MMMM YYYY', 'D MMM YYYY', 'YYYY-MM-DD'], true);
+    const parsed = moment(
+        tanggal,
+        ["D MMMM YYYY", "DD MMMM YYYY", "D MMM YYYY", "YYYY-MM-DD"],
+        true
+    );
     return parsed.isValid() ? parsed.format(format) : null;
 };
 
-window.formatTomSelect = function(data, value = 'id', text = 'nama') {
+window.formatTomSelect = function (data, value = "id", text = "nama") {
     return data.map((item) => {
         return {
             id: item[value],
             text: item[text],
         };
     });
-}
-
+};

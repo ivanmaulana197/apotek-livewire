@@ -8,20 +8,22 @@
    </svg> --}}
 @php
     if (!isset($icon)) {
-        $icon = "solar:info-circle-bold";
+        $icon = 'solar:info-circle-bold';
     }
-    
+
 @endphp
 
-<span {{ $attributes->merge(['class' => "mt-1 py-1 px-1.5 inline-flex flex-row flex-wrap gap-1 text-xs font-medium bg-light$status text-$status rounded-lg dark:bg-dark$status dark:text-$status"]) }}>
+<span
+      {{ $attributes->merge(['class' => "mt-1 py-1 px-1.5 inline-flex flex-row  shadow-lg flex-wrap gap-1 text-xs font-medium bg-light$status text-$status rounded-lg dark:bg-dark$status dark:text-$status"]) }}>
 
     @if ($icon instanceof \Illuminate\View\ComponentSlot)
         <div {{ $icon->attributes->merge(['class' => '']) }}>
             {{ $icon }}
         </div>
     @elseif ($icon)
-        @if($icon != "")
-            <iconify-icon icon="{{ $icon }}" class="mt-0.5"></iconify-icon>
+        @if ($icon != '')
+            {{-- <iconify-icon icon="{{ $icon }}" class="mt-0.5"></iconify-icon> --}}
+            <i class="iconify tabler--{{ $icon }} mt-0.5"></i>
         @endif
     @endif
 

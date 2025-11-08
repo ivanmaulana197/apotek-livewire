@@ -35,7 +35,7 @@
                             <span class="card-subtitle">super
                                 admin</span>
                             <p class="flex items-center mt-1 mb-0 ">
-                                <iconify-icon icon="solar:mailbox-line-duotone" class="text-base me-1"></iconify-icon>
+                                <span class="iconify solar--mailbox-line-duotone text-base me-1"></span>
                                 info@spike.com
                             </p>
                         </div>
@@ -46,7 +46,7 @@
                             <a href="main/page-user-profile.html" class="relative flex items-center gap-5 p-2 rounded-sm bg-hover group">
                                 <span
                                       class="flex items-center justify-center p-2 rounded-sm bg-lightinfo dark:bg-darkinfo hover:bg-info group text-info hover:text-white">
-                                    <iconify-icon icon="solar:wallet-2-line-duotone" class="text-2xl "></iconify-icon>
+                                    <span class="iconify solar--wallet-2-line-duotone text-2xl "></span>
                                 </span>
 
                                 <div>
@@ -62,7 +62,7 @@
                             <a href="main/app-email.html" class="relative flex items-center gap-5 p-2 rounded-sm bg-hover group">
                                 <span
                                       class="flex items-center justify-center p-2 rounded-sm bg-lightsuccess dark:bg-darksuccess hover:bg-success group text-success hover:text-white">
-                                    <iconify-icon icon="solar:shield-minimalistic-line-duotone" class="text-2xl"></iconify-icon>
+                                    <span class="iconify solar--shield-minimalistic-line-duotone text-2xl"></span>
                                 </span>
 
                                 <div>
@@ -78,7 +78,7 @@
                             <a href="main/app-kanban.html" class="relative flex items-center gap-5 p-2 rounded-sm bg-hover group">
                                 <span
                                       class="flex items-center justify-center p-2 rounded-sm bg-lighterror dark:bg-darkerror hover:bg-error group text-error hover:text-white">
-                                    <iconify-icon icon="solar:card-2-line-duotone" class="text-2xl"></iconify-icon>
+                                    <span class="iconify solar--card-2-line-duotone text-2xl"></span>
                                 </span>
 
                                 <div>
@@ -94,7 +94,7 @@
                 </div>
             </div>
             <div class="mt-5">
-                <livewire:auth.logout-button tipe="navbar"/>
+                <livewire:auth.logout-button tipe="navbar" />
             </div>
         </div>
     </div>

@@ -1,4 +1,4 @@
-@props(['name','label'])
+@props(['name', 'label'])
 <th scope="col" @click="sort('{{ $name }}')" class="text-sm cursor-pointer font-semibold text-white">
     <div {{ $attributes->merge(['class' => 'inline-flex items-center ms-2']) }}>
         {{ $label }}
@@ -7,7 +7,7 @@
                 <span x-text="sortDir === 'asc' ? '▲' : '▼'"></span>
             </template>
             <template x-if="sortBy !== '{{ $name }}'">
-                <i class="ti ti-caret-up-down-filled"></i>
+                <span class="iconify tabler--caret-up-down-filled text-lg"></span>
             </template>
         </div>
     </div>

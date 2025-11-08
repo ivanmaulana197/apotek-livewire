@@ -4,7 +4,7 @@
     <x-breadcrumb name="{{ $form->isEdit ? 'Edit' : 'Tambah' }} Data Barang">
         <x-slot:button>
             <a class="btn btn-xs bg-slate-500 hover:bg-slate-700" href="{{ route('data.barang') }}" wire:navigate>
-                <iconify-icon icon="famicons:caret-back"></iconify-icon>
+                <span class="iconify famicons--caret-back"></span>
                 Kembali
             </a>
         </x-slot:button>
@@ -34,8 +34,8 @@
                         </x-form.input>
                     </div>
                     <div class="col-span-12 sm:col-span-6">
-                        <x-form.select-alpine label="Kategori Obat" name="kategori" :data-option="$this->kategories" option-value="id" option-label="nama"
-                                              : modal-name="kategori" :add-value=true multiple x-model="id_kategories" error-name="form.id_kategories" />
+                        <x-form.select-alpine label="Kategori Obat" name="kategori" :data-option="$this->kategories" option-value="id" option-label="nama" :
+                                              modal-name="kategori" :add-value=true multiple x-model="id_kategories" error-name="form.id_kategories" />
                         <x-form.select-alpine label="Rak" name="rak" :data-option="$this->raks" option-value="id" option-label="nama" modal-name="rak"
                                               :add-value=true multiple x-model="id_raks" error-name="form.id_raks" />
                         <x-form.input label="Keterangan" x-model='keterangan' error-name="keterangan" type="textarea" />

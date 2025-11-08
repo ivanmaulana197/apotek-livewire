@@ -2,7 +2,7 @@
     use App\Helpers\FormatHelper;
 @endphp
 <x-table.action-button color="info">
-    <iconify-icon icon="tabler:info-square-rounded-filled"></iconify-icon>
+    <span class="iconify tabler--info-square-rounded-filled"></span>
     <x-slot name="tooltip" class="max-w-xs w-full text-start">
         <div class="p-2 gap-1 text-sm ">
             <div class="font-normal">
@@ -42,7 +42,8 @@
                 @endforelse
             </div>
             <div class="font-normal">
-                <span class="font-bold">Harga Utama : </span> Rp. {{ FormatHelper::formatNumberToString($pesanan_kasir->mode_kasir == 'UMUM' ? $barang_pesanan->barang->harga_jual_utama : $this->hargaJualResep($barang_pesanan->barang->harga_jual_utama, $persen_resep)) }}
+                <span class="font-bold">Harga Utama : </span> Rp.
+                {{ FormatHelper::formatNumberToString($pesanan_kasir->mode_kasir == 'UMUM' ? $barang_pesanan->barang->harga_jual_utama : $this->hargaJualResep($barang_pesanan->barang->harga_jual_utama, $persen_resep)) }}
             </div>
             <div class="font-normal">
                 <span class="font-bold">Harga Grosir : </span>

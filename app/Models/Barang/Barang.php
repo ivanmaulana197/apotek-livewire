@@ -1,6 +1,9 @@
 <?php
 namespace App\Models\Barang;
 
+use App\Helpers\FormatHelper;
+use App\Models\Barang\HargaBarang;
+use App\Models\Barang\StokBatchBarang;
 use App\Models\DataMaster\Kategori;
 use App\Models\DataMaster\Rak;
 use App\Models\DataMaster\Satuan;
@@ -28,8 +31,8 @@ class Barang extends Model
         'keterangan',
     ];
 
-    protected $appends = ['satuan_opsi', 'harga_beli'];
-    protected $hidden  = [];
+    // protected $appends = ['satuan_opsi'];
+    protected $hidden = [];
 
     public function raks()
     {
@@ -46,7 +49,9 @@ class Barang extends Model
     }
     public function opsi_satuan()
     {
-        return $this->belongsToMany(Satuan::class, 'satuan_barang', 'id_barang', 'id_satuan')->withPivot('rasio_satuan_utama', 'rasio_satuan_opsi');
+        return $this->belongsToMany(Satuan::class, 'satuan_barang', 'id_barang', 'id_satuan')
+            ->withPivot('rasio_satuan_utama', 'rasio_satuan_opsi')
+            ->select(['id', 'nama']);
     }
     public function opsi_harga()
     {
@@ -57,40 +62,47 @@ class Barang extends Model
         return $this->hasMany(StokBatchBarang::class, 'id_barang');
     }
 
+    // public function scopeFilter($query, array $filters)
+    // {
+    //     $query
+    //         ->when($filters['id_kategories'] ?? null, function ($q, $ids) {
+    //             foreach ($ids as $id) {
+    //                 $q->whereHas('kategories', fn($k) => $k->where('kategori.id', $id));
+    //             }
+    //         })
+    //         ->when($filters['id_raks'] ?? null, function ($q, $ids) {
+    //             foreach ($ids as $id) {
+    //                 $q->whereHas('raks', fn($r) => $r->where('rak.id', $id));
+    //             }
+    //         });
+    // }
     public function scopeFilter($query, array $filters)
     {
-        $query
-            ->when($filters['id_kategories'] ?? null, function ($query, $id_kategori) {
-                $query->whereHas(
-                    'kategories',
-                    function ($q) use ($id_kategori) {
-                        $q->whereIn('kategori.id', $id_kategori);
-                    },
-                    '=',
-                    count($id_kategori),
-                ); //menampilkan kategori yang harus terpilih
-            })
-            ->when($filters['id_raks'] ?? null, function ($query, $id_rak) {
-                $query->whereHas(
-                    'raks',
-                    function ($q) use ($id_rak) {
-                        $q->whereIn('rak.id', $id_rak);
-                    },
-                    '=',
-                    count($id_rak),
-                ); //menampilkan rak yang harus terpilih
-            });
+        $query->when($filters['id_kategories'] ?? null, function ($q, $ids) {
+            $q
+                ->whereIn('kategori.id', $ids)
+                ->havingRaw('COUNT(DISTINCT kategori.id) = ?', [count($ids)]);
+        })->when($filters['id_raks'] ?? null, function ($q, $ids) {
+            $q
+                ->whereIn('rak.id', $ids)
+                ->havingRaw('COUNT(DISTINCT rak.id) = ?', [count($ids)]);
+        });
     }
 
     public function getSatuanOpsiAttribute()
     {
-        return $this->opsi_satuan->map(function ($satuan) {
-            return [
-                'id_satuan' => $satuan->id,
-                'satuan'    => $satuan->nama,
-                'rasio'     => $satuan->pivot->rasio_satuan_utama / $satuan->pivot->rasio_satuan_opsi,
-            ];
-        });
+        return $this->opsi_satuan
+            ->sortByDesc(function ($satuan) {
+                return $satuan->pivot->rasio_satuan_utama / $satuan->pivot->rasio_satuan_opsi;
+            })
+            ->map(function ($satuan) {
+                return [
+                    'id_satuan' => $satuan->id,
+                    'satuan'    => $satuan->nama,
+                    'rasio'     => $satuan->pivot->rasio_satuan_utama / $satuan->pivot->rasio_satuan_opsi,
+                ];
+            })
+            ->values();
     }
 
     public function getAllSatuanAttribute()
@@ -147,42 +159,28 @@ class Barang extends Model
         return $harga_beli ?? $this->harga_beli_default;
     }
 
-    public function getFormattedStokAttribute()
+    public function konversi_stok($stok = null)
     {
-        $stokUtama      = $this->stok;         // Stok dalam satuan utama
-        $satuanUtama    = $this->satuan_utama; // Satuan utama
-        $satuanOpsional = $this->opsi_satuan()->whereRaw('rasio_satuan_utama / rasio_satuan_opsi < 1')->orderByRaw('rasio_satuan_utama / rasio_satuan_opsi DESC')->get();
-        // dd($satuanOpsional);
-        $result = [];
-        if ($satuanOpsional->isEmpty()) {
-            $stokUtama = floor($stokUtama);
-            return "{$stokUtama} {$satuanUtama->nama}";
+        $satuan = $this->all_satuan->sortByDesc('rasio')->values();
+        if (! $stok) {
+            $stok = $this->stok;
         }
-        $jumlahSatuanUtama = floor($stokUtama); // Jumlah stok dalam satuan utama tanpa koma
+        $hasil = [];
 
-        $result[] = "{$jumlahSatuanUtama} {$satuanUtama->nama}";
-                                                                 // $result[] = [
-                                                                 //     'jumlah' => $jumlahSatuanUtama,
-                                                                 //     'satuan' => $satuanUtama->nama,
-                                                                 // ];
-        $jumlahSatuanOpsional = $stokUtama - $jumlahSatuanUtama; // ambil decimalnya
-
-        if ($jumlahSatuanOpsional > 0) {
-            $remainingStok = $jumlahSatuanOpsional; //sisa dari satuan utama
-            foreach ($satuanOpsional as $opsiSatuan) {
-                $rasioSatuanUtama = $opsiSatuan->pivot->rasio_satuan_utama;
-
-                $rasioSatuanOpsional = $opsiSatuan->pivot->rasio_opsi_satuan;
-                $jumlahSatuan        = floor($remainingStok / ($rasioSatuanUtama / $rasioSatuanOpsional));
-                $remainingStok -= ($jumlahSatuan * $rasioSatuanUtama) / $rasioSatuanOpsional;
-                $result[] = "{$jumlahSatuan} {$opsiSatuan->nama}";
-                if ($remainingStok <= 0) {
-                    break;
-                }
+        foreach ($satuan as $item) {
+            $rasio = $item['rasio'];
+            if ($rasio <= 0) {
+                continue; // skip kalau rasio tidak valid
             }
-        }
+            $jumlah = floor($stok / $rasio);
+            if ($jumlah > 0) {
+                $hasil[] = FormatHelper::formatNumberToString($jumlah) . " {$item['satuan']}";
+            }
 
-        return implode(' ', $result);
+            $stok = fmod($stok, $rasio);
+
+        }
+        return implode(' ', $hasil);
     }
 
 }

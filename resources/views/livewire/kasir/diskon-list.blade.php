@@ -42,7 +42,7 @@
                         @if ($diskon->id == $id_promo_barang_selected)
                             <x-table.action-button tooltip="Show" color="secondary" wire:click="selectDiskon(null, '{{ $diskon->id_barang }}')">
                                 <div class="flex items-center gap-x-1 text-sm">
-                                    <i class="ti ti-eye-bolt"></i>
+                                    <span class="iconify tabler--eye-bolt"></span>
                                     <p>Selected</p>
                                 </div>
                             </x-table.action-button>
@@ -50,7 +50,7 @@
                             <x-table.action-button tooltip="Show" color="success"
                                                    wire:click="selectDiskon('{{ $diskon->id }}', '{{ $diskon->id_barang }}')">
                                 <div class="flex items-center gap-x-1 text-sm">
-                                    <i class="ti ti-eye-bolt"></i>
+                                    <span class="iconify tabler--eye-bolt"></span>
                                     <p>Select</p>
                                 </div>
                             </x-table.action-button>

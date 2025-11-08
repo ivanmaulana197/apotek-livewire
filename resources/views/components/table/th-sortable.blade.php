@@ -1,16 +1,13 @@
-<th scope="col"
-    wire:click="doSort('{{ $name }}')"
-    class="text-sm cursor-pointer font-semibold text-white"
-    >
-    <div {{ $attributes->merge(['class'=>"inline-flex items-center ms-2"])}}>
+<th scope="col" wire:click="doSort('{{ $name }}')" class="text-sm cursor-pointer font-semibold text-white">
+    <div {{ $attributes->merge(['class' => 'inline-flex items-center ms-2']) }}>
         {{ $label }}
         <div class="ps-1">
             @if ($sortBy !== $name)
-                <i class="ti ti-caret-up-down-filled"></i>
+                <span class="iconify tabler--caret-up-down-filled "></span>
             @elseif ($sortDir == 'desc')
-                <i class="ti ti-caret-down-filled"></i>
+                <span class="iconify tabler--caret-down-filled "></span>
             @else
-                <i class="ti ti-caret-up-filled"></i>
+                <span class="iconify tabler--caret-up-filled "></span>
             @endif
         </div>
     </div>

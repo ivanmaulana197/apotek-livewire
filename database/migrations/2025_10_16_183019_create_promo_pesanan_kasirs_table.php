@@ -16,12 +16,12 @@ return new class extends Migration
             $table->foreignUlid('id_pesanan_kasir')->constrained('pesanan_kasir')->onDelete('cascade');
             $table->enum('tipe_promo', ['BARANG BONUS', 'BARANG DISKON', 'TRANSAKSI'])->default('TRANSAKSI');
             $table->foreignUlid('id_promo_barang')->nullable()->constrained('promo_barang')->onDelete('set null');
-            $table->integer('jumlah')->nullable();
+            $table->smallInteger('jumlah')->nullable();
             $table->foreignUlid('id_satuan')->nullable()->constrained('satuan')->onDelete('set null');
 
             $table->foreignUlid('id_promo_transaksi')->nullable()->constrained('promo_transaksi')->onDelete('set null');
             $table->integer('nominal_promo')->nullable();
-            $table->text('deskripsi');
+            $table->string('deskripsi');
             $table->timestamps();
         });
     }

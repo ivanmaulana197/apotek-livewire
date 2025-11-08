@@ -7,7 +7,7 @@
     <x-breadcrumb name="Detail Promo {{ $promo->nama }}">
         <x-slot:button>
             <a class="btn btn-xs bg-secondary hover:bg-secondaryemphasis" href="{{ route('promo') }}" wire:navigate>
-                <iconify-icon icon="famicons:caret-back"></iconify-icon>
+                <span class="iconify famicons--caret-back"></span>
                 Kembali
             </a>
         </x-slot:button>
@@ -32,9 +32,9 @@
                         <x-span-grid label="Status">
                             <x-slot:data>
                                 @if ($promo->is_aktif == 1)
-                                    <x-badge message="Aktif" status="success" icon="gg:check-r" />
+                                    <x-badge message="Aktif" status="success" icon="tabler--checkbox" />
                                 @else
-                                    <x-badge message="Tidak Aktif" status="warning" icon="gg:close-r" />
+                                    <x-badge message="Tidak Aktif" status="warning" icon="solar--bill-cross-line-duotone" />
                                 @endif
                             </x-slot:data>
                         </x-span-grid>
@@ -51,9 +51,9 @@
                         <x-span-grid label="Member?">
                             <x-slot:data>
                                 @if ($promo->is_member == 1)
-                                    <x-badge message="Member" status="warning" icon="ic:round-key" />
+                                    <x-badge message="Member" status="warning" icon="solar--key-minimalistic-square-2-line-duotone" />
                                 @else
-                                    <x-badge message="Public" status="success" icon="ic:sharp-public" />
+                                    <x-badge message="Public" status="success" icon="nrk--globe" />
                                 @endif
                             </x-slot:data>
                         </x-span-grid>

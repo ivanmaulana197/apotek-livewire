@@ -16,8 +16,7 @@
             </div>
             <div>
                 <label class="block mb-2 font-semibold text-dark dark:text-darklink ">Password</label>
-                <input type="password" class="rounded-full ps-5 form-control dark:text-white" wire:model='password'
-                    placeholder="Password" />
+                <input type="password" class="rounded-full ps-5 form-control dark:text-white" wire:model='password' placeholder="Password" />
                 @error('password')
                     <span class="text-sm text-red-500">{{ $message }}</span>
                 @enderror
@@ -27,8 +26,8 @@
                     <div>
                         <label class="flex items-center cursor-pointer label ">
                             <input type="checkbox" wire:model='remember'
-                                class="w-4 h-4 bg-transparent rounded border-bordergray text-primary dark:border-darkborder dark:checked:bg-primary dark:checked:border-primary focus:ring-0 focus:ring-offset-0"
-                                id="hs-checked-checkbox" checked>
+                                   class="w-4 h-4 bg-transparent rounded border-bordergray text-primary dark:border-darkborder dark:checked:bg-primary dark:checked:border-primary focus:ring-0 focus:ring-offset-0"
+                                   id="hs-checked-checkbox" checked>
                             <span class="label-text ms-2">Remeber
                                 this
                                 Device</span>
@@ -42,9 +41,8 @@
                 Sign In
             </button>
 
-
             <button class="py-3 btn btn-md flex items-center justify-center" wire:loading wire:loading.attr='disabled'>
-                <iconify-icon icon="eos-icons:loading"></iconify-icon>
+                <span class="iconify eos-icons--loading"></span>
             </button>
         </div>
     </form>

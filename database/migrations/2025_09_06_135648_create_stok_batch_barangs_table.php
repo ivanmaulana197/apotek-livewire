@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('stok_batch_barang', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->foreignUlid('id_barang')->constrained('barang')->onDelete('cascade');
-            $table->decimal('jumlah', 10, 2);
+            $table->decimal('jumlah', 8, 4);
             // $table->foreignUlid('id_satuan')->nullable()->constrained('satuan')->nullOnDelete();
             $table->date('tgl_expired')->nullable();
-            $table->bigInteger('harga_beli')->nullable();
+            $table->mediumInteger('harga_beli')->nullable();
             $table->timestamps();
         });
     }

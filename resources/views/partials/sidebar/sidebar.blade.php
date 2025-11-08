@@ -32,7 +32,8 @@
                                              color='green'></x-partials.sidebar.item>
                     <x-partials.sidebar.item title="Transaksi" icon='f7--list-bullet-below-rectangle' href="{{ route('transaksi') }}"
                                              color='orange'></x-partials.sidebar.item>
-                    {{-- <x-partials.sidebar.item title="Stok Opname" icon='f7:list-bullet-below-rectangle' href="{{ route('stok-opname') }}" color='emerald'></x-partials.sidebar.item> --}}
+                    <x-partials.sidebar.item title="Stok Opname" icon='hugeicons--task-done-01' href="{{ route('stok-opname') }}"
+                                             color='emerald'></x-partials.sidebar.item>
 
                     {{-- <x-partials.sidebar.item title="Diskon" icon='duo-icons:discount' href="{{ route('diskon') }}" color='violet'></x-partials.sidebar.item> --}}
                     <x-partials.sidebar.item title="Data Master" icon="simple-icons--databricks" color="blue" :menuLevel="true" name="data-master">
@@ -54,10 +55,12 @@
                                                     color="blue">Data Metode Pembayaran</x-partials.sidebar.subitem>
                     </x-partials.sidebar.item>
 
-                    {{-- <x-partials.sidebar.item title="Informasi" icon="simple-icons:databricks" color="pink" :menuLevel="true" name="info">
-                        <x-partials.sidebar.subitem name="info-barang-expired" href="{{ route('info.barang-expired') }}" color="pink">Info Barang Expired</x-partials.sidebar.subitem>
-                        <x-partials.sidebar.subitem name="info-barang-habis" href="{{ route('info.barang-habis') }}" color="pink">Info Barang Habis</x-partials.sidebar.subitem>
-                    </x-partials.sidebar.item> --}}
+                    <x-partials.sidebar.item title="Informasi" icon="simple-icons--databricks" color="pink" :menuLevel="true" name="info">
+                        <x-partials.sidebar.subitem name="info-barang-expired" href="{{ route('info.barang-expired') }}" color="pink">
+                            Info Barang Expired</x-partials.sidebar.subitem>
+                        <x-partials.sidebar.subitem name="info-barang-habis" href="{{ route('info.barang-habis') }}" color="pink">
+                            Info Barang Habis</x-partials.sidebar.subitem>
+                    </x-partials.sidebar.item>
 
                     {{-- <x-partials.sidebar.caption>Pengguna</x-partials.sidebar.caption>
                     <x-partials.sidebar.item title="List User" icon='solar:user-heart-bold' href="{{ route('data.user') }}" color='pink'></x-partials.sidebar.item> --}}

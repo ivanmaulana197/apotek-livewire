@@ -33,7 +33,7 @@
 
                 <span
                       {{ $attributes->merge(['class' => "py-1.5 px-3 pe-6 block flex-1 min-w-0 w-full rounded-none $border border text-gray-900  text-xs border-bordergray  dark:border-slate-700 dark:text-gray-400"]) }}>
-                    {{ $value ?? '-' }}
+                    {{ $value ?? ($slot ?? '-') }}
                 </span>
                 @if ($inputGroup == 'right' || $inputGroup == 'both')
                     {{-- <span class="px-4 py-2 inline-flex items-center min-w-fit rounded-e-{{ $rounded }} border border-s-0 border-bordergray text-xs bg-primary text-white dark:bg-lightprimary dark:text-primary hover:bg-primaryemphasis dark:hover:bg-primary dark:hover:text-white"> --}}

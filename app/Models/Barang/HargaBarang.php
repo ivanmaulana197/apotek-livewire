@@ -20,8 +20,10 @@ class HargaBarang extends Model
         'mode', // PERSEN, HARGA
         'persen',
         'harga',
-        'harga_satuan_utama'
+        'harga_satuan_utama',
     ];
+
+    public $timestamps = false;
 
     // protected $appends = ['jumlah_dalam_satuan_utama'];
     public function barang()
@@ -32,8 +34,6 @@ class HargaBarang extends Model
     {
         return $this->belongsTo(Satuan::class, 'id_satuan');
     }
-
-
 
     public function getJumlahDalamSatuanUtamaAttribute()
     {

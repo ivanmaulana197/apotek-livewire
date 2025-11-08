@@ -13,8 +13,8 @@ class StrukPembayaran extends Component
     public function mount($id_transaksi)
     {
         $this->transaksi = Transaksi::with([
-            'transaksi_barang' => function ($q) {
-                $q->with(['detail_transaksi', 'barang', 'satuan'])->orderBy('id_barang');
+            'detail_transaksi.detail_barang' => function ($q) {
+                $q->with(['barang:id,nama', 'satuan:id,nama'])->orderBy('id_barang');
             },
             'transaksi_list_promo.barang:id,nama',
         ])
@@ -24,10 +24,10 @@ class StrukPembayaran extends Component
             ->where('tipe_promo', 'BARANG DISKON')
             ->keyBy('id_barang');
 
-        $this->transaksi->transaksi_barang->map(function ($item, $key) use ($diskonPromos) {
-            $next               = $this->transaksi->transaksi_barang->get($key + 1);
-            $item->promo_barang = (! $next || $item->id_barang != $next->id_barang)
-                ? ($diskonPromos[$item->id_barang] ?? null)
+        $this->transaksi->detail_transaksi->map(function ($item, $key) use ($diskonPromos) {
+            $next               = $this->transaksi->detail_transaksi->get($key + 1)?->detail_barang;
+            $item->promo_barang = (! $next || $item->detail_barang->id_barang != $next->id_barang)
+                ? ($diskonPromos[$item->detail_barang->id_barang] ?? null)
                 : null;
             return $item;
         });

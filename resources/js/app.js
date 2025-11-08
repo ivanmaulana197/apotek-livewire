@@ -1,8 +1,8 @@
 // import './bootstrap';
 import "preline";
 import "simplebar";
-import "iconify-icon";
-import "@tabler/icons-webfont/dist/tabler-icons.min.css"; //impoert module icon
+// import "iconify-icon";
+// import "@tabler/icons-webfont/dist/tabler-icons.min.css"; //impoert module icon
 
 import jQuery from "jquery";
 window.$ = window.jQuery = jQuery;
@@ -27,6 +27,12 @@ moment.locale("id");
 import "daterangepicker";
 // comment jika ingin build
 let jp = $.noConflict(true);
+
+import ApexCharts from "apexcharts";
+window.ApexCharts = ApexCharts;
+
+import _ from "lodash";
+window._ = _;
 
 Alpine.plugin(focus);
 

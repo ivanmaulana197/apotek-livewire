@@ -3,7 +3,6 @@
     use Carbon\Carbon;
 @endphp
 
-
 <div>
     <x-modal name="select_barang" size="4xl">
         <div class="card p-1">
@@ -14,7 +13,7 @@
                 </div>
 
                 <x-datatable nama_table="select_barang" placeholder_search="Search Kode / Nama Barang"></x-datatable>
-                
+
                 <x-table nama="select_barang" height="max-h-96">
                     <x-table.thead>
                         <x-table.th label="NO." />
@@ -61,11 +60,12 @@
                                 <x-table.td class="text-center">
                                     <x-table.action-button wire:click="selected('{{ $barang->id }}')" tooltip="Select Barang" color=""
                                                            class="{{ $barang->id == $id_barang ? 'bg-secondary' : 'bg-success' }}">
-                                        <iconify-icon icon="fluent:select-all-on-16-filled"></iconify-icon> <span class="text-sm">Select</span>
+                                        <span class="iconify fluent--select-all-on-16-filled"></span>
+                                        <span class="text-sm">Select</span>
                                     </x-table.action-button>
                                     <x-table.action-button type="href" href="{{ route('data.barang.edit', $barang->id) }}" wire:navigate tooltip="Hapus"
                                                            color="warning">
-                                        <i class="ti ti-edit-circle"></i>
+                                        <span class="iconify tabler--edit-circle text-lg"></span>
                                     </x-table.action-button>
                                 </x-table.td>
 

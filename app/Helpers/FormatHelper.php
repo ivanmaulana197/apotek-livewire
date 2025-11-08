@@ -1,9 +1,7 @@
 <?php
 namespace App\Helpers;
 
-use App\Models\Setting;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Cache;
 
 class FormatHelper
 {
@@ -28,29 +26,60 @@ class FormatHelper
         }
     }
 
+    // public static function formatNumberToString($number)
+    // {
+    //     if ($number === null) {
+    //         return null;
+    //     } else {
+    //         // Pisahkan integer dan desimal
+    //         $parts = explode('.', number_format($number, 2, '.', ''));
+
+    //         // Format bagian integer dengan titik sebagai pemisah ribuan
+    //         $integerPart = number_format($parts[0], 0, '', '.');
+
+    //         // Jika ada desimal, ubah titik menjadi koma
+    //         if (isset($parts[1]) && (float) $parts[1] > 0) {
+    //             return $integerPart . ',' . $parts[1];
+    //         }
+
+    //         // Jika tidak ada desimal, kembalikan hanya bagian integer
+    //         return $integerPart;
+    //     }
+    // }
+
     public static function formatNumberToString($number)
     {
         if ($number === null) {
             return null;
-        } else {
-            // Pisahkan integer dan desimal
-            $parts = explode('.', number_format($number, 2, '.', ''));
-
-            // Format bagian integer dengan titik sebagai pemisah ribuan
-            $integerPart = number_format($parts[0], 0, '', '.');
-
-            // Jika ada desimal, ubah titik menjadi koma
-            if (isset($parts[1]) && (float) $parts[1] > 0) {
-                return $integerPart . ',' . $parts[1];
-            }
-
-            // Jika tidak ada desimal, kembalikan hanya bagian integer
-            return $integerPart;
         }
+
+        // Ubah ke string agar tidak kehilangan presisi desimal
+        $numberStr = (string) $number;
+
+        // Pisahkan integer dan desimal
+        $parts = explode('.', $numberStr);
+
+        // Format bagian integer (pakai titik untuk ribuan)
+        $integerPart = number_format((int) $parts[0], 0, '', '.');
+
+        // Jika ada desimal
+        if (isset($parts[1]) && $parts[1] !== '') {
+            // Hilangkan nol di akhir desimal
+            $decimalPart = rtrim($parts[1], '0');
+
+            // Jika setelah di-trim masih ada angka desimal
+            if ($decimalPart !== '') {
+                return $integerPart . ',' . $decimalPart;
+            }
+        }
+
+        // Jika tidak ada desimal atau desimalnya cuma nol semua
+        return $integerPart;
     }
 
-    public static function formatDate($tgl, $show_time = false, $with_second = false, $mode = 'full'){
-        if (!$tgl) {
+    public static function formatDate($tgl, $show_time = false, $with_second = false, $mode = 'full')
+    {
+        if (! $tgl) {
             return null;
         }
 
@@ -101,7 +130,7 @@ class FormatHelper
 
     public static function formatDateStringToDate($tanggal, $format = 'Y-m-d')
     {
-        if(!$tanggal){
+        if (! $tanggal) {
             return null;
         }
         $bulanIndo = [
@@ -133,14 +162,14 @@ class FormatHelper
         }
     }
 
-    public static function formatTomSelect($data, $value,$text){
-        return collect($data)->map(function ($item) use ($text,$value) {
+    public static function formatTomSelect($data, $value, $text)
+    {
+        return collect($data)->map(function ($item) use ($text, $value) {
             return [
-                'text' => $item[$text],
+                'text'  => $item[$text],
                 'value' => $item[$value],
             ];
         });
     }
 
-    
 }

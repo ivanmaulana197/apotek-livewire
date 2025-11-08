@@ -13,7 +13,7 @@
             async updatePesananBarang(id_barang_pesanan) {
                 await $wire.updateJumlahBarang(id_barang_pesanan)
                     .then(($response) => {
-                        if($response){
+                        if ($response) {
                             this.isEditBarang[id_barang_pesanan] = false;
                         }
                     })
@@ -46,18 +46,9 @@
             </x-table.thead>
             <x-table.tbody>
                 @forelse ($barang_pesanan_kasir as $index => $barang_pesanan)
-                    {{-- @php
-                        $next = $barang_pesanan_kasir[$index + 1] ?? null;
-                        if (!$next || $barang_pesanan->id_barang != $next->id_barang) {
-                            $promo_barang = $pesanan_kasir
-                                ->promo_pesanan_kasir()
-                                ->whereHas('promo_barang', function ($q) use ($barang_pesanan) {
-                                    $q->where('id_barang', $barang_pesanan->id_barang);
-                                })
-                                ->first();
-                        }
-                    @endphp --}}
-                    <x-table.tr class="{{ $barang_pesanan->promo_deskripsi ? '' : ($loop->last ? 'h-full' : '') }} {{ $errors->has('barang_pesanan.' . $barang_pesanan->id) ? 'bg-red-400/80' : '' }}">
+                    
+                    <x-table.tr
+                                class="{{ $barang_pesanan->promo_deskripsi ? '' : ($loop->last ? 'h-full' : '') }} {{ $errors->has('barang_pesanan.' . $barang_pesanan->id) ? 'bg-red-400/80' : '' }}">
                         <x-table.td class="text-center">
                             <input id="hs-table-checkbox-1" wire:model.live="ceklistDeleteBarang" value="{{ $barang_pesanan->id }}" type="checkbox"
                                    class="border-gray-400 w-4 h-4 rounded text-primary focus:ring-primary dark:bg-gray-800 dark:border-gray-700 dark:checked:bg-primary dark:checked:border-primary dark:focus:ring-offset-gray-800">
@@ -106,17 +97,17 @@
                             </x-table.action-button>
                             <x-table.action-button tooltip="Simpan" color="success" x-show="isEditBarang['{{ $barang_pesanan->id }}']"
                                                    @click="updatePesananBarang('{{ $barang_pesanan->id }}')">
-                                <i class="ti ti-check"></i>
+                                <span class="iconify tabler--check text-lg"></span>
                             </x-table.action-button>
 
                             <x-table.action-button tooltip="Edit" color="warning" x-show="!isEditBarang['{{ $barang_pesanan->id }}']"
                                                    @click="editPesananBarang('{{ $barang_pesanan->id }}')">
-                                <i class="ti ti-edit"></i>
+                                <span class="iconify tabler--edit-circle text-lg"></span>
                             </x-table.action-button>
 
                             <x-table.action-button tooltip="Hapus" color="error"
                                                    wire:click="$dispatch('alert-confirm', { id: '{{ $barang_pesanan->id }}', method: 'delete-barang-pesanan-kasir' });">
-                                <i class="ti ti-trash-x-filled"></i>
+                                <span class="iconify tabler--trash-x-filled text-lg"></span>
                             </x-table.action-button>
                         </x-table.td>
 

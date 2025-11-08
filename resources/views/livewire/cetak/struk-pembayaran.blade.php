@@ -18,8 +18,8 @@
     }
 </style>
 
-<div>
-    <div class="max-w-sm font-mono">
+<div class="text-dark">
+    <div class="max-w-sm font-mono ">
         <div class="mb-2">
             <h1 class="text-xl font-bold">{{ $setting->nama }}</h1>
             <p class="text-xs">{{ $setting->alamat }}</p>
@@ -40,17 +40,17 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($transaksi->transaksi_barang as $transaksi_barang)
+                    @foreach ($transaksi->detail_transaksi as $detail_transaksi)
                         <tr>
-                            <td>{{ $transaksi_barang->barang->nama }} [{{ $transaksi_barang->satuan->nama }}]</td>
-                            <td class="text-center">{{ FormatHelper::formatNumberToString($transaksi_barang->jumlah) }}</td>
-                            <td class="text-right">{{ FormatHelper::formatNumberToString($transaksi_barang->detail_transaksi->harga) }}</td>
-                            <td class="text-right">Rp. {{ FormatHelper::formatNumberToString($transaksi_barang->detail_transaksi->total_harga) }}</td>
+                            <td>{{ $detail_transaksi->detail_barang->barang->nama }} [{{ $detail_transaksi->detail_barang->satuan->nama }}]</td>
+                            <td class="text-center">{{ FormatHelper::formatNumberToString($detail_transaksi->detail_barang->jumlah) }}</td>
+                            <td class="text-right">{{ FormatHelper::formatNumberToString($detail_transaksi->harga) }}</td>
+                            <td class="text-right">Rp. {{ FormatHelper::formatNumberToString($detail_transaksi->total_harga) }}</td>
                         </tr>
-                        @if ($transaksi_barang->promo_barang)
+                        @if ($detail_transaksi->promo_barang)
                             <tr>
-                                <td colspan="3" class="text-left font-bold">Promo {{ $transaksi_barang->promo_barang->barang->nama }}</td>
-                                <td class="text-right font-bold">Rp. -{{ FormatHelper::formatNumberToString($transaksi_barang->promo_barang->nominal_promo) }}
+                                <td colspan="3" class="text-left font-bold">Promo {{ $detail_transaksi->promo_barang->barang->nama }}</td>
+                                <td class="text-right font-bold">Rp. -{{ FormatHelper::formatNumberToString($detail_transaksi->promo_barang->nominal_promo) }}
                                 </td>
                             </tr>
                         @endif
