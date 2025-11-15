@@ -13,6 +13,12 @@ class DokterListBarangTerjual extends Component
     public $id_dokter;
     public $filter_date;
 
+    public function mount()
+    {
+        $this->sortBy  = $this->defaultSortBy  = 'total_terjual';
+        $this->sortDir = $this->defaultSortDir = 'desc';
+    }
+
     #[On('update_value_filter_date')]
     public function filterDate($value)
     {
@@ -37,8 +43,10 @@ class DokterListBarangTerjual extends Component
                 "{$this->filter_date['end']} 23:59:59",
             ])
             ->select('b.id', 'b.nama', DB::raw('SUM(hb.jumlah * COALESCE(sb.rasio_satuan_opsi / sb.rasio_satuan_utama, 1)) as total_terjual'), 's_utama.nama as satuan_utama')
+            ->where('b.nama', 'like', '%' . $this->search . '%')
             ->groupBy('b.id', 'b.nama')
-            ->orderByDesc('total_terjual')
+        // ->orderByDesc('total_terjual')
+            ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
 
         return $barang_terlaris;

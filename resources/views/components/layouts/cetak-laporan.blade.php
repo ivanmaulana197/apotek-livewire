@@ -1,6 +1,6 @@
-<x-layouts.cetak class="bg-gray-100 text-gray-900">
+<x-layouts.cetak class=" text-gray-900">
     <x-slot:title>{{ $title ?? 'Sistem' }}</x-slot:title>
-    <div class="max-w-5xl mx-auto bg-white shadow-lg rounded-2xl p-8">
+    <div class="max-w-6xl mx-auto bg-white shadow-lg rounded-2xl p-8">
         <div class="border-b-2 border-gray-800 pb-6 mb-6">
             <div class="flex justify-between items-start">
                 <div>
@@ -13,7 +13,11 @@
                         Telp: (021) 1234-5678 | Email: info@tokosejahtera.com
                     </p>
                 </div>
-
+                <div class="mt-6 text-center no-print">
+                    <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition">
+                        Cetak Laporan
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -25,11 +29,7 @@
         </div>
 
         <!-- Print Button -->
-        <div class="mt-6 text-center no-print">
-            <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition">
-                Cetak Laporan
-            </button>
-        </div>
+
     </div>
 
     <script>

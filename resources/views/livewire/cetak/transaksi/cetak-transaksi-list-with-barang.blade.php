@@ -57,19 +57,18 @@
             <div class="border-2 border-gray-300 rounded-lg overflow-hidden">
                 <!-- Header -->
                 <div class="bg-gray-800 text-white px-4 py-3 flex justify-between items-center">
-                    <div class="flex items-center gap-4">
-                        <span class="font-bold text-lg">{{ $item->no_transaksi }}</span>
-                        <span class="text-sm">{{ FormatHelper::formatDate($item->created_at, true, true) }}</span>
+                    <div class="flex flex-col">
+                        <span class="font-bold text-base">{{ $item->no_transaksi }}</span>
+                        <span class="text-xs">{{ FormatHelper::formatDate($item->created_at, true, true) }}</span>
                     </div>
                     <div class="text-right">
-                        <p class="text-sm">Kasir: <span class="font-semibold">{{ $item->user->name }}</span></p>
+                        <p class="text-sm mb-2">Kasir: <span class="font-semibold">{{ $item->nama_user }} | <span
+                                      class="bg-gray-500 px-2 py-1 rounded text-xs">{{ $item->shift_transaksi }}</span></span></p>
                         <p class="text-sm">
-                            Metode:
-                            <span class="bg-green-500 px-2 py-1 rounded text-xs">{{ $item->metode_pembayaran->nama }}</span>
+                            <span class="bg-green-500 px-2 py-1 rounded text-xs">{{ $item->nama_metode_pembayaran }}</span>
                         </p>
                     </div>
                 </div>
-
                 <!-- Detail -->
                 <div class="p-4">
                     <table class="w-full text-sm">
@@ -86,22 +85,21 @@
                         <tbody class="divide-y divide-gray-200">
                             @foreach ($item->detail_transaksi as $index => $detail_transaksi)
                                 @php
-                                    $next = $item->detail_transaksi->get($index + 1)?->detail_barang->id_barang;
+                                    $next = $item->detail_transaksi->get($index + 1)?->id_barang;
                                 @endphp
                                 <tr>
-                                    <td class="py-2 px-3">{{ $detail_transaksi->detail_barang->barang->nama }}</td>
+                                    <td class="py-2 px-3">{{ $detail_transaksi->nama_barang }}</td>
                                     <td class="text-center py-2 px-3">Rp. @nominal($detail_transaksi->harga_beli)</td>
                                     <td class="text-center py-2 px-3">Rp. @nominal($detail_transaksi->harga)</td>
                                     <td class="text-center py-2 px-3">
-                                        {{ $detail_transaksi->detail_barang->jumlah }}/{{ $detail_transaksi->detail_barang->satuan->nama }}</td>
+                                        @nominal($detail_transaksi->jumlah) {{ $detail_transaksi->nama_satuan }}
+                                    </td>
                                     <td class="text-right py-2 px-3 {{ $detail_transaksi->komisi < 0 ? 'text-red-600' : 'text-green-600' }}">
                                         Rp. @nominal($detail_transaksi->komisi)
                                     </td>
                                     <td class="text-right py-2 px-3">Rp. @nominal($detail_transaksi->total_harga)</td>
                                 </tr>
-                                @if (
-                                    (!$next || $detail_transaksi->detail_barang->id_barang != $next) &&
-                                        ($promo = $item->transaksi_list_promo->where('id_barang', $detail_transaksi->detail_barang->id_barang)->first()))
+                                @if ((!$next || $detail_transaksi->id_barang != $next) && ($promo = $item->promo_barang->where('id_barang', $detail_transaksi->id_barang)->first()))
                                     <tr>
                                         <td class="py-2 px-3 font-semibold" colspan="{{ $promo->tipe_promo == 'BARANG BONUS' ? 4 : 5 }}">
                                             **Promo:** {{ $promo->deskripsi }}
@@ -152,6 +150,104 @@
                 </div>
             </div>
         @endforeach
+
+        {{-- @foreach ($transaksi as $item)
+            <div class="border-2 border-gray-300 rounded-lg overflow-hidden">
+                <!-- Header -->
+                <div class="bg-gray-800 text-white px-4 py-3 flex justify-between items-center">
+                    <div class="flex flex-col">
+                        <span class="font-bold text-base">{{ $item->no_transaksi }}</span>
+                        <span class="text-xs">{{ FormatHelper::formatDate($item->created_at, true, true) }}</span>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-sm mb-2">Kasir: <span class="font-semibold">{{ $item->nama_user }} | <span
+                                      class="bg-gray-500 px-2 py-1 rounded text-xs">{{ $item->shift_transaksi }}</span></span></p>
+                        <p class="text-sm">
+                            <span class="bg-green-500 px-2 py-1 rounded text-xs">{{ $item->nama_metode_pembayaran }}</span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Detail -->
+                <div class="p-4">
+                    <table class="w-full text-sm">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="text-left py-2 px-3 font-semibold text-gray-700">Nama</th>
+                                <th class="text-center py-2 px-3 font-semibold text-gray-700">Harga Beli</th>
+                                <th class="text-center py-2 px-3 font-semibold text-gray-700">Harga Jual</th>
+                                <th class="text-center py-2 px-3 font-semibold text-gray-700">Jumlah</th>
+                                <th class="text-right py-2 px-3 font-semibold text-gray-700">Komisi</th>
+                                <th class="text-right py-2 px-3 font-semibold text-gray-700">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            @foreach ($item->detail_transaksi as $index => $detail_transaksi)
+                                @php
+                                    $next = $item->detail_transaksi->get($index + 1)?->id_barang;
+                                @endphp
+                                <tr>
+                                    <td class="py-2 px-3">{{ $detail_transaksi->nama_barang }}</td>
+                                    <td class="text-center py-2 px-3">Rp. @nominal($detail_transaksi->harga_beli)</td>
+                                    <td class="text-center py-2 px-3">Rp. @nominal($detail_transaksi->harga)</td>
+                                    <td class="text-center py-2 px-3">
+                                        {{ $detail_transaksi->jumlah }}/{{ $detail_transaksi->nama_satuan }}</td>
+                                    <td class="text-right py-2 px-3 {{ $detail_transaksi->komisi < 0 ? 'text-red-600' : 'text-green-600' }}">
+                                        Rp. @nominal($detail_transaksi->komisi)
+                                    </td>
+                                    <td class="text-right py-2 px-3">Rp. @nominal($detail_transaksi->total_harga)</td>
+                                </tr>
+                                @if ((!$next || $detail_transaksi->id_barang != $next) && ($promo = $item->promo_barang->where('id_barang', $detail_transaksi->id_barang)->first()))
+                                    <tr>
+                                        <td class="py-2 px-3 font-semibold" colspan="{{ $promo->tipe_promo == 'BARANG BONUS' ? 4 : 5 }}">
+                                            **Promo:** {{ $promo->deskripsi }}
+                                        </td>
+                                        @if ($promo->tipe_promo == 'BARANG BONUS')
+                                            <td class="text-right py-2 px-3 text-red-600">Rp. @nominal(-$promo->nominal_promo)</td>
+                                        @endif
+                                        <td></td>
+                                    </tr>
+                                @endif
+                            @endforeach
+                        </tbody>
+                    </table>
+
+                    <!-- Total -->
+                    <div class="pt-1 border-t-2 border-gray-300">
+                        <div class="flex justify-end">
+                            <div class="w-64 space-y-1">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Subtotal:</span>
+                                    <span class="font-semibold">Rp. @nominal($item->sub_total)</span>
+                                </div>
+                                @if ($item->potongan_diskon > 0)
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Diskon:</span>
+                                        <span class="font-semibold text-red-600">Rp. @nominal(-$item->potongan_diskon)</span>
+                                    </div>
+                                @endif
+                                @if ($item->pembulatan)
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Pembulatan:</span>
+                                        <span class="font-semibold text-green-600">Rp. @nominal($item->pembulatan)</span>
+                                    </div>
+                                @endif
+                                <div class="flex justify-between border-t border-gray-300 pt-1">
+                                    <span class="font-bold text-lg">TOTAL:</span>
+                                    <span class="font-bold text-lg text-green-600">Rp. @nominal($item->total_bayar)</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-sm">Komisi:</span>
+                                    <span class="text-sm {{ $item->komisi_bersih < 0 ? 'text-red-600' : 'text-green-600' }}">
+                                        Rp. @nominal($item->komisi_bersih)
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endforeach --}}
     </div>
 
 </div>

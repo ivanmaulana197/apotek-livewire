@@ -34,7 +34,7 @@
                         </x-form.input>
                     </div>
                     <div class="col-span-12 sm:col-span-6">
-                        <x-form.select-alpine label="Kategori Obat" name="kategori" :data-option="$this->kategories" option-value="id" option-label="nama" :
+                        <x-form.select-alpine label="Kategori Obat" name="kategori" :data-option="$this->kategories" option-value="id" option-label="nama"
                                               modal-name="kategori" :add-value=true multiple x-model="id_kategories" error-name="form.id_kategories" />
                         <x-form.select-alpine label="Rak" name="rak" :data-option="$this->raks" option-value="id" option-label="nama" modal-name="rak"
                                               :add-value=true multiple x-model="id_raks" error-name="form.id_raks" />

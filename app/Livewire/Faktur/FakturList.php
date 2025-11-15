@@ -28,7 +28,11 @@ class FakturList extends Component
 
     public function mount()
     {
-        $this->sortBy = 'faktur.updated_at';
+        $this->sortBy                = $this->defaultSortBy                = 'faktur.updated_at';
+        $this->filters['created_at'] = [
+            'start' => now()->startOfMonth(),
+            'end'   => now()->endOfMonth(),
+        ];
     }
 
     #[On('update-status-faktur')]
@@ -77,30 +81,54 @@ class FakturList extends Component
 
     public function getFaktur()
     {
-        return Faktur::with(['supplier:id,nama'])
-            ->select('faktur.*')
-            ->join('supplier', 'faktur.id_supplier', '=', 'supplier.id')
-            ->join('users', 'faktur.id_user', '=', 'users.id')
-            ->search($this->search, ['faktur.no_faktur', 'faktur.total_biaya', 'faktur.status'], ['supplier' => ['supplier.nama'], 'user' => ['nama']])
-            ->filter($this->filters);
+        // return Faktur::with(['supplier:id,nama'])
+        //     ->select('faktur.*')
+        //     ->join('supplier', 'faktur.id_supplier', '=', 'supplier.id')
+        //     ->join('users', 'faktur.id_user', '=', 'users.id')
+        //     ->search($this->search, ['faktur.no_faktur', 'faktur.total_biaya', 'faktur.status'], ['supplier' => ['supplier.nama'], 'user' => ['nama']])
+        //     ->filter($this->filters);
+
+        return Faktur::query()
+            ->with(['supplier:id,nama', 'user:id,name'])
+            ->when($this->id_barang, function ($query) {
+                $query->whereHas('detail_faktur_barang', function ($query) {
+                    $query->where('id_barang', $this->id_barang);
+                })
+                    ->with(['detail_faktur_barang' => function ($query) {
+                        $query->select('jumlah', 'tgl_expired', 'id_satuan', 'id_barang')
+                            ->with(['satuan:id,nama', 'barang:id,id_satuan_utama', 'barang.satuan_utama:id,nama']);
+                    }]);
+            })
+            ->search($this->search,
+                ['no_faktur', 'total_biaya'],
+                ['supplier' => ['nama'], 'user' => ['name']])
+            ->filter($this->filters)
+            ->orderBy($this->sortBy, $this->sortDir)->paginate($this->perPage)
+        ;
+    }
+
+    public function getDataRekapInfo()
+    {
+        return Faktur::query()
+            ->when($this->id_barang, function ($query) {
+                $query->whereHas('detail_faktur_barang', function ($query) {
+                    $query->where('id_barang', $this->id_barang);
+                });
+            })
+            ->selectRaw('
+                    SUM(CASE WHEN status = "BELUM LUNAS" THEN total_biaya ELSE 0 END) AS total_belum_lunas,
+                    SUM(CASE WHEN status = "LUNAS" THEN total_biaya ELSE 0 END) AS total_lunas,
+                    COUNT(*) AS total_faktur
+                ')
+            ->filter($this->filters)
+            ->first();
     }
 
     public function render()
     {
-        $data = $this->getFaktur();
-
-        if ($this->id_barang) {
-            $data = $data->whereHas('detail_faktur_barang', function ($query) {
-                $query->where('id_barang', $this->id_barang);
-            })->with(['detail_faktur_barang' => function ($query) {
-                $query->select('history_barang.id', 'jumlah', 'history_barang.id_satuan', 'tgl_expired', 'id_barang')->with(['satuan:id,nama', 'barang:id,id_satuan_utama', 'barang.satuan_utama:id,nama']);
-            }]);
-        }
-        // dd($data->get()->toArray());
-        $hutang = (clone $data)->where('faktur.status', 'BELUM LUNAS')->sum('total_biaya');
-        $data   = $data->orderBy($this->sortBy, $this->sortDir)->groupBy('faktur.id')->paginate($this->perPage);
-
-        return view('livewire.faktur.faktur-list', ['fakturs' => $data, 'hutang' => $hutang]);
+        $data  = $this->getFaktur();
+        $rekap = $this->getDataRekapInfo();
+        return view('livewire.faktur.faktur-list', ['fakturs' => $data, 'rekap' => $rekap]);
     }
 
     #[Computed(persist: true, seconds: 3600, cache: true)]

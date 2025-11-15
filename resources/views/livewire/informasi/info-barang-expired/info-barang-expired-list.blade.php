@@ -1,7 +1,3 @@
-@php
-    use App\Helpers\FormatHelper;
-@endphp
-
 @script
     <script>
         Alpine.data('infoBarangExpiredList', () => ({
@@ -106,8 +102,8 @@
                         </x-table.td>
                         <x-table.td class="text-center">{{ $stok_batch_barang->firstItem() + $index }}</x-table.td>
                         <x-table.td class="text-left">{{ $item->nama_barang }}</x-table.td>
-                        <x-table.td class="text-center">{{ FormatHelper::formatDate($item->tgl_expired) }}</x-table.td>
-                        <x-table.td class="text-center">{{ FormatHelper::formatNumberToString($item->jumlah) }} / {{ $item->nama_satuan }}</x-table.td>
+                        <x-table.td class="text-center" x-text="formatDate('{{ $item->tgl_expired }}')"></x-table.td>
+                        <x-table.td class="text-center">@nominal($item->jumlah) / {{ $item->nama_satuan }}</x-table.td>
                         <x-table.td class="min-w-44">
                             <x-form.input errorName="jumlah_dilaporkan.{{ $item->id }}" placeholder="Masukan Jumlah Stok"
                                           labelInputGroup="/{{ $item->barang->satuan_utama->nama }}" inputGroup="right" onkeyup="formatForInputNumber(this)"
@@ -116,7 +112,6 @@
                         <x-table.td class="min-w-44">
                             <x-form.select errorName="status.{{ $item->id }}" placeholder="Status" name="status_{{ $item->id }}" :direction=false
                                            x-model="status['{{ $item->id }}']">
-                                {{-- wire:model.live='status.{{ $item->id }}'> --}}
                                 <x-slot:custom-option>
                                     <option value="HAPUS INFO" {{ ($status[$item->id] ?? '') == 'HAPUS INFO' ? 'selected' : '' }}>HAPUS INFO</option>
                                     <option value="EXPIRED BUANG" {{ ($status[$item->id] ?? '') == 'EXPIRED BUANG' ? 'selected' : '' }}>EXPIRED BUANG</option>
@@ -128,23 +123,15 @@
                                 </x-slot:custom-option>
                             </x-form.select>
 
-                            {{-- @if (array_key_exists("$item->id", $status) && ($status["$item->id"] == 'EXPIRED GANTI / RETUR' || $status["$item->id"] == 'RUSAK GANTI'))
-                                <x-form.label label="Tgl Expired Baru" />
-                                <x-form.input-date :ranges=false :minDate='$now' :select_date="$tgl_expired[$item->id] ?? null" :singleDatePicker=true
-                                                   errorName="tgl_expired.{{ $item->id }}" nama="tgl_expired_{{ $item->id }}"
-                                                   placeholder="Tgl Expired Baru" model="tgl_expired.{{ $item->id }}" />
-                            @endif --}}
                             <div x-show="status['{{ $item->id }}'] == 'EXPIRED GANTI / RETUR' || status['{{ $item->id }}'] == 'RUSAK GANTI'">
                                 <x-form.label label="Tgl Expired Baru" />
                                 <x-alpine.form.input-date nama="new_tgl_expired_{{ $item->id }}" :minDate='$now' placeholder="Tgl Expired Baru"
                                                           :singleDatePicker=true x-model="new_tgl_expired['{{ $item->id }}']"
-                                                          errorName="tgl_expired.{{ $item->id }}" :ranges=false />
+                                                          errorName="new_tgl_expired.{{ $item->id }}" :ranges=false />
                             </div>
                         </x-table.td>
                         <x-table.td>
-                            {{-- <x-table.action-button tooltip="Submit" color="success" wire:click="submit('{{ $item->id }}')">
-                                <i class="ti ti-check"></i> <span class="text-sm">Submit</span>
-                            </x-table.action-button> --}}
+
                             <x-table.action-button tooltip="Submit" color="success" @click="submit('{{ $item->id }}')">
                                 <i class="ti ti-check"></i> <span class="text-sm">Submit</span>
                             </x-table.action-button>

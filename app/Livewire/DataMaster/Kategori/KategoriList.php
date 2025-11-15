@@ -31,6 +31,7 @@ class KategoriList extends Component
     #[On('kategori-created')]
     public function render()
     {
+
         $data = Kategori::search($this->search, ['nama'])
             ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);

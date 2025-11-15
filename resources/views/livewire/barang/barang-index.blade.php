@@ -20,7 +20,7 @@
             </div>
         </div>
 
-        @livewire('barang.barang-list')
+        <livewire:barang.barang-list />
 
     </div>
 

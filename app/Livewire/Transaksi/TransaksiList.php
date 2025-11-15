@@ -15,18 +15,22 @@ class TransaksiList extends Component
 {
     use WithPagination, CustomDataTable;
 
-    public $filter_date, $shift_transaksi;
-    public $id_barang;
+    public $title;
+    public $filter_date, $shift_transaksi, $big_range_date = false;
+    public $id_barang, $id_dokter, $id_member;
 
     public function mount()
     {
         $this->sortBy = 'transaksi.created_at';
         if ($this->id_barang) {
+            $this->big_range_date  = true;
             $this->shift_transaksi = 'SEMUA';
             $this->filter_date     = [
                 'start' => now()->startOfMonth()->format('Y-m-d'),
                 'end'   => now()->endOfMonth()->format('Y-m-d'),
             ];
+        } elseif ($this->id_dokter || $this->id_member) {
+            $this->shift_transaksi = 'SEMUA';
         }
     }
 
@@ -40,6 +44,12 @@ class TransaksiList extends Component
         }
         $this->dispatch('update_value_filter_date', value: $this->filter_date);
     }
+
+    // #[On('update_value_filter_date')]
+    // public function setFilterDate($value)
+    // {
+    //     $this->filter_date = $value;
+    // }
 
     public function updatedShiftTransaksi($value)
     {
@@ -126,20 +136,35 @@ class TransaksiList extends Component
     {
 
         $query = Transaksi::query()
-            ->with([
-                'metode_pembayaran:id,nama',
-                'pasien:id,nama_pasien',
-                'member:id,nama',
-            ])
+        // ->with([
+        //     'metode_pembayaran:id,nama',
+        //     'pasien:id,nama_pasien',
+        //     'member:id,nama',
+        // ])
+            ->join('metode_pembayaran as mp', 'mp.id', '=', 'transaksi.id_metode_pembayaran')
+            ->leftJoin('member as m', 'm.id', '=', 'transaksi.id_member')
+            ->leftJoin('pasien as p', 'p.id', '=', 'transaksi.id_pasien')
+            ->select('transaksi.*', 'mp.nama as nama_metode_pembayaran', 'm.nama as nama_member', 'p.nama_pasien as nama_pasien')
             ->where('transaksi.status', 'TERJUAL')
             ->when($this->filter_date, function ($query, $item) {
-                $query->whereBetween('created_at', [
+                $query->whereBetween('transaksi.created_at', [
                     "{$item['start']} 00:00:00",
                     "{$item['end']} 23:59:59",
                 ]);
             })
             ->when(in_array($this->shift_transaksi, ['PAGI', 'MALAM']), function ($query) {
                 $query->where('shift_transaksi', $this->shift_transaksi);
+            })
+            ->when($this->id_dokter, function ($query) {
+                $query->where('id_dokter', $this->id_dokter);
+            })
+            ->when($this->id_member, function ($query) {
+                $query->where('id_member', $this->id_member);
+            })
+            ->when($this->id_barang, function ($query) {
+                $query->whereHas('detail_transaksi_barang', function ($query) {
+                    $query->where('id_barang', $this->id_barang);
+                });
             })
             ->search(
                 $this->search,
@@ -149,7 +174,9 @@ class TransaksiList extends Component
                     'metode_pembayaran' => ['nama'],
                     'member'            => ['nama'],
                 ]
-            );
+            )
+            ->orderBy($this->sortBy, $this->sortDir)->paginate($this->perPage)
+        ;
 
         // Handle sorting termasuk kolom relasi
         // $query = match ($this->sortBy) {
@@ -172,18 +199,57 @@ class TransaksiList extends Component
     public function render()
     {
         $data = $this->getDataTransaksi();
-        if ($this->id_barang) {
-            $data = $data->whereHas('detail_transaksi_barang', function ($query) {
-                $query->where('id_barang', $this->id_barang);
-            });
-        }
-
-        $data = $data->orderBy($this->sortBy, $this->sortDir)->paginate($this->perPage);
 
         $data = $this->formatterData($data);
         return view('livewire.transaksi.transaksi-list', [
             'transaksis' => $data,
         ]);
+    }
+    public function getDataTransaksiWithJoin()
+    {
+        $data = Transaksi::query()
+            ->join('metode_pembayaran as mp', 'mp.id', '=', 'transaksi.id_metode_pembayaran')
+            ->leftJoin('member as m', 'm.id', '=', 'transaksi.id_member')
+            ->leftJoin('pasien as p', 'p.id', '=', 'transaksi.id_pasien')
+            ->join('detail_transaksi_barang as dt', 'dt.id_transaksi', '=', 'transaksi.id')
+            ->join('history_barang as hb', 'hb.id', '=', 'dt.id_history_barang')
+            ->where('transaksi.status', 'TERJUAL')
+            ->where('hb.id_barang', $this->id_barang)
+            ->when(in_array($this->shift_transaksi, ['PAGI', 'MALAM']), function ($query) {
+                $query->where('shift_transaksi', $this->shift_transaksi);
+            })
+            ->when($this->id_dokter, function ($query) {
+                $query->where('id_dokter', $this->id_dokter);
+            })
+            ->when($this->id_member, function ($query) {
+                $query->where('id_member', $this->id_member);
+            })
+            ->select(
+                'transaksi.id',
+                'transaksi.no_transaksi',
+                'transaksi.created_at',
+                'transaksi.jenis_transaksi',
+                'm.nama as nama_member',
+                'p.nama_pasien as nama_pasien',
+                'transaksi.sub_total',
+                'mp.nama as nama_metode_pembayaran',
+                'transaksi.potongan_diskon',
+                'transaksi.total_bayar',
+                'transaksi.pembulatan',
+                'transaksi.shift_transaksi',
+            )
+            ->search(
+                $this->search,
+                ['no_transaksi', 'jenis_transaksi', 'shift_transaksi'],
+                [
+                    'pasien'            => ['nama_pasien'],
+                    'metode_pembayaran' => ['mp.nama'],
+                    'member'            => ['m.nama'],
+                ]
+            )
+            ->orderBy($this->sortBy, $this->sortDir)->paginate($this->perPage);
+        dd($data);
+        return $data;
     }
 
     public function formatterData($data)

@@ -1,41 +1,52 @@
 <div class="card" x-data>
     <div class="card-body gap-0">
         <div class="card-title flex flex-wrap justify-between">
-            <h6 class="text-xl font-bold">List Transaksi</h6>
-            <button @click="
-                        let url = '{{ route('cetak.transaksi-with-barang') }}'
-                            + '?date[start]={{ $filter_date['start'] }}'
-                            + '&date[end]={{ $filter_date['end'] }}'
-                            + '&shift={{ $shift_transaksi }}';
-                         @if (!empty($id_barang)) url += '&id_barang={{ $id_barang }}'; @endif
+            <h6 class="text-xl font-bold">{{ $title ?? 'List Transaksi' }}</h6>
+            @if (!$id_dokter && !$id_member)
+                <button @click="
+                        let url = '';
+                        @if ($id_barang) url = '{{ route('cetak.transaksi-barang', $id_barang) }}';
+                        @else
+                            url = '{{ route('cetak.laporan-transaksi') }}'; @endif
+
+                        url = url + '?date[start]={{ $filter_date['start'] }}'
+                                + '&date[end]={{ $filter_date['end'] }}'
+                                + '&shift={{ $shift_transaksi }}'
 
                         window.open(url, '_blank');
                     "
-                    class="btn btn-sm btn-primary">Cetak Transaksi</button>
+                        class="btn btn-sm btn-primary">Cetak Transaksi</button>
+            @endif
         </div>
 
-        @php
-            $cek_shift = now()->hour < 16;
-            $cek = !auth()->user()->can('transaksi.advance-search') && $cek_shift;
-        @endphp
-        <x-datatable nama_table="transaksi" :perPage="$perPage" placeholder_search="Masukan No Transaksi">
-            @if (auth()->user()->can('transaksi.advance-search') || $cek_shift)
-                <div class="w-svw sm:w-56" wire:ignore>
-                    <x-form.select name="shift_transaksi" :direction=false :empty-option=false wire:model.live='shift_transaksi'>
-                        <x-slot:custom-option>
-                            <option value="PAGI" {{ $shift_transaksi == 'PAGI' ? 'selected' : '' }}>PAGI</option>
-                            <option value="MALAM" {{ $shift_transaksi == 'MALAM' ? 'selected' : '' }}>MALAM</option>
-                            <option value="SEMUA" {{ $shift_transaksi == 'SEMUA' ? 'selected' : '' }}>SEMUA</option>
-                        </x-slot:custom-option>
-                    </x-form.select>
-                </div>
-            @endif
-            @if (auth()->user()->can('transaksi.advance-search'))
-                <div class="w-svw sm:w-80" wire:ignore>
-                    <x-form.input-date :bigRange=$id_barang?true:false nama="filter_date" model="filter_date" :select_date='$filter_date'></x-form.input-date>
-                </div>
-            @endif
-        </x-datatable>
+        @if ($id_dokter || $id_member)
+            <div class="my-2">
+                <x-datatable nama_table="transaksi" :perPage="$perPage" placeholder_search="Masukan No Transaksi" />
+            </div>
+        @else
+            @php
+                $cek_shift = now()->hour < 16;
+                $cek = !auth()->user()->can('transaksi.advance-search') && $cek_shift;
+            @endphp
+            <x-datatable nama_table="transaksi" :perPage="$perPage" placeholder_search="Masukan No Transaksi">
+                @if (auth()->user()->can('transaksi.advance-search') || $cek_shift)
+                    <div class="w-svw sm:w-56" wire:ignore>
+                        <x-form.select name="shift_transaksi" :direction=false :empty-option=false wire:model.live='shift_transaksi'>
+                            <x-slot:custom-option>
+                                <option value="PAGI" {{ $shift_transaksi == 'PAGI' ? 'selected' : '' }}>PAGI</option>
+                                <option value="MALAM" {{ $shift_transaksi == 'MALAM' ? 'selected' : '' }}>MALAM</option>
+                                <option value="SEMUA" {{ $shift_transaksi == 'SEMUA' ? 'selected' : '' }}>SEMUA</option>
+                            </x-slot:custom-option>
+                        </x-form.select>
+                    </div>
+                @endif
+                @if (auth()->user()->can('transaksi.advance-search'))
+                    <div class="w-svw sm:w-80" wire:ignore>
+                        <x-form.input-date :bigRange="$big_range_date" nama="filter_date" model="filter_date" :select_date='$filter_date'></x-form.input-date>
+                    </div>
+                @endif
+            </x-datatable>
+        @endif
 
         <x-table nama="transaksi">
             <x-table.thead>
@@ -89,9 +100,9 @@
                             </button>
                             <h6 class="font-semibold">{{ $transaksi->jenis_transaksi }}</h6>
                         </x-table.td>
-                        <x-table.td>{{ $transaksi->pasien?->nama_pasien ?? $transaksi->member?->nama }}</x-table.td>
+                        <x-table.td>{{ $transaksi->nama_pasien ?? $transaksi->nama_member }}</x-table.td>
                         <x-table.td class="min-w-28">Rp. {{ $transaksi->sub_total }}</x-table.td>
-                        <x-table.td class="text-center">{{ $transaksi->metode_pembayaran->nama }}</x-table.td>
+                        <x-table.td class="text-center">{{ $transaksi->nama_metode_pembayaran }}</x-table.td>
                         <x-table.td>Rp. {{ $transaksi->potongan_diskon }}</x-table.td>
                         <x-table.td class="min-w-28">Rp. {{ $transaksi->total_bayar }}</x-table.td>
                         <x-table.td>Rp. {{ $transaksi->pembulatan }}</x-table.td>

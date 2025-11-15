@@ -1,11 +1,8 @@
 <?php
-
 namespace Database\Seeders;
 
-
-use Illuminate\Database\Seeder;
 use App\Models\DataMaster\Kategori;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
 
 class KategoriSeeder extends Seeder
 {
@@ -20,11 +17,12 @@ class KategoriSeeder extends Seeder
             'obat khusus',
             'obat sensitif',
             'obat terapi',
-            'susu'
+            'susu',
         ];
 
-        foreach($data as $item){
-            Kategori::create(["nama"=>$item]);
+        foreach ($data as $item) {
+            Kategori::create(["nama" => $item]);
         }
+
     }
 }

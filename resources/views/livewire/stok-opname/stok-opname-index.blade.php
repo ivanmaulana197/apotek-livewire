@@ -20,6 +20,9 @@
                     <button @click="$wire.dispatch('alert-confirm', { method: 'sinkronisasi-stok' });" class="btn btn-sm bg-success hover:bg-successemphasis">
                         <i class="iconify fluent--save-sync-20-regular text-2xl"></i> Sinkronisasi Stok Keseluruhan
                     </button>
+                    <a class="btn btn-sm bg-primary hover:bg-primaryemphasis" href="{{ route('cetak.form-stok-opname') }}" wire:navigate>
+                        <i class="iconify solar--printer-bold text-2xl"></i> Cetak Form Stok Opname
+                    </a>
                 </div>
 
                 {{-- info --}}

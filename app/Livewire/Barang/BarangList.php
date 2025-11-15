@@ -32,26 +32,27 @@ class BarangList extends Component
             ->with([
                 'kategories:id,nama',
                 'raks:id,nama',
-                'opsi_harga:id,id_barang,harga,jumlah_min,id_satuan',
+                // 'opsi_harga:id,id_barang,harga,jumlah_min,id_satuan',
                 'opsi_harga.satuan:id,nama',
                 'opsi_satuan',
-                'satuan_utama:id,nama',
+                // 'satuan_utama:id,nama',
             ])
-            ->select('barang.*')
-            ->leftjoin('kategori_barang', 'kategori_barang.id_barang', '=', 'barang.id')
-            ->leftjoin('kategori', 'kategori.id', '=', 'kategori_barang.id_kategori')
-            ->leftjoin('rak_barang', 'rak_barang.id_barang', '=', 'barang.id')
-            ->leftjoin('rak', 'rak.id', '=', 'rak_barang.id_rak')
-            ->leftjoin('satuan as satuan_utama', 'satuan_utama.id', '=', 'barang.id_satuan_utama')
-            ->leftjoin('satuan_barang', 'satuan_barang.id_barang', '=', 'barang.id')
-            ->leftjoin('satuan as opsi_satuan', 'opsi_satuan.id', '=', 'satuan_barang.id_satuan')
+            ->join('satuan as satuan_utama', 'satuan_utama.id', '=', 'barang.id_satuan_utama')
+            ->select('barang.*', 'satuan_utama.nama as nama_satuan_utama')
+        // ->leftjoin('kategori_barang', 'kategori_barang.id_barang', '=', 'barang.id')
+        // ->leftjoin('kategori', 'kategori.id', '=', 'kategori_barang.id_kategori')
+        // ->leftjoin('rak_barang', 'rak_barang.id_barang', '=', 'barang.id')
+        // ->leftjoin('rak', 'rak.id', '=', 'rak_barang.id_rak')
+        // ->leftjoin('satuan as satuan_utama', 'satuan_utama.id', '=', 'barang.id_satuan_utama')
+        // ->leftjoin('satuan_barang', 'satuan_barang.id_barang', '=', 'barang.id')
+        // ->leftjoin('satuan as opsi_satuan', 'opsi_satuan.id', '=', 'satuan_barang.id_satuan')
             ->search($this->search,
                 ['barang.kode', 'barang.nama', 'barang.stok', 'barang.harga_beli_default'],
                 [
-                    'kategories'   => ['kategori.nama'],
-                    'raks'         => ['rak.nama'],
+                    'kategories'   => ['nama'],
+                    'raks'         => ['nama'],
                     'satuan_utama' => ['satuan_utama.nama'],
-                    'opsi_satuan'  => ['opsi_satuan.nama'],
+                    'opsi_satuan'  => ['nama'],
                 ])
             ->filter($this->filters)
             ->groupBy('barang.id')

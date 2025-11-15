@@ -3,6 +3,10 @@
     <div class="card-body">
         <div class="items-center justify-between mb-2 sm:flex">
             <h5 class="card-title text-md">List Dokter</h5>
+            <a href="{{ route('cetak.laporan-dokter') }}" target="_blank" class="btn btn-sm btn-primary">
+                Cetak Bulan <span x-text="moment().format('MMMM YYYY')"></span>
+            </a>
+
         </div>
 
         <x-datatable nama_table="dokter" :$perPage></x-datatable>

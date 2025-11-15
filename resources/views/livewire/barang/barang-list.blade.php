@@ -2,7 +2,38 @@
     use App\Helpers\FormatHelper;
 @endphp
 
-<div class="card">
+@script
+    <script>
+        Alpine.data('barangList', () => ({
+            formattedStok(stok, opsi_satuan, nama_satuan_utama) {
+                opsi_satuan.push({
+                    'id_satuan': 0,
+                    'satuan': nama_satuan_utama,
+                    'rasio': 1
+                });
+                let hasil = [];
+                const EPS = 1e-9; // toleransi error kecil
+                const fmod = (a, b) => a - Math.floor(a / b) * b;
+                opsi_satuan = [...opsi_satuan].sort((a, b) => b.rasio - a.rasio)
+                opsi_satuan.forEach((item) => {
+                    const rasio = parseFloat(item.rasio);
+                    if (rasio <= 0) return;
+
+                    const jumlah = Math.floor((stok / rasio) + EPS);
+                    if (jumlah > 0) {
+                        hasil.push(`${formatNumberToString(jumlah)} ${item.satuan}`);
+                    }
+
+                    stok = fmod(stok, rasio);
+                })
+
+                return hasil.join(',  ');
+            },
+        }))
+    </script>
+@endscript
+
+<div class="card" x-data="barangList">
     <div class="card-body">
         <div class="card-title">
             List Barang
@@ -55,14 +86,15 @@
                             @endforeach
                         </x-table.td>
                         <x-table.td>
-                            {{ $barang->konversi_stok() }}
+                            {{-- {{ $barang->konversi_stok() }} --}}
+                            <span x-text="formattedStok({{ $barang->stok }}, {{ $barang->satuan_opsi }}, '{{ $barang->nama_satuan_utama }}')"></span>
                             <p class="text-xs">
                                 Min: @nominal($barang->stok_min, '0')
                             </p>
                         </x-table.td>
                         <x-table.td>
                             <span class="font-normal">Utama:</span>
-                            <span class="font-semibold text-dark dark:text-white">{{ $barang->satuan_utama->nama }}</span>
+                            <span class="font-semibold text-dark dark:text-white">{{ $barang->nama_satuan_utama }}</span>
                             @foreach ($barang->opsi_satuan as $index => $opsi_satuan)
                                 <p class="text-xs">- {{ $opsi_satuan->nama }}</p>
                             @endforeach
@@ -86,18 +118,45 @@
                         </x-table.td>
 
                         <x-table.td class="text-center">
-                            <x-table.action-button tooltip="Detail" color="secondary" type="href" href="{{ route('data.barang.detail', $barang->id) }}"
-                                                   wire:navigate>
-                                <span class="iconify tabler--eye text-lg"></span>
-                            </x-table.action-button>
-                            <x-table.action-button tooltip="Edit" color="warning" type="href" href="{{ route('data.barang.edit', $barang->id) }}"
+                            {{-- <x-table.action-button tooltip="Edit" color="warning" type="href" href="{{ route('data.barang.edit', $barang->id) }}"
                                                    wire:navigate>
                                 <span class="iconify tabler--edit-circle text-lg"></span>
-                            </x-table.action-button>
-                            <x-table.action-button tooltip="Hapus" color="error"
+                            </x-table.action-button> --}}
+                            {{-- <x-table.action-button tooltip="Hapus" color="error"
                                                    @click="$wire.dispatch('alert-confirm', { id: '{{ $barang->id }}', method: 'delete-barang' });">
                                 <span class="iconify tabler--trash-x-filled text-lg"></span>
-                            </x-table.action-button>
+                            </x-table.action-button> --}}
+                            <x-dropdown text="" wire:key='dropdown-{{ $barang->id }}'>
+                                <x-dropdown.item href="{{ route('data.barang.detail', $barang->id) }}" wire:navigate class="text-blue-600">
+                                    <span class="iconify solar--eye-bold text-lg"></span>
+                                    <span class="text-sm">Detail</span>
+                                </x-dropdown.item>
+                                <x-dropdown.item href="{{ route('data.barang.edit', $barang->id) }}" wire:navigate class="text-yellow-600">
+                                    <span class="iconify tabler--edit-circle text-lg"></span>
+                                    <span class="text-sm">Edit</span>
+                                </x-dropdown.item>
+                                <x-dropdown.item class="text-red-600 " href="#"
+                                                 @click=" $wire.dispatch('alert-confirm', {id: '{{ $barang->id }}', method: 'delete-barang', text: 'Apakah anda yakin menghapus Barang?'}); ">
+                                    <span class="iconify basil--trash-outline text-lg"></span>
+                                    <span class="text-sm">Hapus</span>
+                                </x-dropdown.item>
+                                <x-dropdown.item href="{{ route('data.barang.detail.faktur', $barang->id) }}" wire:navigate>
+                                    <span class="iconify solar--eye-bold text-lg"></span>
+                                    <span class="text-sm">Detail Faktur</span>
+                                </x-dropdown.item>
+                                <x-dropdown.item href="{{ route('data.barang.detail.stok', $barang->id) }}" wire:navigate>
+                                    <span class="iconify solar--eye-bold text-lg"></span>
+                                    <span class="text-sm">Detail Stok</span>
+                                </x-dropdown.item>
+                                <x-dropdown.item href="{{ route('data.barang.detail.expired', $barang->id) }}" wire:navigate>
+                                    <span class="iconify solar--eye-bold text-lg"></span>
+                                    <span class="text-sm">Detail Expired</span>
+                                </x-dropdown.item>
+                                <x-dropdown.item href="{{ route('data.barang.detail.transaksi', $barang->id) }}" wire:navigate>
+                                    <span class="iconify solar--eye-bold text-lg"></span>
+                                    <span class="text-sm">Detail Transaksi</span>
+                                </x-dropdown.item>
+                            </x-dropdown>
                         </x-table.td>
                     </x-table.tr>
                 @empty

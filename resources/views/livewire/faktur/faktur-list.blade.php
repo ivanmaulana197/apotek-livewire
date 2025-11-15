@@ -4,7 +4,7 @@
 @endphp
 
 <div>
-    <x-badge status="error" icon="">
+    {{-- <x-badge status="error" icon="">
         <x-slot:message>
             <div class="flex items-center gap-x-3">
                 <span class="iconify tabler--alert-triangle text-lg"></span>
@@ -12,8 +12,42 @@
                 <p class="mx-1 text-lg">Rp. {{ FormatHelper::formatNumberToString($hutang) }}</p>
             </div>
         </x-slot:message>
-    </x-badge>
+    </x-badge> --}}
     {{-- @include('faktur.components.advance-search-faktur') --}}
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+        <div class="bg-blue-200 dark:bg-blue-800/40 p-4 mx-2 my-1 rounded-2xl flex justify-between items-center shadow">
+            <div>
+                <h3 class="text-gray-500 dark:text-gray-400  font-semibold">Jumlah Faktur</h3>
+                <h3 class="font-bold text-2xl mb-1">@nominal($rekap->total_faktur ?? '0')</h3>
+            </div>
+
+            <div class="bg-blue-400/60 dark:bg-blue-300 text-blue-600 dark:text-sky-800 rounded-xl p-3 shadow">
+                <span class="iconify solar--chart-bold-duotone text-2xl font-bold "></span>
+            </div>
+        </div>
+
+        <div class="bg-green-200 dark:bg-green-800/40 p-4 mx-2 my-1 rounded-2xl flex justify-between items-center shadow">
+            <div>
+                <h3 class="text-gray-500 dark:text-gray-400 font-semibold">Total Pengeluaran</h3>
+                <h3 class="font-bold text-2xl mb-1">Rp. @nominal($rekap->total_lunas ?? '0')</h3>
+            </div>
+
+            <div class="bg-green-400/50 dark:bg-green-300 text-green-800 dark:text-emerald-800 rounded-xl p-3 shadow">
+                <span class="iconify solar--hand-money-linear text-2xl font-bold "></span>
+            </div>
+        </div>
+        <div class="bg-red-200 dark:bg-red-800/40 p-4 mx-2 my-1 rounded-2xl flex justify-between items-center shadow">
+            <div>
+                <h3 class="text-gray-500 dark:text-gray-400 font-semibold">Total Hutang</h3>
+                <h3 class="font-bold text-2xl mb-1">Rp. @nominal($rekap->total_belum_lunas ?? '0')</h3>
+            </div>
+
+            <div class="bg-red-400/50 dark:bg-red-300 text-red-800 dark:text-emerald-800 rounded-xl p-3 shadow">
+                <span class="iconify solar--hand-money-linear text-2xl font-bold "></span>
+            </div>
+        </div>
+    </div>
 
     <x-datatable nama_table="faktur" :$perPage placeholder_search="Masukan No. Kwitansi / Nama Supplier, dll">
         <div class="">
@@ -27,10 +61,10 @@
         </div>
         <div class="">
             <x-form.label label="Dibuat :" />
-            <x-form.input-date nama="created_at" model="filters.created_at"></x-form.input-date>
+            <x-form.input-date nama="created_at" model="filters.created_at" :select_date="$filters['created_at']"></x-form.input-date>
         </div>
         <div class="w-svw sm:w-56" wire:ignore>
-            <x-form.select label="Status :" multiple name="rak" :direction=false wire:model.live='filters.status'>
+            <x-form.select label="Status :" name="status" :direction=false wire:model.live='filters.status'>
                 <x-slot:custom-option>
                     <option value="LUNAS">LUNAS</option>
                     <option value="BELUM LUNAS">BELUM LUNAS</option>
@@ -46,7 +80,7 @@
             <x-table.th-sortable :sortBy="$sortBy" :sortDir="$sortDir" label="Nama Supplier" name="supplier.nama" />
             <x-table.th-sortable :sortBy="$sortBy" :sortDir="$sortDir" label="Tgl Masuk" name="faktur.created_at" />
             <x-table.th-sortable :sortBy="$sortBy" :sortDir="$sortDir" label="Tgl Jatuh Tempo" name="faktur.tgl_jatuh_tempo" />
-            <x-table.th-sortable :sortBy="$sortBy" :sortDir="$sortDir" label="Biaya Pengeluaran" name="faktur.biaya_belanja" />
+            <x-table.th-sortable :sortBy="$sortBy" :sortDir="$sortDir" label="Biaya Pengeluaran" name="faktur.total_biaya" />
             <x-table.th-sortable :sortBy="$sortBy" :sortDir="$sortDir" label="Status" name="faktur.status" />
 
             @if ($id_barang)
@@ -70,27 +104,22 @@
                         $warna = 'bg-amber-200/60 dark:bg-bg-amber-600/40';
                     }
                 @endphp
-                <x-table.tr wire:loading.remove class="{{ $warna }}">
+                <x-table.tr class="{{ $warna }}">
                     <x-table.td class="text-center">{{ $fakturs->firstItem() + $index }}</x-table.td>
                     <x-table.td>
                         <a class="font-bold underline" href="{{ route('faktur.detail', $faktur->id) }}" wire:navigate>
-                            {!! $this->highlight($faktur->no_faktur) !!}
+                            {{ $faktur->no_faktur }}
                         </a>
                     </x-table.td>
                     <x-table.td>
-                        {!! $this->highlight($faktur->supplier->nama) !!}
+                        {{ $faktur->supplier->nama }}
                     </x-table.td>
+                    <x-table.td x-text="formatDate('{{ $faktur->created_at }}',true)"></x-table.td>
+                    <x-table.td class="font-semibold" x-text="formatDate('{{ $faktur->tgl_jatuh_tempo }}')"></x-table.td>
                     <x-table.td>
-                        <h6>{!! $this->highlight(FormatHelper::formatDate($faktur->created_at)) !!}</h6>
-                    </x-table.td>
-                    <x-table.td>
-                        <h6 class="font-semibold">{!! $this->highlight(FormatHelper::formatDate($faktur->tgl_jatuh_tempo)) !!}</h6>
-                    </x-table.td>
-                    <x-table.td>
-                        Rp. {{ FormatHelper::formatNumberToString($faktur->total_biaya) }}
+                        Rp. @nominal($faktur->total_biaya)
                     </x-table.td>
                     <x-table.td class="text-center">
-
                         <button type="button"
                                 class="btn btn-xs cursor-default {{ $faktur->status == 'LUNAS' ? 'bg-success hover:bg-successemphasis' : 'bg-warning hover:bg-warningemphasis' }}">
                             <span class="iconify {{ $faktur->status == 'LUNAS' ? 'tabler--checkbox' : 'basil--edit-outline' }}"></span>
@@ -101,14 +130,14 @@
                         <x-table.td>
                             @foreach ($faktur->detail_faktur_barang as $faktur_barang)
                                 <p class="flex items-center"> <i class="iconify iconamoon--arrow-right-2-fill"></i>
-                                    {{ FormatHelper::formatNumberToString($faktur_barang->jumlah) }} / {{ $faktur_barang->satuan->nama }}</p>
+                                    @nominal($faktur_barang->jumlah) / {{ $faktur_barang->satuan->nama }}</p>
                             @endforeach
                         </x-table.td>
                         <x-table.td>
                             @foreach ($faktur->detail_faktur_barang as $faktur_barang)
                                 @foreach ($faktur_barang->tgl_expired as $item)
                                     <p class="flex items-center"> <i class="iconify iconamoon--arrow-right-2-fill"></i>
-                                        {{ FormatHelper::formatNumberToString($item['jumlah']) }} {{ $faktur_barang->barang->satuan_utama->nama }} <br>
+                                        @nominal($item['jumlah']) {{ $faktur_barang->barang->satuan_utama->nama }} <br>
                                         [{{ $item['tgl'] }}]
                                     </p>
                                 @endforeach
@@ -155,13 +184,9 @@
                     </x-table.td>
                 </x-table.tr>
             @empty
-                <tr wire:loading.remove>
-                    <td colspan="7" class="p-2 text-sm font-semibold text-center text-dark dark:text-white">
-                        Tidak Ada Data
-                    </td>
-                </tr>
+                <x-table.tr-empty colspan="7" />
             @endforelse
-            <x-table.loading colspan="7" />
+            <x-table.loading-spin />
         </x-table.tbody>
     </x-table>
 

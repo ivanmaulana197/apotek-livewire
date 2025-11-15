@@ -27,7 +27,7 @@ class InfoBarangExpiredList extends Component
     public $minimum_alert;
     public $id_barang;
 
-    public function mount($minimum_alert = false)
+    public function mount($minimum_alert = null)
     {
         $this->defaultSortBy  = 'tgl_expired';
         $this->sortBy         = 'tgl_expired';
@@ -36,7 +36,11 @@ class InfoBarangExpiredList extends Component
         if ($minimum_alert) {
             $this->minimum_alert = $minimum_alert;
         } else {
-            $this->minimum_alert = Carbon::now()->addMonths(3);
+            if ($this->id_barang) {
+                $this->minimum_alert = Carbon::now()->addYears(10);
+            } else {
+                $this->minimum_alert = Carbon::now()->addMonths(3);
+            }
         }
     }
 
@@ -49,6 +53,7 @@ class InfoBarangExpiredList extends Component
                 [
                     'jumlah_dilaporkan.' . $id_stok_barang => 'required|numeric|max:' . $stokBatchBarang->jumlah . '|gt:0',
                     'status.' . $id_stok_barang            => 'required',
+                    'new_tgl_expired.' . $id_stok_barang   => $this->status[$id_stok_barang] == 'EXPIRED GANTI / RETUR' || $this->status[$id_stok_barang] == 'RUSAK GANTI' ? 'required|date|after_or_equal:today' : 'nullable',
                 ],
                 ['required' => 'Kolom Ini Wajib Diisi', 'max' => 'Melebihi jumlah yang ada', 'gt' => 'Harus lebih besar dari 0'],
             );
@@ -59,7 +64,6 @@ class InfoBarangExpiredList extends Component
             DB::beginTransaction();
             if ($status != 'HAPUS INFO') {
                 if ($status == 'EXPIRED GANTI / RETUR' || $status == 'RUSAK GANTI') {
-                    $this->validate(['new_tgl_expired.' . $id_stok_barang => 'required|date|after_or_equal:today'], ['required' => 'Kolom Ini Wajib Diisi']);
                     if ($this->new_tgl_expired[$id_stok_barang] === $stokBatchBarang->tgl_expired) {
                         $this->addError('new_tgl_expired.' . $id_stok_barang, 'Tanggal ini sama dengan tanggal sebelumnya. Silakan pilih tanggal lain.');
                         return;
@@ -116,33 +120,6 @@ class InfoBarangExpiredList extends Component
         $this->dispatch('clear-select-status_' . $id_stok_barang);
         unset($this->new_tgl_expired[$id_stok_barang]);
     }
-
-    // public function triggerCeklistInfoBarang()
-    // {
-    //     try {
-    //         // dd($this->ceklistInfoBarang);
-    //         $this->validate(['status_ceklist' => 'required|in:HAPUS INFO,EXPIRED BUANG,EXPIRED GANTI / RETUR,EXPIRED RETUR,RUSAK BUANG,RUSAK GANTI,HILANG']);
-    //         if ($this->status_ceklist == 'EXPIRED GANTI / RETUR' || $this->status_ceklist == 'RUSAK GANTI') {
-    //             $this->validate(['tgl_expired_ceklist' => 'required|date|after_or_equal:today']);
-    //         }
-    //         foreach ($this->ceklistInfoBarang as $id_info_barang) {
-    //             $info_barang                              = BarangInfo::select('jumlah')->find($id_info_barang);
-    //             $this->jumlah_dilaporkan[$id_info_barang] = FormatHelper::formatNumberToString($info_barang->jumlah);
-    //             $this->status[$id_info_barang]            = $this->status_ceklist;
-    //             if ($this->status_ceklist == 'EXPIRED GANTI / RETUR' || $this->status_ceklist == 'RUSAK GANTI') {
-    //                 $this->tgl_expired[$id_info_barang] = $this->tgl_expired_ceklist;
-    //             }
-    //             $this->submit($id_info_barang);
-    //         }
-
-    //         $this->resetFormCeklist();
-    //     } catch (\Exception $e) {
-    //         foreach ($this->ceklistInfoBarang as $id_info_barang) {
-    //             $this->resetFormList($id_info_barang);
-    //         }
-    //         throw $e;
-    //     }
-    // }
 
     public function triggerCeklistStokBarang()
     {
@@ -224,9 +201,8 @@ class InfoBarangExpiredList extends Component
     {
         $today  = Carbon::today();
         $plus30 = $today->copy()->addDays(30);
-        // $plus90 = $today->copy()->addDays(90);
+
         return StokBatchBarang::query()
-        // ->with(['barang:id,nama,id_satuan_utama', 'barang.satuan_utama:id,nama'])
             ->select([
                 'stok_batch_barang.id',
                 'stok_batch_barang.id_barang',
@@ -245,25 +221,21 @@ class InfoBarangExpiredList extends Component
             ])
             ->join('barang', 'stok_batch_barang.id_barang', '=', 'barang.id')
             ->join('satuan', 'barang.id_satuan_utama', '=', 'satuan.id')
-            ->where('tgl_expired', '<=', $this->minimum_alert)
-        // ->search($this->search, ['tgl_expired'], ['barang.satuan_utama' => ['satuan.nama']], ['barang' => ['barang.nama']]);
-            ->when($this->search, function ($query) {
-                $query->where(function ($q) {
-                    $q->where('barang.nama', 'like', "%{$this->search}%")
-                        ->orWhere('satuan.nama', 'like', "%{$this->search}%")
-                        ->orWhereDate('tgl_expired', 'like', "%{$this->search}%");
-                });
-            });
+            ->when($this->id_barang, function ($query) {
+                $query->where('stok_batch_barang.id_barang', $this->id_barang);
+            })
+            ->when($this->id_barang == null, function ($query) {
+                $query->where('stok_batch_barang.tgl_expired', '<=', $this->minimum_alert);
+            })
+            ->search($this->search, ['barang.nama', 'satuan.nama', 'stok_batch_barang.tgl_expired'])
+            ->orderBy($this->sortBy, $this->sortDir)->paginate($this->perPage)
+
+        ;
     }
 
     public function render()
     {
         $data = $this->getQuery();
-        if ($this->id_barang) {
-            $data = $data->where('id_barang', $this->id_barang);
-        }
-        $data = $data->orderBy($this->sortBy, $this->sortDir)->paginate($this->perPage);
-
         return view('livewire.informasi.info-barang-expired.info-barang-expired-list', ['stok_batch_barang' => $data]);
     }
     public function placeholder()

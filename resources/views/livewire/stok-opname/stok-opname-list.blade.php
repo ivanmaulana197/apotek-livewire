@@ -3,6 +3,30 @@
         Alpine.data('stokOpnameList', () => ({
             bulan: formatDate(moment(), false, false, 'bulan'),
             stok_real: $wire.entangle('stok_real'),
+            formattedStok(stok, opsi_satuan, nama_satuan_utama) {
+                opsi_satuan.push({
+                    'id_satuan': 0,
+                    'satuan': nama_satuan_utama,
+                    'rasio': 1
+                });
+                let hasil = [];
+                const EPS = 1e-9; // toleransi error kecil
+                const fmod = (a, b) => a - Math.floor(a / b) * b;
+                opsi_satuan = [...opsi_satuan].sort((a, b) => b.rasio - a.rasio)
+                opsi_satuan.forEach((item) => {
+                    const rasio = parseFloat(item.rasio);
+                    if (rasio <= 0) return;
+
+                    const jumlah = Math.floor((stok / rasio) + EPS);
+                    if (jumlah > 0) {
+                        hasil.push(`${formatNumberToString(jumlah)} ${item.satuan}`);
+                    }
+
+                    stok = fmod(stok, rasio);
+                })
+
+                return hasil.join(',  ');
+            },
             init() {
 
             }
@@ -64,7 +88,7 @@
                     @php
                         $stok_real[$barang->id] = FormatHelper::formatNumberToString($barang->stok_real);
                     @endphp
-                    <x-table.tr wire:key='table-stokopname{{ $barang->id }}'>
+                    <x-table.tr wire:key='table-stokopname{{ $barang->id }}' x-data="{ stok_real: $wire.entangle('stok_real.{{ $barang->id }}') }">
                         <x-table.td class="text-center !py-0.5 w-4">{{ $barangs->firstItem() + $index }}</x-table.td>
                         <x-table.td class="!py-0.5 w-8">
                             <h6 class="text-sm whitespace-normal line-clamp-2">
@@ -102,9 +126,10 @@
                                 }
                             "
                                           errorName="stok_real.{{ $barang->id }}" placeholder="Masukan Jumlah Stok di Toko"
-                                          labelInputGroup="/{{ $barang->nama_satuan_utama }}" inputGroup="right"
-                                          wire:model.defer="stok_real.{{ $barang->id }}" id="stok_real_{{ $barang->id }}"
-                                          onkeyup="formatForInputNumber(this)" />
+                                          labelInputGroup="/{{ $barang->nama_satuan_utama }}" inputGroup="right" x-model="stok_real"
+                                          id="stok_real_{{ $barang->id }}" onkeyup="formatForInputNumber(this)" />
+                            <span class="text-xs"
+                                  x-text="formattedStok(formatStringToNumber(stok_real), {{ $barang->satuan_opsi }}, '{{ $barang->nama_satuan_utama }}')"></span>
                         </x-table.td>
                         <x-table.td class="!py-1 !text-xs text-center">
                             @decimal($barang->stok_real - $barang->stok)
@@ -139,7 +164,7 @@
                                                         {{ $opsi_satuan->pivot->rasio_satuan_opsi }}
                                                         {{ $opsi_satuan->nama }} =
                                                         {{ $opsi_satuan->pivot->rasio_satuan_utama }}
-                                                        {{ $barang->satuan_utama->nama }}</p>
+                                                        {{ $barang->nama_satuan_utama }}</p>
                                                 @empty
                                                     -
                                                 @endforelse

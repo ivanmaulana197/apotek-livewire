@@ -7,6 +7,7 @@ use App\Models\Barang\StokBatchBarang;
 use App\Models\DataMaster\Kategori;
 use App\Models\DataMaster\Rak;
 use App\Models\DataMaster\Satuan;
+use App\Models\HistoryBarang;
 use App\Traits\ScopeSearchable;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -46,6 +47,11 @@ class Barang extends Model
     public function satuan_utama()
     {
         return $this->belongsTo(Satuan::class, 'id_satuan_utama');
+    }
+
+    public function transaksi_barang()
+    {
+        return $this->hasMany(HistoryBarang::class, 'id_barang')->where('status', 'TERJUAL');
     }
     public function opsi_satuan()
     {

@@ -32,7 +32,7 @@
     </div>
     <form wire:submit.prevent='save'>
         <div class="grid grid-cols-1">
-            <x-form.input label="Jumlah Stok" x-model="jumlah" onkeyup="formatForInputNumber(this)" input-group="right"
+            <x-form.input label="Jumlah Stok" x-model="jumlah" onkeyup="formatForInputNumber(this)" input-group="right" errorName="jumlah"
                           label-input-group="{{ $nama_satuan_utama }}" />
             <span class="ms-2 font-semibold text-sm text-gray-700 dark:text-gray-300 " x-text="' = '+formattedStok(formatStringToNumber(jumlah))"></span>
             <div class="">

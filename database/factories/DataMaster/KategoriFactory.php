@@ -1,5 +1,4 @@
 <?php
-
 namespace Database\Factories\DataMaster;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -17,7 +16,8 @@ class KategoriFactory extends Factory
     public function definition(): array
     {
         return [
-            'nama' => $this->faker->randomElement(['Obat Bebas', 'Obat Keras', 'Suplemen']),
+            // 'nama' => $this->faker->randomElement(['Obat Bebas', 'Obat Keras', 'Suplemen']),
+            'nama' => $this->faker->unique()->name(),
         ];
     }
 }

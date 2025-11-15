@@ -62,6 +62,15 @@
                             Info Barang Habis</x-partials.sidebar.subitem>
                     </x-partials.sidebar.item>
 
+                    <x-partials.sidebar.item title="Laporan" icon="simple-icons--databricks" color="blue" :menuLevel="true" name="laporan">
+                        <x-partials.sidebar.subitem name="laporan/transaksi" href="{{ route('laporan.transaksi') }}" color="blue">
+                            Laporan Transaksi
+                        </x-partials.sidebar.subitem>
+                        <x-partials.sidebar.subitem name="laporan/faktur" href="{{ route('laporan.faktur') }}" color="blue">
+                            Laporan Faktur
+                        </x-partials.sidebar.subitem>
+                    </x-partials.sidebar.item>
+
                     {{-- <x-partials.sidebar.caption>Pengguna</x-partials.sidebar.caption>
                     <x-partials.sidebar.item title="List User" icon='solar:user-heart-bold' href="{{ route('data.user') }}" color='pink'></x-partials.sidebar.item> --}}
 

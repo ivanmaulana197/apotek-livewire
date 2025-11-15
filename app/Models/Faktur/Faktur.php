@@ -67,15 +67,21 @@ class Faktur extends Model
 
     public function scopeFilter($query, $filters)
     {
-        foreach ($filters as $key => $value) {
-            $query->when($value ?? null, function ($query, $item) use ($key) {
-                if ($key == 'tgl_jatuh_tempo' || $key == 'created_at') {
-                    $query->whereBetween("faktur.$key", ["{$item['start']} 00:00:00", "{$item['end']} 23:59:59"]);
-                } else {
-                    $query->where("faktur.$key", $item);
-                }
-            });
-        }
+
+        $query
+            ->when($filters['tgl_jatuh_tempo'] ?? null, function ($query, $item) {
+                $query->whereBetween("tgl_jatuh_tempo", ["{$item['start']} 00:00:00", "{$item['end']} 23:59:59"]);
+            })
+            ->when($filters['created_at'] ?? null, function ($query, $item) {
+                $query->whereBetween("created_at", ["{$item['start']} 00:00:00", "{$item['end']} 23:59:59"]);
+            })
+            ->when($filters['id_suppliers'] ?? null, function ($query, $item) {
+                $query->whereIn("id_supplier", $item);
+            })
+            ->when($filters['status'] ?? null, function ($query, $item) {
+                $query->where("status", $item);
+            })
+        ;
 
     }
 }

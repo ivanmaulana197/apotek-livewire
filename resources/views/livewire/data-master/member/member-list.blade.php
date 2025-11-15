@@ -43,6 +43,10 @@
                             {!! $this->highlight($member->profesi->nama) !!}
                         </x-table.td>
                         <x-table.td class="text-center">
+                            <x-table.action-button tooltip="Detail" color="info" type="href" wire:navigate
+                                                   href="{{ route('data-master.member.detail', $member->id) }}">
+                                <span class="iconify tabler--info-circle text-lg"></span>
+                            </x-table.action-button>
                             <x-table.action-button tooltip="Edit" color="warning" @click="$dispatch('edit-member',{member:'{{ $member->id }}'})">
                                 <span class="iconify tabler--edit-circle text-lg"></span>
                             </x-table.action-button>

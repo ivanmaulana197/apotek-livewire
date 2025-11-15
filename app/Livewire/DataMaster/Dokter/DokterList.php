@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Livewire\DataMaster\Dokter;
 
 use App\Models\DataMaster\Dokter;
@@ -15,7 +14,7 @@ class DokterList extends Component
 
     public function confirmationDelete($id)
     {
-        $this->dispatch('alert-confirm', id: $id,method: 'delete-dokter');
+        $this->dispatch('alert-confirm', id: $id, method: 'delete-dokter');
     }
 
     #[On('delete-dokter')]
@@ -24,7 +23,7 @@ class DokterList extends Component
         if (Auth::user()->hasRole('admin')) { //nanti update yang mempunyai permission
             $id->delete();
             $this->dispatch('alert', message: 'Berhasil Menghapus Dokter');
-        }else{
+        } else {
             $this->dispatch('alert', message: 'Kamu Tidak Memiliki Akses', status: 'error');
         }
     }
@@ -32,12 +31,11 @@ class DokterList extends Component
     #[On('dokter-created')]
     public function render()
     {
-       $data = Dokter::search($this->search, ['nama'])
+        $data = Dokter::search($this->search, ['nama', 'spesialis', 'alamat'])
             ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
 
-        return view('livewire.data-master.dokter.dokter-list',['dokters'=>$data]);
+        return view('livewire.data-master.dokter.dokter-list', ['dokters' => $data]);
     }
-
 
 }

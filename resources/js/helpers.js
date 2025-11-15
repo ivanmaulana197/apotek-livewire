@@ -105,12 +105,12 @@ window.formatDate = function (
     date,
     showTime = false,
     withSecond = false,
-    mode = "full"
+    mode = "full",
+    month = "full"
 ) {
     if (!date) return null;
 
-    const bulan = [
-        "", // supaya index 1 = Januari
+    const bulanFull = [
         "Januari",
         "Februari",
         "Maret",
@@ -125,11 +125,28 @@ window.formatDate = function (
         "Desember",
     ];
 
+    const bulanShort = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "Mei",
+        "Jun",
+        "Jul",
+        "Agu",
+        "Sep",
+        "Okt",
+        "Nov",
+        "Des",
+    ];
+
     const m = moment(date);
     if (!m.isValid()) return null;
+    const mm = m.month();
 
     const tanggal = m.date();
-    const bulanIndo = bulan[m.month() + 1]; // moment bulan dari 0-11
+    // const bulanIndo = bulanFull[m.month()]; // moment bulan dari 0-11
+    const bulanIndo = month === "full" ? bulanFull[mm] : bulanShort[mm];
     const tahun = m.year();
 
     let formattedDate = "";

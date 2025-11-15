@@ -32,7 +32,7 @@ class PembulatanHelper
 
     public static function pembulatanHargaBarang(array $barang)
     {
-        $all_satuan = collect($barang['all_satuan']);
+
         $hargaBeliAcuan  = $barang['harga_beli_default'];
         $hargaJualUtama  = self::pembulatanHargaJualBarang($barang['harga_jual_utama']);
         $persenJualUtama = self::hitungPersen($hargaBeliAcuan, $hargaJualUtama);
@@ -42,11 +42,12 @@ class PembulatanHelper
 
         // === Opsi harga ===
         if (isset($barang['opsi_harga']) && is_array($barang['opsi_harga'])) {
+            $all_satuan = collect($barang['all_satuan']);
             foreach ($barang['opsi_harga'] as $key => $opsi) {
                 // $opsi['harga']              = self::pembulatanHargaJualBarang($opsi['harga']);
                 $opsi['harga_satuan_utama'] = self::pembulatanHargaJualBarang($opsi['harga_satuan_utama']);
                 $opsi['persen']             = round(self::hitungPersen($hargaBeliAcuan, $opsi['harga_satuan_utama']), 2);
-                $opsi['harga'] = $opsi['harga_satuan_utama'] * $all_satuan->firstWhere('id_satuan', $opsi['id_satuan'])['rasio'];
+                $opsi['harga']              = $opsi['harga_satuan_utama'] * $all_satuan->firstWhere('id_satuan', $opsi['id_satuan'])['rasio'];
                 $barang['opsi_harga'][$key] = $opsi;
             }
         }

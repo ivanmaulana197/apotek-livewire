@@ -180,6 +180,14 @@
     }
 }
 
+.disabled,
+[disabled] {
+    /* pointer-events: none;
+    background-color:  !important;
+    opacity: 0.5; */
+    @apply pointer-events-none bg-gray-700 dark:bg-gray-500 opacity-50;
+}
+
 .highlight {
     background-color: var(--color-primary);
     color: white;

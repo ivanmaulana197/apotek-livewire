@@ -2,17 +2,19 @@
     <div class="card-body">
         <h5 class="card-title flex justify-between items-center">
             <span>List Pasien</span>
-            <x-datatable.per-page nama_table="list_pasien" :perPage="$perPage" />
+            {{-- <x-datatable.per-page nama_table="list_pasien" :perPage="$perPage" /> --}}
         </h5>
+
+        <x-datatable nama_table="list_pasien" :$perPage></x-datatable>
 
         <x-table nama="list_pasien">
             <x-table.thead>
                 <x-table.th label="No" />
-                <x-table.th label="Nama Pasien" />
+                <x-table.th-sortable :sortBy="$sortBy" :sortDir="$sortDir" label="Nama Pasien" name="nama_pasien" />
                 <x-table.th label="Alamat" />
                 <x-table.th label="No HP" />
                 @if ($id_dokter)
-                    <x-table.th label="Total Belanja" />
+                    <x-table.th-sortable :sortBy="$sortBy" :sortDir="$sortDir" label="Total Belanja" name="total_bayar" />
                 @endif
             </x-table.thead>
             <x-table.tbody>

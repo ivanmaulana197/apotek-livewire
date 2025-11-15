@@ -8,6 +8,7 @@ use App\Models\DataMaster\Rak;
 use App\Models\DataMaster\Satuan;
 use App\Models\Setting;
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Computed;
 use Livewire\Component;
 
 class BarangForm extends Component

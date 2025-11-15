@@ -33,7 +33,7 @@ class BarangFactory extends Factory
 
         return [
             'kode'               => $this->faker->unique()->bothify('BRG-#####'),
-            'nama'               => $this->faker->unique()->words(2, true),
+            'nama'               => $this->faker->unique()->name(),
             'stok'               => $this->faker->numberBetween(10, 100),
             'stok_min'           => $this->faker->numberBetween(5, 10),
             'stok_real'          => $this->faker->numberBetween(10, 100),

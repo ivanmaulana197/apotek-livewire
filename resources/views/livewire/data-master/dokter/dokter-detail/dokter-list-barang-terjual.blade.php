@@ -2,14 +2,16 @@
     <div class="card-body">
         <h5 class="card-title flex justify-between items-center">
             <span>Barang Terlaris</span>
-            <x-datatable.per-page nama_table="barang_terlaris" :perPage="$perPage" />
+            {{-- <x-datatable.per-page nama_table="barang_terlaris" :perPage="$perPage" /> --}}
         </h5>
+
+        <x-datatable nama_table="barang_terlaris" :$perPage></x-datatable>
 
         <x-table nama="barang_terlaris">
             <x-table.thead>
                 <x-table.th label="No" />
-                <x-table.th label="Nama Barang" />
-                <x-table.th label="Terjual" />
+                <x-table.th-sortable :sortBy="$sortBy" :sortDir="$sortDir" label="Nama Barang" name="b.nama" />
+                <x-table.th-sortable :sortBy="$sortBy" :sortDir="$sortDir" label="Total Terjual" name="total_terjual" />
             </x-table.thead>
             <x-table.tbody>
                 @forelse ($barang_terlaris as $index => $item)

@@ -15,7 +15,8 @@ class StokOpnameList extends Component
 {
     use WithPagination, CustomDataTable;
     public $stok_real = [];
-    public $filters   = [
+    public $total_kerugian;
+    public $filters = [
         'id_kategories' => [],
         'id_raks'       => [],
     ];
@@ -26,6 +27,7 @@ class StokOpnameList extends Component
         $this->defaultSortBy  = 'barang.nama';
         $this->defaultSortDir = 'asc';
         $this->sortDir        = 'asc';
+        $this->total_kerugian = Barang::selectRaw('SUM((COALESCE(stok_real, 0) - stok) * harga_beli_default) as total_kerugian')->value('total_kerugian');
     }
 
     public function simpanStokReal($id_barang)
@@ -34,6 +36,7 @@ class StokOpnameList extends Component
         if ($barang && isset($this->stok_real[$id_barang])) {
             $barang->stok_real = FormatHelper::formatStringToNumber($this->stok_real[$id_barang]);
             $barang->save();
+            $this->updateStokReal();
             return $this->dispatch('alert', status: 'success', message: 'Berhasil Menyimpan Stok Real');
         }
         return $this->dispatch('alert', status: 'error', message: 'Gagal Menyimpan Stok Real');
@@ -41,7 +44,7 @@ class StokOpnameList extends Component
 
     public function getDataBarang()
     {
-        return Barang::with(['kategories:id,nama', 'raks:id,nama'])
+        return Barang::with(['kategories:id,nama', 'raks:id,nama', 'opsi_satuan:id,nama'])
             ->select([
                 'barang.id',
                 'barang.kode',
@@ -67,6 +70,11 @@ class StokOpnameList extends Component
             ->paginate($this->perPage);
     }
     #[On('update-stok-real')]
+    public function updateStokReal()
+    {
+        $this->total_kerugian = Barang::selectRaw('SUM((COALESCE(stok_real, 0) - stok) * harga_beli_default) as total_kerugian')->value('total_kerugian');
+    }
+
     public function render()
     {
         $data = $this->getDataBarang();
@@ -76,10 +84,10 @@ class StokOpnameList extends Component
                 $this->stok_real[$item->id] = FormatHelper::formatNumberToString($item->stok_real);
             }
         }
-        $total_kerugian = Barang::selectRaw('SUM((COALESCE(stok_real, 0) - stok) * harga_beli_default) as total_kerugian')->value('total_kerugian');
+
         return view('livewire.stok-opname.stok-opname-list', [
-            'barangs'        => $data,
-            'total_kerugian' => $total_kerugian,
+            'barangs' => $data,
+            // 'total_kerugian' => $total_kerugian,
         ]);
     }
 

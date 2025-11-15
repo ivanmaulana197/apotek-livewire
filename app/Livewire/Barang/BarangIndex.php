@@ -12,12 +12,11 @@ class BarangIndex extends Component
     {
         PembulatanHelper::init();
         $barangs = Barang::query()
-            ->with(['opsi_harga'])
-            ->get();
+            ->select('id', 'id_satuan_utama', 'harga_jual_utama', 'persen_jual_utama')
+            ->with(['opsi_harga', 'opsi_satuan', 'satuan_utama:id,nama'])->get();
 
         foreach ($barangs as $barang) {
             $barang->append('all_satuan');
-            // dd($barang->toArray());
             $temp                      = PembulatanHelper::pembulatanHargaBarang($barang->toArray());
             $barang->harga_jual_utama  = $temp['harga_jual_utama'];
             $barang->persen_jual_utama = $temp['persen_jual_utama'];

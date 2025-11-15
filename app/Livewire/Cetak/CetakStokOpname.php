@@ -12,9 +12,9 @@ class CetakStokOpname extends Component
     public function mount($created_at)
     {
         $this->created_at  = $created_at;
-        $this->stokOpnames = StokOpnameHistory::with('barang:id,nama,id_satuan_utama', 'barang.satuan_utama')->where('created_at', $created_at)->get();
-        // dd($this->stokOpnames->toArray());
-
+        $this->stokOpnames = StokOpnameHistory::query()
+            ->with('barang:id,nama,id_satuan_utama', 'barang.satuan_utama:id,nama')
+            ->where('created_at', $created_at)->get();
     }
 
     #[Layout('components.layouts.cetak-laporan')]

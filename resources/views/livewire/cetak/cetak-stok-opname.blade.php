@@ -30,8 +30,8 @@
         <table class="min-w-full border text-xs">
             <thead class="bg-gray-200">
                 <tr>
-                    <th class="border px-2 py-1">No</th>
-                    <th class="border px-2 py-1">Nama Barang</th>
+                    <th class="border px-2 py-1 w-[7%]">No</th>
+                    <th class="border px-2 py-1 w-[35%]">Nama Barang</th>
                     {{-- <th class="border px-2 py-1">Kategori</th> --}}
                     {{-- <th class="border px-2 py-1">Harga Beli</th>
                     <th class="border px-2 py-1">Harga Jual</th>
@@ -39,7 +39,7 @@
                     <th class="border px-2 py-1">Stok Aplikasi</th>
                     <th class="border px-2 py-1">Stok Toko</th>
                     <th class="border px-2 py-1">Selisih</th>
-                    <th class="border px-2 py-1">Kerugian</th>
+                    <th class="border px-2 py-1 w-[28%]">Kerugian</th>
                 </tr>
             </thead>
             <tbody>

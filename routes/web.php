@@ -23,13 +23,18 @@ Route::middleware(['role:admin|pegawai'])->group(function () {
     Route::get("/cetak/struk-pembayaran/{id_transaksi}", Livewire\Cetak\StrukPembayaran::class)->name('cetak.struk-pembayaran');
 
     Route::get('/transaksi', Livewire\Transaksi\TransaksiIndex::class)->name('transaksi');
-    Route::get('/cetak/transaksi-with-barang', Livewire\Cetak\Transaksi\CetakTransaksiListWithBarang::class)->name('cetak.transaksi-with-barang');
+    // Route::get('/cetak/transaksi-with-barang', Livewire\Cetak\Transaksi\CetakTransaksiListWithBarang::class)->name('cetak.transaksi-with-barang');
+    Route::get('/cetak/transaksi/{id_barang}', Livewire\Cetak\Transaksi\CetakLaporanTransaksi::class)->name('cetak.transaksi-barang');
     Route::get('/transaksi/detail/{id_transaksi}', Livewire\Transaksi\TransaksiDetail::class)->name('transaksi.detail');
 
     Route::middleware(['role:admin'])->group(function () {
         Route::get('/data-barang', action: Livewire\Barang\BarangIndex::class)->name('data.barang');
         Route::get('/data-barang/tambah-barang', action: Livewire\Barang\BarangForm\BarangForm::class)->name('data.barang.tambah');
         Route::get('/data-barang/{barang:id}', action: Livewire\Barang\BarangDetail\BarangDetailIndex::class)->name('data.barang.detail');
+        Route::get('/data-barang/{id}/faktur', action: Livewire\Barang\BarangDetail\BarangDetailFaktur::class)->name('data.barang.detail.faktur');
+        Route::get('/data-barang/{id}/stok', action: Livewire\Barang\BarangDetail\BarangDetailStok::class)->name('data.barang.detail.stok');
+        Route::get('/data-barang/{id}/expired', action: Livewire\Barang\BarangDetail\BarangDetailExpired::class)->name('data.barang.detail.expired');
+        Route::get('/data-barang/{id}/transaksi', action: Livewire\Barang\BarangDetail\BarangDetailTransaksi::class)->name('data.barang.detail.transaksi');
         Route::get('/data-barang/edit-barang/{id}', action: Livewire\Barang\BarangForm\BarangForm::class)->name('data.barang.edit');
 
         Route::get('/faktur-masuk', action: Livewire\Faktur\FakturIndex::class)->name('faktur');
@@ -50,6 +55,7 @@ Route::middleware(['role:admin|pegawai'])->group(function () {
             Route::get('/data-dokter', action: Livewire\DataMaster\Dokter\DokterIndex::class)->name('data-master.dokter');
             Route::get('/data-dokter/{id_dokter}', action: Livewire\DataMaster\Dokter\DokterDetail\DokterDetailIndex::class)->name('data-master.dokter.detail');
             Route::get('/data-member', action: Livewire\DataMaster\Member\MemberIndex::class)->name('data-master.member');
+            Route::get('/data-member/{id_member}', action: Livewire\DataMaster\Member\MemberDetail\MemberDetailIndex::class)->name('data-master.member.detail');
             Route::get('/data-metode-pembayaran', action: Livewire\DataMaster\MetodePembayaran\MetodePembayaranIndex::class)->name('data-master.metode-pembayaran');
         });
 
@@ -61,6 +67,20 @@ Route::middleware(['role:admin|pegawai'])->group(function () {
 
         Route::group(['prefix' => 'cetak'], function () {
             Route::get('/stok-opname/{created_at}', Livewire\Cetak\CetakStokOpname::class)->name('cetak.stok-opname');
+            Route::get('/form-stok-opname', Livewire\Cetak\StokOpname\CetakFormStokOpname::class)->name('cetak.form-stok-opname');
+            Route::get('/laporan-dokter', Livewire\Cetak\Dokter\CetakLaporanDokter::class)->name('cetak.laporan-dokter');
+            Route::get('/laporan-dokter/{id_dokter}', Livewire\Cetak\Dokter\CetakDokterDetail::class)->name('cetak.laporan-dokter.detail');
+            Route::get('/laporan-member/{id_member}', Livewire\Cetak\Member\CetakMemberDetail::class)->name('cetak.laporan-member.detail');
+
+            Route::group(['prefix' => 'laporan-transaksi'], function () {
+                Route::get('/', Livewire\Cetak\Transaksi\CetakLaporanTransaksi::class)->name('cetak.laporan-transaksi');
+            });
+            Route::get('/laporan-faktur', Livewire\Cetak\Faktur\CetakLaporanFaktur::class)->name('cetak.laporan-faktur');
+        });
+
+        Route::group(['prefix' => 'laporan'], function () {
+            Route::get('/transaksi', Livewire\Laporan\LaporanTransaksi::class)->name('laporan.transaksi');
+            Route::get('/faktur', Livewire\Laporan\LaporanFaktur::class)->name('laporan.faktur');
         });
 
         Route::get('/setting-apotek', Livewire\Settings\SettingApotek\SettingApotekIndex::class)->name('setting-apotek');

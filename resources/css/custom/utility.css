@@ -63,8 +63,6 @@
     padding: 20px 30px;
 }
 
-
-
 @utility btn {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     border-color: transparent;
@@ -76,10 +74,9 @@
         box-shadow: 0 4px 6px rgba(255, 255, 255, 0.15);
     }
 
-    @variant hover{
+    @variant hover {
         color: rgb(255 255 255 / var(--tw-text-opacity));
         background-color: var(--color-primary-emphasis);
         --tw-text-opacity: 1;
     }
-    
 }
