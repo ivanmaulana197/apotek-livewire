@@ -79,11 +79,7 @@ trait KasirHelper
         // ----------------------------------------------------
         // 2. Ambil promo (1 query)
         // ----------------------------------------------------
-        $promoBarang = PromoBarang::with(['barang.opsi_satuan', 'barang_bonus.opsi_satuan', 'satuan_bonus'])->find($id_promo_barang);
-        // QUERY 2
-        if (! $promoBarang) {
-            return;
-        }
+        $promoBarang = PromoBarang::with(['barang.opsi_satuan', 'barang_bonus.opsi_satuan', 'satuan_bonus'])->findOrFail($id_promo_barang);
 
         // ----------------------------------------------------
         // 3. Ambil total harga & total jumlah

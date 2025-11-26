@@ -5,7 +5,6 @@ use App\Helpers\FormatHelper;
 use App\Livewire\KasirCadangan\Helpers\BarangPesananHelper;
 use App\Livewire\KasirCadangan\Helpers\KasirHelper;
 use App\Models\Barang\Barang;
-use App\Models\DataMaster\Satuan;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
@@ -85,19 +84,6 @@ class BarangPesananForm extends Component
 
             $this->updateHargaPesananLain($data_barang, $id_barang_pesanan, $this->harga_satuan_utama);
 
-            // $pesanans          = $this->pesanan_kasir->barang_pesanan_kasir->where('id_barang', $this->id_barang)->where('id', '!=', $id_barang_pesanan)->values();
-            // if ($pesanans->count() > 0) {
-            //     foreach ($pesanans as $pesanan) {
-            //         $harga = $this->calculateJumlahDalamSatuanUtama($data_barang, $this->harga_satuan_utama, $pesanan->id_satuan);
-            //         $pesanan->update([
-            //             'harga'              => $harga,
-            //             'harga_satuan_utama' => $this->harga_satuan_utama,
-            //             'sub_total'          => $pesanan->jumlah * $harga,
-            //         ]);
-            //     }
-            // }
-            // $all_sub_total = $pesanans->sum('sub_total') + ($this->jumlah * $this->harga_jual);
-
             $all_sub_total = $this->pesanan_kasir->barang_pesanan_kasir->where('id_barang', $this->id_barang)->sum('sub_total');
             $promo         = $this->applyPromoBarang($this->id_barang, $total_jumlah, $all_sub_total, $this->id_promo_selected);
             if ($promo && ! $promo['success']) {
@@ -114,19 +100,10 @@ class BarangPesananForm extends Component
                 return;
             }
 
-            // 'promo_pesanan_kasir.promo_barang',
-            // 'barang_pesanan_kasir.barang.opsi_satuan',
-            // 'barang_pesanan_kasir.barang.satuan_utama',
-            // 'barang_pesanan_kasir.barang.opsi_harga',
-            // 'barang_pesanan_kasir.barang.opsi_harga.barang:id,id_satuan_utama',
-            // 'barang_pesanan_kasir.barang.opsi_harga.barang.opsi_satuan:id',
-            // 'barang_pesanan_kasir.satuan',
-
-            // dd($this->pesanan_kasir);
             $this->pesanan_kasir->update([
                 'total_harga' => $this->pesanan_kasir->barang_pesanan_kasir->sum('sub_total'),
             ]);
-            // dd($this->pesanan_kasir);
+
             DB::commit();
             $this->dispatch('focus-select-barang');
             $this->syncFrontEnd();
@@ -163,9 +140,7 @@ class BarangPesananForm extends Component
             'harga_satuan_utama' => $this->harga_satuan_utama,
             'sub_total'          => $this->jumlah * $this->harga_jual,
         ]);
-        // $data->load(['barang.opsi_satuan', 'satuan:id,nama', 'barang.opsi_harga', 'barang.satuan_utama']);
-        $data->setRelation('barang', $data_barang);
-        $data->setRelation('satuan', Satuan::select('id', 'nama')->find($this->id_satuan));
+        $data->load(['barang.opsi_satuan', 'satuan:id,nama', 'barang.opsi_harga.satuan', 'barang.satuan_utama']);
         $this->pesanan_kasir->setRelation('barang_pesanan_kasir',
             $this->pesanan_kasir->barang_pesanan_kasir->push($data));
         // ->sortBy([

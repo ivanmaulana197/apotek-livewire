@@ -30,7 +30,7 @@
             <x-table.tbody>
                 @forelse ($pesanan_kasirs as $index => $pesanan_kasir)
                     <x-table.tr wire:key="table-pesanan_kasir-{{ $pesanan_kasir->id }}">
-                        <x-table.td class="text-center">{{ $index + 1 }}</x-table.td>
+                        <x-table.td class="text-center">{{ $pesanan_kasirs->firstItem() + $index }}</x-table.td>
                         <x-table.td>{{ $pesanan_kasir->no_pesanan_kasir }}</x-table.td>
                         <x-table.td>{{ $pesanan_kasir->nama_user }}</x-table.td>
                         <x-table.td>{{ $pesanan_kasir->mode_shift }}</x-table.td>

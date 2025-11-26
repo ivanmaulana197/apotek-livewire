@@ -4,7 +4,6 @@ namespace App\Livewire\KasirCadangan;
 use App\Helpers\FormatHelper;
 use App\Livewire\KasirCadangan\Helpers\BarangPesananHelper;
 use App\Livewire\KasirCadangan\Helpers\KasirHelper;
-use App\Models\Kasir\PesananKasir;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\On;
@@ -23,7 +22,6 @@ class BarangPesananList extends Component
 
     public function mount()
     {
-
         $this->barang_pesanan_kasir = $this->pesanan_kasir->barang_pesanan_kasir->toArray();
         $this->promo_pesanan_kasir  = $this->pesanan_kasir->promo_pesanan_kasir->toArray();
         $this->id_member            = $this->pesanan_kasir->id_member;
@@ -88,9 +86,9 @@ class BarangPesananList extends Component
                 return;
             }
             $id_promo_transaksi_selected = $this->pesanan_kasir->promo_pesanan_kasir->whereNotNull('id_promo_transaksi')->first()?->id_promo_transaksi ?? null;
-            $promo                       = $this->sinkronPromoTransaksi($id_promo_transaksi_selected);
-            if ($promo && ! $promo['success']) {
-                $this->dispatch('alert', message: $promo['error'], status: 'error');
+            $promo_transaksi             = $this->sinkronPromoTransaksi($id_promo_transaksi_selected);
+            if ($promo_transaksi && ! $promo_transaksi['success']) {
+                $this->dispatch('alert', message: $promo_transaksi['error'], status: 'error');
                 DB::rollback();
                 return;
             }
@@ -116,12 +114,8 @@ class BarangPesananList extends Component
 
     public function updatePromoBarang($id_promo_barang, $id_barang, $total_jumlah, $total_harga_barang)
     {
-
-        $this->pesanan_kasir = PesananKasir::query()
-            ->with([
-                'promo_pesanan_kasir.promo_barang',
-            ])
-            ->find($this->pesanan_kasir['id']);
+        // dd($this->pesanan_kasir);
+        $this->pesanan_kasir->load('promo_pesanan_kasir.promo_barang');
         try {
             DB::BeginTransaction();
             $promo = $this->applyPromoBarang($id_barang, $total_jumlah, $total_harga_barang, $id_promo_barang);
@@ -135,7 +129,6 @@ class BarangPesananList extends Component
 
             $this->pesanan_kasir->load([
                 'promo_pesanan_kasir.promo_barang',
-                // 'promo_pesanan_kasir.promo_transaksi',
                 'barang_pesanan_kasir.satuan',
                 'barang_pesanan_kasir.barang.opsi_satuan',
                 'barang_pesanan_kasir.barang.satuan_utama',
@@ -144,9 +137,9 @@ class BarangPesananList extends Component
                 // 'barang_pesanan_kasir.barang.opsi_harga.barang.opsi_satuan:id',
             ]);
             $id_promo_transaksi_selected = $this->pesanan_kasir->promo_pesanan_kasir->whereNotNull('id_promo_transaksi')->first()?->id_promo_transaksi ?? null;
-            $promo                       = $this->sinkronPromoTransaksi($id_promo_transaksi_selected);
-            if ($promo && ! $promo['success']) {
-                $this->dispatch('alert', message: $promo['error'], status: 'error');
+            $promo_transaksi             = $this->sinkronPromoTransaksi($id_promo_transaksi_selected);
+            if ($promo_transaksi && ! $promo_transaksi['success']) {
+                $this->dispatch('alert', message: $promo_transaksi['error'], status: 'error');
                 DB::rollback();
                 return;
             }
@@ -171,6 +164,13 @@ class BarangPesananList extends Component
         DB::BeginTransaction();
         $this->pesanan_kasir->barang_pesanan_kasir()->delete();
         $this->pesanan_kasir->promo_pesanan_kasir()->whereNotNull('id_promo_barang')->delete();
+        $id_promo_transaksi_selected = $this->pesanan_kasir->promo_pesanan_kasir->whereNotNull('id_promo_transaksi')->first()?->id_promo_transaksi ?? null;
+        $promo_transaksi             = $this->sinkronPromoTransaksi($id_promo_transaksi_selected);
+        if ($promo_transaksi && ! $promo_transaksi['success']) {
+            $this->dispatch('alert', message: $promo_transaksi['error'], status: 'error');
+            DB::rollback();
+            return;
+        }
         // $this->updateTotalHarga();
         $this->pesanan_kasir->update([
             'total_harga' => $this->pesanan_kasir->barang_pesanan_kasir->sum('sub_total'),
@@ -193,7 +193,6 @@ class BarangPesananList extends Component
                 ->where('id_barang', $barang_pesanan->id_barang)
                 ->where('id', '!=', $barang_pesanan->id) // selain yang dihapus
                 ->isNotEmpty();
-            // dd($masih_ada);
             if (! $masih_ada) {
                 $this->pesanan_kasir->promo_pesanan_kasir()
                     ->whereHas('promo_barang', function ($q) use ($barang_pesanan) {
@@ -233,6 +232,13 @@ class BarangPesananList extends Component
             // 'barang_pesanan_kasir.barang.opsi_harga.barang:id,id_satuan_utama',
             // 'barang_pesanan_kasir.barang.opsi_harga.barang.opsi_satuan:id',
         ]);
+        $id_promo_transaksi_selected = $this->pesanan_kasir->promo_pesanan_kasir->whereNotNull('id_promo_transaksi')->first()?->id_promo_transaksi ?? null;
+        $promo_transaksi             = $this->sinkronPromoTransaksi($id_promo_transaksi_selected);
+        if ($promo_transaksi && ! $promo_transaksi['success']) {
+            $this->dispatch('alert', message: $promo_transaksi['error'], status: 'error');
+            DB::rollback();
+            return;
+        }
         $this->ceklistDeleteBarang = [];
         $this->pesanan_kasir->update([
             'total_harga' => $this->pesanan_kasir->barang_pesanan_kasir()->sum('sub_total'),
@@ -297,6 +303,14 @@ class BarangPesananList extends Component
                 // 'barang_pesanan_kasir.barang.opsi_harga.barang:id,id_satuan_utama',
                 // 'barang_pesanan_kasir.barang.opsi_harga.barang.opsi_satuan:id',
             ]);
+
+            $id_promo_transaksi_selected = $this->pesanan_kasir->promo_pesanan_kasir->whereNotNull('id_promo_transaksi')->first()?->id_promo_transaksi ?? null;
+            $promo_transaksi             = $this->sinkronPromoTransaksi($id_promo_transaksi_selected);
+            if ($promo_transaksi && ! $promo_transaksi['success']) {
+                $this->dispatch('alert', message: $promo_transaksi['error'], status: 'error');
+                DB::rollback();
+                return;
+            }
 
             $this->pesanan_kasir->update([
                 'total_harga' => $this->pesanan_kasir->barang_pesanan_kasir->sum('sub_total'),
