@@ -28,20 +28,20 @@ class AppServiceProvider extends ServiceProvider
             [$angka, $optional] = array_pad(explode(',', $expression), 2, null);
             if ($angka == null) {
                 return "<?php echo $optional; ?>";
-            }
-            return "<?php echo number_format($angka, 0, ',', '.'); ?>";
-        });
+}
+return "<?php echo number_format($angka, 0, ',', '.'); ?>";
+});
 
-        Blade::directive('decimal', function ($expression) {
+Blade::directive('decimal', function ($expression) {
 
-            [$angka, $optional] = array_pad(explode(',', $expression), 2, null);
-            if ($angka == null) {
-                return "<?php echo $optional; ?>";
-            }
-            return "<?php echo number_format($angka, 2, ',', '.'); ?>";
-        });
+[$angka, $optional] = array_pad(explode(',', $expression), 2, null);
+if ($angka == null) {
+return "<?php echo $optional; ?>";
+}
+return "<?php echo number_format($angka, 2, ',', '.'); ?>";
+});
 
-        Barang::observe(BarangObserver::class);
+Barang::observe(BarangObserver::class);
 
-    }
+}
 }

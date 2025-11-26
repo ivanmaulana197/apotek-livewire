@@ -37,6 +37,22 @@
                     });
                 });
 
+                Livewire.on('alert-info', ({
+                    message,
+                    status,
+                    subtitle
+                }) => {
+                    Swal.fire({
+                        title: message ?? "",
+                        text: subtitle ?? null,
+                        icon: status ?? "info",
+                        customClass: {
+                            title: "!leading-[1.4]",
+
+                        },
+                    });
+                });
+
                 Livewire.on('alert-confirm', ({
                     method,
                     id,
@@ -75,12 +91,12 @@
                             showConfirmButton: false,
                             timer: 1500,
                         });
-                    },{once:true})
+                    }, {
+                        once: true
+                    })
                 }
             }
         }))
 
     })
 </script>
-
-

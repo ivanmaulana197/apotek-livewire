@@ -51,7 +51,7 @@ class PromoBarang extends Model
             return $this->syarat_qty;
         }
         //cara 1:
-        $pivot = $this->barang->opsi_satuan->firstWhere('id', $this->id_satuan);
+        $pivot = $barang->opsi_satuan->firstWhere('id', $this->id_satuan);
         // dd($pivot);
         if ($pivot) {
             return $this->syarat_qty * (

@@ -2,7 +2,7 @@
 
 <{{ $type == 'href' ? 'a' : 'button' }} {{ $attributes->merge([
     'type' => $type,
-    'class' => " p-1 m-[2px] inline-flex justify-center items-center text-lg font-medium rounded-xs border border-transparent bg-$color hover:bg-{$color}emphasis text-white hs-tooltip",
+    'class' => " p-1 m-[2px] inline-flex justify-center items-center text-lg font-medium rounded-xs border border-transparent bg-$color hover:bg-{$color}emphasis text-white hs-tooltip ",
 ]) }}
                                         target="{{ $newTab ? '_blank' : '' }}">
 

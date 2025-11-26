@@ -50,7 +50,6 @@ window.initTomSelect = function ({
     window.addEventListener(
         "update_" + name,
         ({ detail: { data, selected } }) => {
-            console.log(selected);
             if (data) {
                 // let selectedValues = tom.getValue(); // simpan value terpilih
                 el.tomselect.clear(true);

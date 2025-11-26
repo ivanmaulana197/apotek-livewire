@@ -56,8 +56,7 @@ class Barang extends Model
     public function opsi_satuan()
     {
         return $this->belongsToMany(Satuan::class, 'satuan_barang', 'id_barang', 'id_satuan')
-            ->withPivot('rasio_satuan_utama', 'rasio_satuan_opsi')
-            ->select(['id', 'nama']);
+            ->withPivot('rasio_satuan_utama', 'rasio_satuan_opsi');
     }
     public function opsi_harga()
     {
@@ -153,6 +152,15 @@ class Barang extends Model
     {
         $id_satuan = $id_satuan ?? $this->id_satuan_utama;
         return $this->all_satuan->where('id_satuan', $id_satuan)->first()['rasio'] * $jumlah;
+    }
+
+    public function hitungJumlahDalamSatuanUtama($jumlah, $id_satuan = null)
+    {
+        if ($id_satuan !== $this->id_satuan_utama) {
+            return $this->satuan_opsi->where('id_satuan', $id_satuan)->first()['rasio'] * $jumlah;
+        } else {
+            return $jumlah;
+        }
     }
 
     // 🔹 Ambil harga beli terakhir (dengan prioritas batch aktif)

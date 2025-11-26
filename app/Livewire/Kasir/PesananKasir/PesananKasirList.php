@@ -5,9 +5,12 @@ use App\Models\Kasir\PesananKasir;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use Livewire\WithoutUrlPagination;
+use Livewire\WithPagination;
 
 class PesananKasirList extends Component
 {
+    use WithPagination, WithoutUrlPagination;
     public $pesanan_kasir_selected;
 
     #[On('pesanan_kasir_selected')]
@@ -36,17 +39,25 @@ class PesananKasirList extends Component
         }
     }
 
-    #[On('update_pesanan_kasir')]
+    #[On('load-data')]
+    public function loadData()
+    {}
+
+    // #[On('update_pesanan_kasir')]
     public function render()
     {
         if (Auth::check() && Auth::user()->hasRole('admin')) {
-            $data = PesananKasir::with(['user:id,name'])
-                ->select(['id', 'no_pesanan_kasir', 'mode_shift', 'mode_kasir', 'id_user', 'total_harga', 'updated_at'])
-                ->orderByDesc('updated_at')->paginate(10);
+            $data = PesananKasir::query()
+            // ->with(['user:id,name'])
+                ->join('users', 'users.id', '=', 'pesanan_kasir.id_user')
+                ->select(['pesanan_kasir.id', 'no_pesanan_kasir', 'mode_shift', 'mode_kasir', 'id_user', 'total_harga', 'pesanan_kasir.updated_at', 'users.name as nama_user'])
+                ->orderByDesc('pesanan_kasir.updated_at')->paginate(5);
         } else {
-            $data = PesananKasir::with(['user:id,name'])
-                ->select(['id', 'no_pesanan_kasir', 'mode_shift', 'mode_kasir', 'id_user', 'total_harga', 'updated_at'])
-                ->where('id_user', Auth::user()->id)->orderByDesc('updated_at')->paginate(10);
+            $data = PesananKasir::query()
+            // ->with(['user:id,name'])
+                ->join('users', 'users.id', '=', 'pesanan_kasir.id_user')
+                ->select(['pesanan_kasir.id', 'no_pesanan_kasir', 'mode_shift', 'mode_kasir', 'id_user', 'total_harga', 'pesanan_kasir.updated_at', 'users.name as nama_user'])
+                ->where('id_user', Auth::user()->id)->orderByDesc('pesanan_kasir.updated_at')->paginate(5);
         }
         return view('livewire.kasir.pesanan-kasir.pesanan-kasir-list', [
             'pesanan_kasirs' => $data,
