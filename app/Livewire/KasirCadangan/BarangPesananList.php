@@ -40,12 +40,10 @@ class BarangPesananList extends Component
 
             $this->pesanan_kasir->refresh()->loadMissing([
                 'promo_pesanan_kasir.promo_barang',
+                'barang_pesanan_kasir.satuan',
                 'barang_pesanan_kasir.barang.opsi_satuan',
                 'barang_pesanan_kasir.barang.satuan_utama',
                 'barang_pesanan_kasir.barang.opsi_harga.satuan:id,nama',
-                // 'barang_pesanan_kasir.barang.opsi_harga.barang:id,id_satuan_utama',
-                // 'barang_pesanan_kasir.barang.opsi_harga.barang.opsi_satuan:id',
-                'barang_pesanan_kasir.satuan',
             ]);
             $barang_pesanan = $this->pesanan_kasir->barang_pesanan_kasir->where('id', $id_barang_pesanan)->first();
 
@@ -133,8 +131,7 @@ class BarangPesananList extends Component
                 'barang_pesanan_kasir.barang.opsi_satuan',
                 'barang_pesanan_kasir.barang.satuan_utama',
                 'barang_pesanan_kasir.barang.opsi_harga.satuan:id,nama',
-                // 'barang_pesanan_kasir.barang.opsi_harga.barang:id,id_satuan_utama',
-                // 'barang_pesanan_kasir.barang.opsi_harga.barang.opsi_satuan:id',
+
             ]);
             $id_promo_transaksi_selected = $this->pesanan_kasir->promo_pesanan_kasir->whereNotNull('id_promo_transaksi')->first()?->id_promo_transaksi ?? null;
             $promo_transaksi             = $this->sinkronPromoTransaksi($id_promo_transaksi_selected);
@@ -229,8 +226,7 @@ class BarangPesananList extends Component
             'barang_pesanan_kasir.barang.opsi_satuan',
             'barang_pesanan_kasir.barang.satuan_utama',
             'barang_pesanan_kasir.barang.opsi_harga.satuan',
-            // 'barang_pesanan_kasir.barang.opsi_harga.barang:id,id_satuan_utama',
-            // 'barang_pesanan_kasir.barang.opsi_harga.barang.opsi_satuan:id',
+
         ]);
         $id_promo_transaksi_selected = $this->pesanan_kasir->promo_pesanan_kasir->whereNotNull('id_promo_transaksi')->first()?->id_promo_transaksi ?? null;
         $promo_transaksi             = $this->sinkronPromoTransaksi($id_promo_transaksi_selected);
@@ -300,8 +296,6 @@ class BarangPesananList extends Component
                 'barang_pesanan_kasir.barang.opsi_satuan',
                 'barang_pesanan_kasir.barang.satuan_utama',
                 'barang_pesanan_kasir.barang.opsi_harga.satuan',
-                // 'barang_pesanan_kasir.barang.opsi_harga.barang:id,id_satuan_utama',
-                // 'barang_pesanan_kasir.barang.opsi_harga.barang.opsi_satuan:id',
             ]);
 
             $id_promo_transaksi_selected = $this->pesanan_kasir->promo_pesanan_kasir->whereNotNull('id_promo_transaksi')->first()?->id_promo_transaksi ?? null;

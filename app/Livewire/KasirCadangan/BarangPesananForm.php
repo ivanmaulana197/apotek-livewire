@@ -50,8 +50,6 @@ class BarangPesananForm extends Component
                 'barang_pesanan_kasir.barang.opsi_satuan',
                 'barang_pesanan_kasir.barang.satuan_utama',
                 'barang_pesanan_kasir.barang.opsi_harga.satuan:id,nama',
-                // 'barang_pesanan_kasir.barang.opsi_harga.barang:id,id_satuan_utama',
-                // 'barang_pesanan_kasir.barang.opsi_harga.barang.opsi_satuan:id',
                 'barang_pesanan_kasir.satuan',
             ]);
             $existingBarang = $this->pesanan_kasir->barang_pesanan_kasir->firstWhere('id_barang', $this->id_barang);
@@ -143,10 +141,7 @@ class BarangPesananForm extends Component
         $data->load(['barang.opsi_satuan', 'satuan:id,nama', 'barang.opsi_harga.satuan', 'barang.satuan_utama']);
         $this->pesanan_kasir->setRelation('barang_pesanan_kasir',
             $this->pesanan_kasir->barang_pesanan_kasir->push($data));
-        // ->sortBy([
-        //         ['id_barang', 'asc'],
-        //         ['updated_at', 'asc'],
-        //     ])->values()
+
         return $data->id;
     }
 

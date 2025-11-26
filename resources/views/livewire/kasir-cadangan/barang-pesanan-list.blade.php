@@ -67,7 +67,7 @@
                     ...this.barang_pesanan.filter((item) => item.id === id_barang_pesanan)[0]
                 };
                 this.$nextTick(() => {
-                    this.refs['jumlah_barang_' + id_barang_pesanan]?.focus();
+                    this.refs[`jumlah_barang_${id_barang_pesanan}`]?.focus();
                 });
             },
             cancelUpdatePesananBarang(index) {
@@ -318,7 +318,7 @@
                             <x-table.td class="min-w-44">
                                 <div>
                                     <form x-show="isEditBarang[`${item.id}`]" @submit.prevent="updatePesananBarang(item.id)">
-                                        <x-form.input x-init="refs[`jumlah_barang_${item.id}`] = $el" ::value="item.jumlah" x-model="jumlah_barang_input[item.id]"
+                                        <x-form.input x-effect="refs[`jumlah_barang_${item.id}`] = $el" ::value="item.jumlah" x-model="jumlah_barang_input[item.id]"
                                                       @keyup="updateJumlah($el, item.id)" errorName="jumlah_barang_input.${item.id}"
                                                       placeholder="Masukan Jumlah" inputGroup="right">
                                             <x-slot:labelInputGroup>
@@ -331,12 +331,12 @@
                             </x-table.td>
                             <x-table.td class="text-right min-w-24" x-text="`Rp. ${formatNumberToString(item.sub_total)}`"></x-table.td>
                             <x-table.td class="text-center flex items-center justify-center gap-x-1 min-w-24">
-                                <template x-if="!isEditBarang[item.id]">
-                                    @include('livewire.kasir-cadangan.components.badge-tooltip-info-barang')
-                                </template>
-                                <x-table.action-button tooltip="List Diskon Barang" color="info" x-show="!isEditBarang[item.id]"
+
+                                @include('livewire.kasir-cadangan.components.badge-tooltip-info-barang')
+
+                                <x-table.action-button tooltip="List Diskon Barang" color="primary" x-show="!isEditBarang[item.id]"
                                                        @click="showListDiskonBarang(item.id)">
-                                    <span class="text-xs">Diskon</span>
+                                    <span class="text-xs">Promo</span>
                                 </x-table.action-button>
                                 <x-table.action-button tooltip="Simpan" color="success" x-show="isEditBarang[item.id]" @click="updatePesananBarang(item.id)">
                                     <span class="iconify tabler--check text-lg"></span>

@@ -35,22 +35,17 @@ class KasirPembayaran extends Component
         $this->sub_total           = ceil($this->pesanan_kasir->total_harga);
         $this->diskon              = ceil($this->pesanan_kasir->promo_pesanan_kasir->sum('nominal_promo'));
         $this->total_bayar         = ceil(PembulatanHelper::pembulatanTotalHarga($this->sub_total - $this->diskon, $this->mode_kasir == 'RESEP' ? 'RESEP' : 'UMUM', false));
-        // dd($this->total_bayar, $this->sub_total, $this->diskon);
     }
 
     public function updatePromoTransaksi($id_promo_transaksi_selected)
     {
-        // dd($id_promo_transaksi_selected);
         try {
             $this->pesanan_kasir->refresh()->loadMissing([
                 'promo_pesanan_kasir.promo_barang',
-                // 'promo_pesanan_kasir.promo_transaksi',
+                'barang_pesanan_kasir.satuan',
                 'barang_pesanan_kasir.barang.opsi_satuan',
                 'barang_pesanan_kasir.barang.satuan_utama',
                 'barang_pesanan_kasir.barang.opsi_harga.satuan:id,nama',
-                // 'barang_pesanan_kasir.barang.opsi_harga.barang:id,id_satuan_utama',
-                // 'barang_pesanan_kasir.barang.opsi_harga.barang.opsi_satuan:id',
-                'barang_pesanan_kasir.satuan',
             ]);
             DB::beginTransaction();
 
@@ -60,7 +55,6 @@ class KasirPembayaran extends Component
                 DB::rollback();
                 return;
             }
-            // dd($this->pesanan_kasir);
             DB::commit();
 
             $this->syncFrontEnd();

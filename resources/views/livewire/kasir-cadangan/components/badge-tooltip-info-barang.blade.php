@@ -1,4 +1,4 @@
-<x-table.action-button color="info" class="[--trigger:focus]">
+<x-table.action-button color="info" class="[--trigger:focus]" x-show="!isEditBarang[item.id]">
     <span class="iconify tabler--info-square-rounded-filled"></span>
     <x-slot name="tooltip" class="max-w-xs w-full text-start">
         <div class="p-2 gap-1 text-sm ">
