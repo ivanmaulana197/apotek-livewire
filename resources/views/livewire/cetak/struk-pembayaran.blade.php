@@ -24,7 +24,15 @@
          <div class="mb-2">
              <h1 class="text-xl font-bold">{{ $setting->nama }}</h1>
              <p class="text-xs">{{ $setting->alamat }}</p>
-             <p class="text-important flex justify-between">Telp: <span class="font-bold">{{ $setting->no_telp }}</span></p>
+             {{-- <p class="text-important flex justify-between">Telp: <span class="font-bold">{{ $setting->no_telp }}</span></p> --}}
+
+             @if ($transaksi->jenis_transaksi == 'MEMBERSHIP' || $transaksi->jenis_transaksi == 'MEMBERSHIP RESEP')
+                 <p class="text-important flex justify-between">Member: <span class="font-bold">{{ $transaksi->nama_member }}</span></p>
+             @endif
+             @if ($transaksi->jenis_transaksi == 'RESEP' || $transaksi->jenis_transaksi == 'MEMBERSHIP RESEP')
+                 <p class="text-important flex justify-between">Pasien: <span class="font-bold">{{ $transaksi->nama_pasien }}</span></p>
+                 <p class="text-important flex justify-between">Dokter: <span class="font-bold">{{ $transaksi->nama_dokter }}</span></p>
+             @endif
              <p class="text-important flex justify-between">Tanggal: <span class="font-bold">{{ $transaksi->created_at }}</span></p>
              <p class="text-important flex justify-between">No. Struk: <span class="font-bold">{{ $transaksi->no_transaksi }}</span></p>
          </div>

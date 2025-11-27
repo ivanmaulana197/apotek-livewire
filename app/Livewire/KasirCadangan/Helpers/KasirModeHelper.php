@@ -23,6 +23,7 @@ trait KasirModeHelper
                 // 'barang_pesanan_kasir.barang.opsi_harga.barang:id,id_satuan_utama',
                 // 'barang_pesanan_kasir.barang.opsi_harga.barang.opsi_satuan:id',
             ]);
+            $status = 'success';
             foreach ($this->pesanan_kasir->barang_pesanan_kasir as $index => $barang_pesanan_kasir) {
                 // $total_jumlah                                                             = $this->pesanan_kasir->barang_pesanan_kasir->where('id_barang', $barang_pesanan_kasir->id_barang)->sum('jumlah_dalam_satuan_utama');
                 // [$barang_pesanan_kasir->harga, $barang_pesanan_kasir->harga_satuan_utama] = $barang_pesanan_kasir->barang->hargaJual($total_jumlah, $barang_pesanan_kasir->id_satuan);
@@ -40,12 +41,15 @@ trait KasirModeHelper
                 }
                 $sub_total         = $this->pesanan_kasir->barang_pesanan_kasir->where('id_barang', $barang_pesanan_kasir->id_barang)->sum('sub_total');
                 $id_promo_selected = $this->cekPromoSelected($barang_pesanan_kasir->id_barang);
-                $this->applyPromoBarang($barang_pesanan_kasir->id_barang, $total_jumlah, $sub_total, $id_promo_selected?->promo_barang?->id);
+                $promo             = $this->applyPromoBarang($barang_pesanan_kasir->id_barang, $total_jumlah, $sub_total, $id_promo_selected?->promo_barang?->id);
+                if ($promo && $promo['status'] == 'warning') {
+                    $status = 'warning';
+                }
             }
             $id_promo_transaksi_selected = $this->pesanan_kasir->promo_pesanan_kasir->whereNotNull('id_promo_transaksi')->first()?->id_promo_transaksi ?? null;
-            $promo                       = $this->sinkronPromoTransaksi($id_promo_transaksi_selected);
-            if ($promo && ! $promo['success']) {
-                $this->dispatch('alert', message: $promo['error'], status: 'error');
+            $promo_transaksi             = $this->sinkronPromoTransaksi($id_promo_transaksi_selected);
+            if ($promo_transaksi && $promo_transaksi['status'] == 'error') {
+                $this->dispatch('alert', message: $promo_transaksi['message'], status: 'warning');
                 DB::rollback();
                 return;
             }
@@ -57,20 +61,11 @@ trait KasirModeHelper
 
             $this->dispatch('updatedModeKasir', value: $value);
             DB::commit();
-            // $this->pesanan_kasir->loadMissing([
-            //     'barang_pesanan_kasir' => function ($query) {
-            //         $query->with([
-            //             'barang.opsi_satuan', 'satuan:id,nama', 'barang.opsi_harga.satuan', 'barang.satuan_utama',
-            //         ]);
-            //     },
-            //     'promo_pesanan_kasir.promo_barang',
-            // ]);
-            // dd($this->pesanan_kasir);
-            $this->dispatch('barang_pesanan_updated',
-                list_total_jumlah_dalam_satuan_utama: $this->list_total_jumlah_dalam_satuan_utama,
-                pesanan_kasir: $this->pesanan_kasir
-            );
-            $this->dispatch('alert', message: 'Berhasil Mengubah Mode Kasir', status: 'success');
+
+            $this->syncFrontEnd();
+            if ($status == 'success' && (empty($promo_transaksi) || ($promo_transaksi['status'] ?? null) === 'success')) {
+                $this->dispatch('alert', message: 'Berhasil Mengubah Mode Kasir', status: 'success');
+            }
         } catch (\Exception $e) {
             DB::rollBack();
             $this->dispatch('alert', message: $e->getMessage(), status: 'error');

@@ -17,10 +17,10 @@ Route::middleware(['guest'])->group(function () {
 Route::middleware(['role:admin|pegawai'])->group(function () {
     // Route::get('/dashboard', DashboardIndex::class)->name('dashboard');
     Route::get('/', Livewire\Home\HomeIndex::class)->name('home');
-    Route::get('/kasir', action: Livewire\Kasir\KasirIndex::class)->name('kasir');
-    Route::get('/kasir/{id_pesanan_kasir}', action: Livewire\Kasir\KasirIndex::class)->name('kasir.show');
-    Route::get('/kasir-cadangan', action: Livewire\KasirCadangan\KasirIndex::class)->name('kasir-cadangan');
-    Route::get('/kasir-cadangan/{id_pesanan_kasir}', action: Livewire\KasirCadangan\KasirIndex::class)->name('kasir-cadangan.show');
+    // Route::get('/kasir', action: Livewire\Kasir\KasirIndex::class)->name('kasir');
+    // Route::get('/kasir/{id_pesanan_kasir}', action: Livewire\Kasir\KasirIndex::class)->name('kasir.show');
+    Route::get('/kasir', action: Livewire\KasirCadangan\KasirIndex::class)->name('kasir-cadangan');
+    Route::get('/kasir/{id_pesanan_kasir}', action: Livewire\KasirCadangan\KasirIndex::class)->name('kasir-cadangan.show');
     Route::get('/kasir-pemasukan', action: Livewire\Pemasukan\PemasukanIndex::class)->name('pemasukan');
     Route::get('/kasir-pemasukan/{id_pesanan_kasir}', action: Livewire\Pemasukan\PemasukanIndex::class)->name('pemasukan.show');
 

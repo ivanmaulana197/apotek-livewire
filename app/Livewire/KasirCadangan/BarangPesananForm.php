@@ -44,7 +44,7 @@ class BarangPesananForm extends Component
                 ],
             );
             DB::beginTransaction();
-
+            $status = 'success';
             $this->pesanan_kasir->refresh()->loadMissing([
                 'promo_pesanan_kasir.promo_barang',
                 'barang_pesanan_kasir.barang.opsi_satuan',
@@ -84,19 +84,13 @@ class BarangPesananForm extends Component
 
             $all_sub_total = $this->pesanan_kasir->barang_pesanan_kasir->where('id_barang', $this->id_barang)->sum('sub_total');
             $promo         = $this->applyPromoBarang($this->id_barang, $total_jumlah, $all_sub_total, $this->id_promo_selected);
-            if ($promo && ! $promo['success']) {
-                $this->dispatch('alert', message: $promo['error'], status: 'error');
+            if ($promo && $promo['status'] == 'warning') {
                 $this->dispatch('focus-input-jumlah');
                 DB::rollback();
                 return;
             }
             $id_promo_transaksi_selected = $this->pesanan_kasir->promo_pesanan_kasir->whereNotNull('id_promo_transaksi')->first()?->id_promo_transaksi ?? null;
-            $promo                       = $this->sinkronPromoTransaksi($id_promo_transaksi_selected);
-            if ($promo && ! $promo['success']) {
-                $this->dispatch('alert', message: $promo['error'], status: 'error');
-                DB::rollback();
-                return;
-            }
+            $promo_transaksi             = $this->sinkronPromoTransaksi($id_promo_transaksi_selected);
 
             $this->pesanan_kasir->update([
                 'total_harga' => $this->pesanan_kasir->barang_pesanan_kasir->sum('sub_total'),
@@ -105,7 +99,9 @@ class BarangPesananForm extends Component
             DB::commit();
             $this->dispatch('focus-select-barang');
             $this->syncFrontEnd();
-            $this->dispatch('alert', message: 'Barang berhasil ditambahkan.', status: 'success');
+            if ((empty($promo) || ($promo['status'] ?? null) === 'success') && (empty($promo_transaksi) || ($promo_transaksi['status'] ?? null) === 'success')) {
+                $this->dispatch('alert', message: 'Barang berhasil ditambahkan.', status: 'success');
+            }
         } catch (\Exception $e) {
             DB::rollback();
             $this->jumlah = FormatHelper::formatNumberToString($this->jumlah);

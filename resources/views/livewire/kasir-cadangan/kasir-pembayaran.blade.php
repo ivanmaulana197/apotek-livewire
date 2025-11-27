@@ -6,7 +6,6 @@
     <script>
         Alpine.data('kasirPembayaran', () => ({
             'setting': $wire.entangle('setting'),
-
             'mode_kasir': $wire.entangle('mode_kasir'),
             'sub_total': $wire.entangle('sub_total'),
             'diskon': $wire.entangle('diskon'),
@@ -39,6 +38,14 @@
                 }) => {
                     $wire.updatePromoTransaksi(id_promo_transaksi);
                 });
+
+                Livewire.on('struk-pembayaran', ({
+                    id_transaksi
+                }) => {
+                    const url = "{{ route('cetak.struk-pembayaran', ['id_transaksi' => '__ID__']) }}"
+                        .replace('__ID__', id_transaksi);
+                    window.open(url, '_blank', 'width=700,height=600');
+                })
             },
 
             showPromoTransaksiModal() {
@@ -51,8 +58,6 @@
                     (sum, item) => sum + item.nominal_promo, 0
                 );
                 total_belanja = total_belanja - total_diskon;
-                console.log(promo_selected?.id_promo_transaksi)
-                console.log(total_belanja)
                 $dispatch('list-promo-transaksi', {
                     id_promo_transaksi_selected: promo_selected?.id_promo_transaksi ?? null,
                     id_member: this.id_member,
@@ -72,17 +77,44 @@
             },
             hitungKembalian(value) {
                 this.bayar = formatToStringNumber(value);
-
                 this.kembalian = Math.ceil(formatStringToNumber(this.bayar) - this.total_bayar);
                 this.kembalian = formatNumberToString(this.kembalian);
 
+            },
+            saveTransaksi(event) {
+                event.preventDefault();
+                if (this.total_bayar <= 0) {
+                    Livewire.dispatch('alert', {
+                        message: 'Silahkan Input Barang Terlebih Dahulu',
+                        status: 'error'
+                    });
+                    Livewire.dispatch('focus-select-barang');
+                    return;
+                }
+                if (!this.bayar || !this.kembalian) {
+                    Livewire.dispatch('alert', {
+                        message: 'Masukan Nominal Pembayaran',
+                        status: 'error'
+                    });
+                    $('#bayar').focus();
+                    return;
+                }
+                if (formatStringToNumber(this.kembalian) >= 0) {
+                    $wire.$call('handlePembayaran');
+                } else {
+                    Livewire.dispatch('alert', {
+                        message: 'Kembalian tidak mencukupi',
+                        status: 'error'
+                    });
+                    $('#bayar').focus();
+                }
             },
         }))
     </script>
 @endscript
 
 <div class="card" x-data="kasirPembayaran">
-    <form @submit="submit">
+    <form @submit="saveTransaksi">
         <div class="card-body p-3 ">
             <div class="card-title bg-warning py-2 px-1 rounded-lg justify-center ">
                 <span class="text-4xl text-white font-mono" x-text="'Rp. '+formatNumberToString(total_bayar)">

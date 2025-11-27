@@ -50,8 +50,13 @@ class StrukPembayaran extends Component
                 )
                     ->join('history_barang', 'history_barang.id', '=', 'detail_transaksi_barang.id_history_barang')
                     ->join('barang', 'barang.id', '=', 'history_barang.id_barang')
-                    ->join('satuan', 'satuan.id', '=', 'history_barang.id_satuan');
+                    ->join('satuan', 'satuan.id', '=', 'history_barang.id_satuan')
+                    ->orderBy('history_barang.id_barang', 'asc');
             }, 'transaksi_list_promo'])
+            ->leftjoin('member', 'member.id', '=', 'transaksi.id_member')
+            ->leftjoin('pasien', 'pasien.id', '=', 'transaksi.id_pasien')
+            ->leftjoin('dokter', 'dokter.id', '=', 'transaksi.id_dokter')
+            ->select('transaksi.*', 'member.nama as nama_member', 'pasien.nama_pasien', 'dokter.nama as nama_dokter')
             ->find($this->id_transaksi);
 
         $diskonPromos = $this->transaksi->transaksi_list_promo

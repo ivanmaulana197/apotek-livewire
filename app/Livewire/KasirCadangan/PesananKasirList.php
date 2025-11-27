@@ -22,8 +22,10 @@ class PesananKasirList extends Component
     #[On('delete-pesanan-kasir')]
     public function delete(PesananKasir $id, $message = 'Berhasil Menghapus Pesanan Kasir')
     {
+
         if (Auth::check() && (Auth::user()->hasRole('admin') || $id->id_user == Auth::user()->id)) {
             $id->barang_pesanan_kasir()->delete();
+            $id->promo_pesanan_kasir()->delete();
             $id->delete();
             if ($this->pesanan_kasir_selected == $id->id) {
                 session()->flash('alert', [

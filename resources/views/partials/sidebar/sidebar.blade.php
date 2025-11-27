@@ -21,7 +21,8 @@
                     <!---Apps---->
                     <x-partials.sidebar.caption>Apps</x-partials.sidebar.caption>
 
-                    <x-partials.sidebar.item title="Kasir" icon='hugeicons--cashier' href="{{ route('kasir') }}" color='purple'></x-partials.sidebar.item>
+                    <x-partials.sidebar.item title="Kasir" icon='hugeicons--cashier' href="{{ route('kasir-cadangan') }}"
+                                             color='purple'></x-partials.sidebar.item>
 
                     <x-partials.sidebar.item name="faktur-masuk" title="Faktur Masuk" icon='solar--chart-line-duotone' href="{{ route('faktur') }}"
                                              color='red'></x-partials.sidebar.item>

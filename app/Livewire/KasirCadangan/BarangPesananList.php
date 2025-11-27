@@ -78,31 +78,26 @@ class BarangPesananList extends Component
             $total_by_barang   = $this->pesanan_kasir->barang_pesanan_kasir->where('id_barang', $barang_pesanan->id_barang)->sum('sub_total');
             $id_promo_selected = $this->getIdPromoBarangSelected($barang_pesanan->id_barang);
             $promo             = $this->applyPromoBarang($barang_pesanan->id_barang, $total_jumlah, $total_by_barang, $id_promo_selected);
-            if ($promo && ! $promo['success']) {
-                $this->dispatch('alert', message: $promo['error'], status: 'error');
-                DB::rollback();
-                return;
-            }
+
             $id_promo_transaksi_selected = $this->pesanan_kasir->promo_pesanan_kasir->whereNotNull('id_promo_transaksi')->first()?->id_promo_transaksi ?? null;
             $promo_transaksi             = $this->sinkronPromoTransaksi($id_promo_transaksi_selected);
-            if ($promo_transaksi && ! $promo_transaksi['success']) {
-                $this->dispatch('alert', message: $promo_transaksi['error'], status: 'error');
-                DB::rollback();
-                return;
-            }
-            // dd($promo);
+
             $this->pesanan_kasir->update([
                 'total_harga' => $this->pesanan_kasir->barang_pesanan_kasir->sum('sub_total'),
             ]);
             DB::commit();
 
             $this->syncFrontEnd();
-            if ($promo && ($promo['success'] ?? false) && ($promo['error'] ?? false)) {
-                return ['status' => 'success'];
-            } else {
+            if ((empty($promo) || ($promo['status'] ?? null) === 'success') && (empty($promo_transaksi) || ($promo_transaksi['status'] ?? null) === 'success')) {
                 $this->dispatch('alert', message: 'Barang berhasil ditambahkan.', status: 'success');
                 return ['status' => 'success'];
             }
+            // if ($promo && ($promo['success'] ?? false) && ($promo['error'] ?? false)) {
+            //     return ['status' => 'success'];
+            // } else {
+            //     $this->dispatch('alert', message: 'Barang berhasil ditambahkan.', status: 'success');
+            //     return ['status' => 'success'];
+            // }
         } catch (\Exception $e) {
             $this->jumlah_barang_input[$id_barang_pesanan] = FormatHelper::formatNumberToString($this->jumlah_barang_input[$id_barang_pesanan]);
             $this->dispatch('alert', message: $e->getMessage(), status: 'error');
@@ -117,13 +112,6 @@ class BarangPesananList extends Component
         try {
             DB::BeginTransaction();
             $promo = $this->applyPromoBarang($id_barang, $total_jumlah, $total_harga_barang, $id_promo_barang);
-            // dd($promo);
-            if ($promo && ! $promo['success']) {
-                $this->dispatch('alert', message: $promo['error'], status: 'error');
-                $this->dispatch('focus-input-jumlah');
-                DB::rollback();
-                return;
-            }
 
             $this->pesanan_kasir->load([
                 'promo_pesanan_kasir.promo_barang',
@@ -135,14 +123,12 @@ class BarangPesananList extends Component
             ]);
             $id_promo_transaksi_selected = $this->pesanan_kasir->promo_pesanan_kasir->whereNotNull('id_promo_transaksi')->first()?->id_promo_transaksi ?? null;
             $promo_transaksi             = $this->sinkronPromoTransaksi($id_promo_transaksi_selected);
-            if ($promo_transaksi && ! $promo_transaksi['success']) {
-                $this->dispatch('alert', message: $promo_transaksi['error'], status: 'error');
-                DB::rollback();
-                return;
-            }
+
             DB::commit();
             $this->syncFrontEnd();
-            $this->dispatch('alert', message: 'Berhasil Mengubah Promo Barang', status: 'success');
+            if ((empty($promo) || ($promo['status'] ?? null) === 'success') && (empty($promo_transaksi) || ($promo_transaksi['status'] ?? null) === 'success')) {
+                $this->dispatch('alert', message: 'Berhasil Mengubah Promo Barang', status: 'success');
+            }
         } catch (\Exception $e) {
             DB::rollBack();
             // dd($e);
@@ -152,7 +138,6 @@ class BarangPesananList extends Component
 
     public function render()
     {
-
         return view('livewire.kasir-cadangan.barang-pesanan-list');
     }
 
@@ -163,18 +148,15 @@ class BarangPesananList extends Component
         $this->pesanan_kasir->promo_pesanan_kasir()->whereNotNull('id_promo_barang')->delete();
         $id_promo_transaksi_selected = $this->pesanan_kasir->promo_pesanan_kasir->whereNotNull('id_promo_transaksi')->first()?->id_promo_transaksi ?? null;
         $promo_transaksi             = $this->sinkronPromoTransaksi($id_promo_transaksi_selected);
-        if ($promo_transaksi && ! $promo_transaksi['success']) {
-            $this->dispatch('alert', message: $promo_transaksi['error'], status: 'error');
-            DB::rollback();
-            return;
-        }
-        // $this->updateTotalHarga();
+
         $this->pesanan_kasir->update([
             'total_harga' => $this->pesanan_kasir->barang_pesanan_kasir->sum('sub_total'),
         ]);
         DB::commit();
         $this->syncFrontEnd();
-        $this->dispatch('alert', message: 'Semua Barang Berhasil Dihapus', status: 'success');
+        if ((empty($promo_transaksi) || ($promo_transaksi['status'] ?? null) === 'success')) {
+            $this->dispatch('alert', message: 'Semua Barang Berhasil Dihapus', status: 'success');
+        }
     }
 
     public function deleteWithSelectedItem()
@@ -184,8 +166,9 @@ class BarangPesananList extends Component
             'barang_pesanan_kasir.barang.opsi_satuan',
             'barang_pesanan_kasir.barang.opsi_harga',
         ]);
+        $status                  = 'success';
         $barang_pesanan_selected = $this->pesanan_kasir->barang_pesanan_kasir->whereIn('id', $this->ceklistDeleteBarang)->values();
-        $barang_pesanan_selected->each(function ($barang_pesanan) {
+        $barang_pesanan_selected->each(function ($barang_pesanan) use (&$status) {
             $masih_ada = $this->pesanan_kasir->barang_pesanan_kasir
                 ->where('id_barang', $barang_pesanan->id_barang)
                 ->where('id', '!=', $barang_pesanan->id) // selain yang dihapus
@@ -207,14 +190,13 @@ class BarangPesananList extends Component
 
                 $id_promo_selected = $this->getIdPromoBarangSelected($barang_pesanan->id_barang);
                 $promo             = $this->applyPromoBarang($barang_pesanan->id_barang, $total_jumlah, $total_harga, $id_promo_selected);
-                if ($promo && ! $promo['success']) {
-                    $this->dispatch('alert', message: $promo['error'], status: 'error');
-                    return;
-                } elseif ($promo && $promo['success'] && ! empty($promo['error'])) {
+                if ($promo && $promo['status'] == 'success') {
                     $this->pesanan_kasir->promo_pesanan_kasir()
                         ->whereHas('promo_barang', function ($q) use ($barang_pesanan) {
                             $q->where('id_barang', $barang_pesanan->id_barang);
                         })->delete();
+                } elseif ($promo && $promo['status'] == 'warning') {
+                    $status = 'warning';
                 }
             }
 
@@ -230,17 +212,15 @@ class BarangPesananList extends Component
         ]);
         $id_promo_transaksi_selected = $this->pesanan_kasir->promo_pesanan_kasir->whereNotNull('id_promo_transaksi')->first()?->id_promo_transaksi ?? null;
         $promo_transaksi             = $this->sinkronPromoTransaksi($id_promo_transaksi_selected);
-        if ($promo_transaksi && ! $promo_transaksi['success']) {
-            $this->dispatch('alert', message: $promo_transaksi['error'], status: 'error');
-            DB::rollback();
-            return;
-        }
+
         $this->ceklistDeleteBarang = [];
         $this->pesanan_kasir->update([
             'total_harga' => $this->pesanan_kasir->barang_pesanan_kasir()->sum('sub_total'),
         ]);
         $this->syncFrontEnd();
-        $this->dispatch('alert', message: 'Barang yang Di Pilih Berhasil Dihapus', status: 'success');
+        if ($status == 'success' && (empty($promo_transaksi) || ($promo_transaksi['status'] ?? null) === 'success')) {
+            $this->dispatch('alert', message: 'Barang yang Di Pilih Berhasil Dihapus', status: 'success');
+        }
     }
 
     #[On('delete-barang-pesanan-kasir')]
@@ -276,11 +256,7 @@ class BarangPesananList extends Component
 
                 $id_promo_selected = $this->getIdPromoBarangSelected($barang_pesanan->id_barang);
                 $promo             = $this->applyPromoBarang($barang_pesanan->id_barang, $total_jumlah, $total_harga, $id_promo_selected);
-                if ($promo && ! $promo['success']) {
-                    $this->dispatch('alert', message: $promo['error'], status: 'error');
-                    DB::rollback();
-                    return;
-                } elseif ($promo && $promo['success'] && ! empty($promo['error'])) {
+                if ($promo && $promo['status'] == 'success') {
                     $this->pesanan_kasir->promo_pesanan_kasir()
                         ->whereHas('promo_barang', function ($q) use ($barang_pesanan) {
                             $q->where('id_barang', $barang_pesanan->id_barang);
@@ -300,11 +276,6 @@ class BarangPesananList extends Component
 
             $id_promo_transaksi_selected = $this->pesanan_kasir->promo_pesanan_kasir->whereNotNull('id_promo_transaksi')->first()?->id_promo_transaksi ?? null;
             $promo_transaksi             = $this->sinkronPromoTransaksi($id_promo_transaksi_selected);
-            if ($promo_transaksi && ! $promo_transaksi['success']) {
-                $this->dispatch('alert', message: $promo_transaksi['error'], status: 'error');
-                DB::rollback();
-                return;
-            }
 
             $this->pesanan_kasir->update([
                 'total_harga' => $this->pesanan_kasir->barang_pesanan_kasir->sum('sub_total'),
@@ -313,7 +284,9 @@ class BarangPesananList extends Component
             DB::commit();
 
             $this->syncFrontEnd();
-            $this->dispatch('alert', message: 'Berhasil Menghapus Barang Pesanan Kasir');
+            if ((empty($promo) || ($promo['status'] ?? null) === 'success') && (empty($promo_transaksi) || ($promo_transaksi['status'] ?? null) === 'success')) {
+                $this->dispatch('alert', message: 'Berhasil Menghapus Barang Pesanan Kasir');
+            }
         } else {
             $this->dispatch('alert', message: 'Kamu Tidak Memiliki Akses', status: 'error');
         }

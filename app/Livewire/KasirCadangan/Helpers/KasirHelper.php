@@ -96,9 +96,10 @@ trait KasirHelper
                 })->values()
             );
             $this->dispatch('alert-info', message: 'Jumlah barang tidak mencukupi untuk promo ini', status: 'warning', subtitle: 'silahkan tambahkan jumlah pesanan');
+
             return [
-                'success' => true,
-                'error'   => 'Jumlah barang tidak mencukupi untuk promo ini',
+                'status'  => 'warning',
+                'message' => 'Jumlah barang tidak mencukupi untuk promo ini',
             ];
         }
 
@@ -128,11 +129,12 @@ trait KasirHelper
             $deskripsi = "FREE {$promoBarang->barang_bonus->nama} [{$jumlah_bonus} / {$promoBarang->satuan_bonus->nama}]";
 
             // CEK STOK BONUS (tanpa query)
-            $bonus_dalam_satuan_utama = $promoBarang->barang_bonus->hitungJumlahDalamSatuanUtama($jumlah_bonus, $promoBarang->id_satuan_bonus);
+            $bonus_dalam_satuan_utama = $promoBarang->barang_bonus->hitungJumlahDalamSatuanUtama($jumlah_bonus, $promoBarang->id_satuan_bonus) + $total_jumlah;
             if ($bonus_dalam_satuan_utama > $promoBarang->barang_bonus->stok) {
+                $this->dispatch('alert-info', message: 'Stok Barang Bonus tidak cukup', status: 'warning', subtitle: 'silahkan update jumlah pesanan');
                 return [
-                    'success' => false,
-                    'error'   => 'Stok barang bonus tidak cukup.',
+                    'status'  => 'warning',
+                    'message' => 'Stok Barang Bonus tidak cukup',
                 ];
             }
         }
@@ -170,9 +172,8 @@ trait KasirHelper
         }
 
         return [
-            'success' => true,
-            'promo'   => $hasil,
-            'status'  => $status,
+            'status'  => 'success',
+            'message' => 'Promo berhasil di-' . $status,
         ];
     }
 
@@ -183,7 +184,7 @@ trait KasirHelper
         // ----------------------------------------------------
 
         if (! $id_promo_transaksi) {
-            $promoLama = $this->pesanan_kasir->promo_pesanan_kasir->whereNotNull('id_promo_transaksi')->each->delete();
+            $this->pesanan_kasir->promo_pesanan_kasir->whereNotNull('id_promo_transaksi')->each->delete();
             $this->pesanan_kasir->setRelation(
                 'promo_pesanan_kasir',
                 $this->pesanan_kasir->promo_pesanan_kasir->reject(function ($item) {
@@ -217,8 +218,8 @@ trait KasirHelper
             );
             $this->dispatch('alert-info', message: 'Total Transaksi tidak mencukupi untuk promo ini', status: 'warning', subtitle: 'silahkan tambahkan pesanan');
             return [
-                'success' => true,
-                'error'   => 'Total transaksi tidak mencukupi untuk promo ini',
+                'status'  => 'warning',
+                'message' => 'Total transaksi tidak mencukupi untuk promo ini',
             ];
         }
 
@@ -249,9 +250,8 @@ trait KasirHelper
         }
 
         return [
-            'success' => true,
-            'promo'   => $hasil,
-            'status'  => $status,
+            'status'  => 'success',
+            'message' => 'Promo Transaksi berhasil di-' . $status,
         ];
 
     }

@@ -60,7 +60,9 @@ class KasirIndex extends Component
     public function updateValueAllBarangPesananKasir()
     {
         $barang_pesanan_stok_error = [];
-        $this->pesanan_kasir->barang_pesanan_kasir->each(function ($barang_pesanan) use (&$barang_pesanan_stok_error) {
+        $status                    = 'success';
+        // $this->pesanan_kasir->barang_pesanan_kasir->each(function ($barang_pesanan, $index) use (&$barang_pesanan_stok_error, &$status) {
+        foreach ($this->pesanan_kasir->barang_pesanan_kasir as $index => $barang_pesanan) {
             $total_jumlah = $this->totalJumlahBarangDalamSatuanUtama($barang_pesanan->barang);
             if ($barang_pesanan->barang->stok < $total_jumlah) {
                 // $this->dispatch('alert-info', message: 'Stok barang <b class="!font-extrabold">[' . $barang_pesanan->barang->nama . '</b>] tidak mencukupi.', status: 'warning', subtitle: 'silahkan perbarui stok barang atau perbarui jumlah pesanan');
@@ -82,13 +84,18 @@ class KasirIndex extends Component
                     'sub_total'          => $barang_pesanan->jumlah * $harga_new,
                 ]);
             }
+            $next = $this->pesanan_kasir->barang_pesanan_kasir->get($index + 1);
+            if ($next?->id_barang == $barang_pesanan->id_barang) {
+                continue;
+            }
             $total_harga_by_barang = $this->totalHargaBarang($barang_pesanan->id_barang);
             $id_promo_selected     = $this->getIdPromoBarangSelected($barang_pesanan->id_barang);
             $promo                 = $this->applyPromoBarang($barang_pesanan->id_barang, $total_jumlah, $total_harga_by_barang, $id_promo_selected);
-            if ($promo && ! $promo['success']) {
-                $this->dispatch('alert', message: $promo['error'], status: 'error');
+            if ($promo && $promo['status'] == 'warning') {
+                $status = 'warning';
             }
-        });
+            // });
+        }
         if (count($barang_pesanan_stok_error) > 0) {
             $nama_barang = collect($barang_pesanan_stok_error)->pluck('nama_barang')->join(', ');
             $this->dispatch('alert-info', message: 'Stok barang <b class="!font-extrabold">[' . $nama_barang . '</b>] tidak mencukupi.', status: 'warning', subtitle: 'silahkan perbarui stok barang atau perbarui jumlah pesanan');
@@ -104,10 +111,6 @@ class KasirIndex extends Component
         }
         $id_promo_transaksi_selected = $this->pesanan_kasir->promo_pesanan_kasir->whereNotNull('id_promo_transaksi')->first()?->id_promo_transaksi;
         $promo                       = $this->sinkronPromoTransaksi($id_promo_transaksi_selected);
-        if ($promo && ! $promo['success']) {
-            $this->dispatch('alert', message: $promo['error'], status: 'error');
-            return;
-        }
 
         $this->pesanan_kasir->update([
             'total_harga' => $this->pesanan_kasir->barang_pesanan_kasir->sum('sub_total'),
