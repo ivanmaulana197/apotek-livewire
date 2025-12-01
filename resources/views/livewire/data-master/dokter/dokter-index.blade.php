@@ -8,14 +8,16 @@
     </x-breadcrumb>
 
     <div class="grid grid-cols-12 gap-3">
-        <div class="col-span-12 md:col-span-6 lg:col-span-4">
-            @livewire('data-master.dokter.dokter-form')
-        </div>
-        <div class="col-span-12 md:col-span-6 lg:col-span-8">
-            @livewire('data-master.dokter.dokter-list')
-        </div>
+        @can('dokter.create')
+            <div class="col-span-12 md:col-span-6 lg:col-span-4">
+                @livewire('data-master.dokter.dokter-form')
+            </div>
+        @endcan
+        @can('dokter.list')
+            <div class="col-span-12 md:col-span-6 lg:col-span-8">
+                @livewire('data-master.dokter.dokter-list')
+            </div>
+        @endcan
     </div>
 
 </div>
-
-

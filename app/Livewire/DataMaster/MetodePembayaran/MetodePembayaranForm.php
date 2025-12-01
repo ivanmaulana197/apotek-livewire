@@ -1,15 +1,12 @@
 <?php
-
 namespace App\Livewire\DataMaster\MetodePembayaran;
 
-use Livewire\Component;
-use App\Enums\SupplierAsalEnum;
 use App\Models\DataMaster\MetodePembayaran;
-use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use App\Models\DataMaster\Supplier;
-use Illuminate\Validation\Rules\Enum;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\On;
+use Livewire\Component;
 
 class MetodePembayaranForm extends Component
 {
@@ -19,15 +16,17 @@ class MetodePembayaranForm extends Component
 
     public $nama;
 
-
     protected function rules()
     {
         return [
-            'nama'     => ['required', $this->isEdit ? Rule::unique('metode_pembayaran', 'nama')->ignore($this->metodePembayaran->id) : 'unique:metode_pembayaran,nama'],
+            'nama' => ['required', $this->isEdit ? Rule::unique('metode_pembayaran', 'nama')->ignore($this->metodePembayaran->id) : 'unique:metode_pembayaran,nama'],
         ];
     }
     public function save()
     {
+        if (! Auth::user()->can('metode-pembayaran.create')) {
+            return $this->dispatch('alert', status: 'error', message: 'Kamu Tidak Memiliki Akses');
+        }
         try {
             $validate = $this->validate();
             DB::BeginTransaction();
@@ -47,13 +46,19 @@ class MetodePembayaranForm extends Component
     #[On('edit-metode_pembayaran')]
     public function editFormMetodePembayaran(MetodePembayaran $metodePembayaran)
     {
-        $this->isEdit   = true;
+        if (! Auth::user()->can('metode-pembayaran.edit')) {
+            return $this->dispatch('alert', status: 'error', message: 'Kamu Tidak Memiliki Akses');
+        }
+        $this->isEdit           = true;
         $this->metodePembayaran = $metodePembayaran;
-        $this->nama     = $metodePembayaran->nama;
+        $this->nama             = $metodePembayaran->nama;
     }
 
     public function update()
     {
+        if (! Auth::user()->can('metode-pembayaran.edit')) {
+            return $this->dispatch('alert', status: 'error', message: 'Kamu Tidak Memiliki Akses');
+        }
         try {
             $validate = $this->validate();
             DB::BeginTransaction();
@@ -69,15 +74,13 @@ class MetodePembayaranForm extends Component
         }
     }
 
-
-
     #[On('close-modal-metode_pembayaran')]
     public function resetForm()
     {
         $this->isEdit = false;
         $this->dispatch('clear-select-asal');
         $this->metodePembayaran = new MetodePembayaran();
-        $this->nama     = null;
+        $this->nama             = null;
     }
 
     public function render()

@@ -56,10 +56,12 @@
                                     </div>
                                 </x-table.action-button>
                             @endif
-                            <x-table.action-button tooltip="Hapus" color="error"
-                                                   @click="$wire.dispatch('alert-confirm', {id: '{{ $pesanan_kasir->id }}', method: 'delete-pesanan-kasir'});">
-                                <span class="iconify tabler--trash-x-filled text-lg"></span>
-                            </x-table.action-button>
+                            @canany(['pesanan-kasir.delete-own', 'pesanan-kasir.delete-all'])
+                                <x-table.action-button tooltip="Hapus" color="error"
+                                                       @click="$wire.dispatch('alert-confirm', {id: '{{ $pesanan_kasir->id }}', method: 'delete-pesanan-kasir'});">
+                                    <span class="iconify tabler--trash-x-filled text-lg"></span>
+                                </x-table.action-button>
+                            @endcanany
 
                         </x-table.td>
 

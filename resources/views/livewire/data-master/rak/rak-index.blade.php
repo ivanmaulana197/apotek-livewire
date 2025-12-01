@@ -7,19 +7,17 @@
         </x-slot:before>
     </x-breadcrumb>
 
-
-
     <div class="grid grid-cols-12 gap-3">
         <div class="col-span-12 md:col-span-6 lg:col-span-4">
-
-            @livewire('data-master.rak.rak-form')
+            @canany(['rak.create', 'rak.edit'])
+                @livewire('data-master.rak.rak-form')
+            @endcanany
         </div>
         <div class="col-span-12 md:col-span-6 lg:col-span-8">
-            @livewire('data-master.rak.rak-list')
+            @can('rak.list')
+                @livewire('data-master.rak.rak-list')
+            @endcan
         </div>
     </div>
 
-
 </div>
-
-

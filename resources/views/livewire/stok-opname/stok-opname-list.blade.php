@@ -28,7 +28,12 @@
                 return hasil.join(',  ');
             },
             init() {
+                Livewire.on('update-stok-real', () => {
+                    this.$nextTick(() => {
+                        this.stok_real = $wire.entangle('stok_real');
 
+                    });
+                })
             }
         }))
     </script>
@@ -49,11 +54,13 @@
                     </x-slot:message>
                 </x-badge>
             </div>
-            <div
-                 class="px-3 py-1.5 inline-flex justify-center items-center text-sm {{ $total_kerugian < 0 ? 'bg-error' : 'bg-success' }} rounded-lg text-white gap-2">
-                <i class="iconify tabler--cash-register text-2xl"></i>
-                Nominal Kerugian : Rp. {{ $total_kerugian > 0 ? '+' : '' }}@nominal($total_kerugian)
-            </div>
+            @can('stok-opname.info-total-kerugian')
+                <div
+                     class="px-3 py-1.5 inline-flex justify-center items-center text-sm {{ $total_kerugian < 0 ? 'bg-error' : 'bg-success' }} rounded-lg text-white gap-2">
+                    <i class="iconify tabler--cash-register text-2xl"></i>
+                    Nominal Kerugian : Rp. {{ $total_kerugian > 0 ? '+' : '' }}@nominal($total_kerugian)
+                </div>
+            @endcan
         </div>
 
         <x-datatable nama_table="stok_opname" :$perPage placeholder_search="Masukan KODE/NAMA Barang">

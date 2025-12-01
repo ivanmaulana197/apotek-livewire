@@ -3,6 +3,7 @@ namespace App\Livewire\Informasi\InfoBarangHabis;
 
 use App\Models\Barang\Barang;
 use App\Traits\CustomDataTable;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -38,6 +39,9 @@ class InfoBarangHabisList extends Component
 
     public function render()
     {
+        if (! Auth::user()->can('info-barang-habis.list')) {
+            return $this->dispatch('alert', status: 'error', message: 'Kamu Tidak Memiliki Akses');
+        }
         $data = $this->getData();
         return view('livewire.informasi.info-barang-habis.info-barang-habis-list', [
             'info_barang_habis' => $data,

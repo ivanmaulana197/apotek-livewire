@@ -8,14 +8,16 @@
     </x-breadcrumb>
 
     <div class="grid grid-cols-12 gap-3">
-        <div class="col-span-12 md:col-span-6 lg:col-span-4">
-            @livewire('data-master.metode-pembayaran.metode-pembayaran-form')
-        </div>
-        <div class="col-span-12 md:col-span-6 lg:col-span-8">
-            @livewire('data-master.metode-pembayaran.metode-pembayaran-list')
-        </div>
+        @can('metode-pembayaran.create')
+            <div class="col-span-12 md:col-span-6 lg:col-span-4">
+                @livewire('data-master.metode-pembayaran.metode-pembayaran-form')
+            </div>
+        @endcan
+        @can('metode-pembayaran.list')
+            <div class="col-span-12 md:col-span-6 lg:col-span-8">
+                @livewire('data-master.metode-pembayaran.metode-pembayaran-list')
+            </div>
+        @endcan
     </div>
 
 </div>
-
-

@@ -33,14 +33,16 @@
                     </x-form.select>
                 </div>
             </div>
-            <button @click="
+            @canany(['transaksi.cetak-laporan-all', 'transaksi.cetak-laporan-own'])
+                <button @click="
                     let url = '{{ route('cetak.laporan-transaksi') }}'
                             + '?date[start]={{ $filter_date['start'] }}'
                             + '&date[end]={{ $filter_date['end'] }}'
                             + '&shift={{ $shift_transaksi }}'
                             + '&by_user={{ $by_user }}';
                         window.open(url, '_blank');"
-                    class="btn btn-sm btn-primary flex-none">Cetak Laporan</button>
+                        class="btn btn-sm btn-primary flex-none">Cetak Laporan</button>
+            @endcanany
         </div>
     </div>
 

@@ -42,9 +42,11 @@
                 Livewire.on('struk-pembayaran', ({
                     id_transaksi
                 }) => {
-                    const url = "{{ route('cetak.struk-pembayaran', ['id_transaksi' => '__ID__']) }}"
-                        .replace('__ID__', id_transaksi);
-                    window.open(url, '_blank', 'width=700,height=600');
+                    @canAny(['cetak.struk-pembayaran-own', 'cetak.struk-pembayaran-all'])
+                        const url = "{{ route('cetak.struk-pembayaran', ['id_transaksi' => '__ID__']) }}"
+                            .replace('__ID__', id_transaksi);
+                        window.open(url, '_blank', 'width=700,height=600');
+                    @endcanAny
                 })
             },
 

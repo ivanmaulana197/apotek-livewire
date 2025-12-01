@@ -1,3 +1,5 @@
+<x-slot:title>History Stok Opname</x-slot:title>
+
 <div class="max-w-full">
     <x-breadcrumb name="History Stok Opname">
         <x-slot:before>
@@ -64,10 +66,12 @@
                                 </x-table.td>
 
                                 <x-table.td class="flex justify-center">
-                                    <x-table.action-button tooltip="Edit" color="warning" type="href"
-                                                           href="{{ route('cetak.stok-opname', $stokOpname->created_at) }}" :newTab=true>
-                                        <i class="ti ti-edit-circle"></i> <span class="text-sm">Lihat</span>
-                                    </x-table.action-button>
+                                    @can('stok-opname.cetak-laporan')
+                                        <x-table.action-button tooltip="Edit" color="warning" type="href"
+                                                               href="{{ route('cetak.stok-opname', $stokOpname->created_at) }}" :newTab=true>
+                                            <i class="ti ti-edit-circle"></i> <span class="text-sm">Lihat</span>
+                                        </x-table.action-button>
+                                    @endcan
                                     {{-- <x-table.action-button tooltip="Edit" color="error" type="href"
                                                            href="{{ route('cetak.stok-opname.pdf', $stokOpname->created_at) }}">
                                         <i class="ti ti-edit-circle"></i> <span class="text-sm">PDF</span>

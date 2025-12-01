@@ -46,7 +46,7 @@
                 @foreach ($stokOpnames as $index => $data)
                     <tr>
                         <td class="border px-2 py-1 text-center">{{ $index + 1 }}</td>
-                        <td class="border px-2 py-1">{{ $data->barang->nama }} [{{ $data->barang->satuan_utama->nama }}]</td>
+                        <td class="border px-2 py-1">{{ $data->nama }} [{{ $data->satuan_utama_nama }}]</td>
                         {{-- <td class="border px-2 py-1">{{ $satuan }}</td> --}}
                         {{-- <td class="border px-2 py-1">{{ $kategori }}</td> --}}
                         {{-- <td class="border px-2 py-1 text-right">{{ nominal($data->HARGA_BELI) }}</td>

@@ -63,7 +63,10 @@
                 <x-table.th-sortable :sortBy="$sortBy" :sortDir="$sortDir" label="H.Beli" name="barang.harga_beli_default" />
                 <x-table.th-sortable :sortBy="$sortBy" :sortDir="$sortDir" label="H.Jual" name="barang.harga_jual_utama" />
                 <x-table.th label="H.Grosir" />
-                <x-table.th label="Aksi" />
+                @canany(['barang.detail-faktur', 'barang.detail-stok', 'barang.detail-transaksi', 'barang.detail-barang-expired', 'barang.edit',
+                    'barang.detail', 'barang.delete'])
+                    <x-table.th label="Aksi" />
+                @endcanany
             </x-table.thead>
             <x-table.tbody>
                 @forelse ($barangs as $index => $barang)
@@ -117,47 +120,56 @@
                             @endforeach
                         </x-table.td>
 
-                        <x-table.td class="text-center">
-                            {{-- <x-table.action-button tooltip="Edit" color="warning" type="href" href="{{ route('data.barang.edit', $barang->id) }}"
-                                                   wire:navigate>
-                                <span class="iconify tabler--edit-circle text-lg"></span>
-                            </x-table.action-button> --}}
-                            {{-- <x-table.action-button tooltip="Hapus" color="error"
-                                                   @click="$wire.dispatch('alert-confirm', { id: '{{ $barang->id }}', method: 'delete-barang' });">
-                                <span class="iconify tabler--trash-x-filled text-lg"></span>
-                            </x-table.action-button> --}}
-                            <x-dropdown text="" wire:key='dropdown-{{ $barang->id }}'>
-                                <x-dropdown.item href="{{ route('data.barang.detail', $barang->id) }}" wire:navigate class="text-blue-600">
-                                    <span class="iconify solar--eye-bold text-lg"></span>
-                                    <span class="text-sm">Detail</span>
-                                </x-dropdown.item>
-                                <x-dropdown.item href="{{ route('data.barang.edit', $barang->id) }}" wire:navigate class="text-yellow-600">
-                                    <span class="iconify tabler--edit-circle text-lg"></span>
-                                    <span class="text-sm">Edit</span>
-                                </x-dropdown.item>
-                                <x-dropdown.item class="text-red-600 " href="#"
-                                                 @click=" $wire.dispatch('alert-confirm', {id: '{{ $barang->id }}', method: 'delete-barang', text: 'Apakah anda yakin menghapus Barang?'}); ">
-                                    <span class="iconify basil--trash-outline text-lg"></span>
-                                    <span class="text-sm">Hapus</span>
-                                </x-dropdown.item>
-                                <x-dropdown.item href="{{ route('data.barang.detail.faktur', $barang->id) }}" wire:navigate>
-                                    <span class="iconify solar--eye-bold text-lg"></span>
-                                    <span class="text-sm">Detail Faktur</span>
-                                </x-dropdown.item>
-                                <x-dropdown.item href="{{ route('data.barang.detail.stok', $barang->id) }}" wire:navigate>
-                                    <span class="iconify solar--eye-bold text-lg"></span>
-                                    <span class="text-sm">Detail Stok</span>
-                                </x-dropdown.item>
-                                <x-dropdown.item href="{{ route('data.barang.detail.expired', $barang->id) }}" wire:navigate>
-                                    <span class="iconify solar--eye-bold text-lg"></span>
-                                    <span class="text-sm">Detail Expired</span>
-                                </x-dropdown.item>
-                                <x-dropdown.item href="{{ route('data.barang.detail.transaksi', $barang->id) }}" wire:navigate>
-                                    <span class="iconify solar--eye-bold text-lg"></span>
-                                    <span class="text-sm">Detail Transaksi</span>
-                                </x-dropdown.item>
-                            </x-dropdown>
-                        </x-table.td>
+                        @canany(['barang.detail-faktur', 'barang.detail-stok', 'barang.detail-transaksi', 'barang.detail-barang-expired', 'barang.edit',
+                            'barang.detail', 'barang.delete'])
+                            <x-table.td class="text-center">
+                                <x-dropdown text="" wire:key='dropdown-{{ $barang->id }}'>
+                                    @can('barang.detail')
+                                        <x-dropdown.item href="{{ route('data.barang.detail', $barang->id) }}" wire:navigate class="text-blue-600">
+                                            <span class="iconify solar--eye-bold text-lg"></span>
+                                            <span class="text-sm">Detail</span>
+                                        </x-dropdown.item>
+                                    @endcan
+                                    @can('barang.edit')
+                                        <x-dropdown.item href="{{ route('data.barang.edit', $barang->id) }}" wire:navigate class="text-yellow-600">
+                                            <span class="iconify tabler--edit-circle text-lg"></span>
+                                            <span class="text-sm">Edit</span>
+                                        </x-dropdown.item>
+                                    @endcan
+                                    @can('barang.delete')
+                                        <x-dropdown.item class="text-red-600 " href="#"
+                                                         @click=" $wire.dispatch('alert-confirm', {id: '{{ $barang->id }}', method: 'delete-barang', text: 'Apakah anda yakin menghapus Barang?'}); ">
+                                            <span class="iconify basil--trash-outline text-lg"></span>
+                                            <span class="text-sm">Hapus</span>
+                                        </x-dropdown.item>
+                                    @endcan
+                                    @can('barang.detail-faktur')
+                                        <x-dropdown.item href="{{ route('data.barang.detail.faktur', $barang->id) }}" wire:navigate>
+                                            <span class="iconify solar--eye-bold text-lg"></span>
+                                            <span class="text-sm">Detail Faktur</span>
+                                        </x-dropdown.item>
+                                    @endcan
+                                    @can('barang.detail-stok')
+                                        <x-dropdown.item href="{{ route('data.barang.detail.stok', $barang->id) }}" wire:navigate>
+                                            <span class="iconify solar--eye-bold text-lg"></span>
+                                            <span class="text-sm">Detail Stok</span>
+                                        </x-dropdown.item>
+                                    @endcan
+                                    @can('barang.detail-barang-expired')
+                                        <x-dropdown.item href="{{ route('data.barang.detail.expired', $barang->id) }}" wire:navigate>
+                                            <span class="iconify solar--eye-bold text-lg"></span>
+                                            <span class="text-sm">Detail Expired</span>
+                                        </x-dropdown.item>
+                                    @endcan
+                                    @can('barang.detail-transaksi')
+                                        <x-dropdown.item href="{{ route('data.barang.detail.transaksi', $barang->id) }}" wire:navigate>
+                                            <span class="iconify solar--eye-bold text-lg"></span>
+                                            <span class="text-sm">Detail Transaksi</span>
+                                        </x-dropdown.item>
+                                    @endcan
+                                </x-dropdown>
+                            </x-table.td>
+                        @endcanany
                     </x-table.tr>
                 @empty
                     <x-table.tr-empty colspan="11" />

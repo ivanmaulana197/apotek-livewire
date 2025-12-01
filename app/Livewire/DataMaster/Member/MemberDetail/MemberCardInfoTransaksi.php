@@ -1,6 +1,7 @@
 <?php
 namespace App\Livewire\DataMaster\Member\MemberDetail;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -28,15 +29,19 @@ class MemberCardInfoTransaksi extends Component
             ])
             ->selectRaw(
                 'COUNT(*) as total_transaksi,
-                SUM(total_bayar) as total_bayar,
-                SUM(COALESCE(nominal_promo,0)) as total_benefit')
+                    SUM(total_bayar) as total_bayar,
+                    SUM(COALESCE(nominal_promo,0)) as total_benefit')
             ->first();
 
         return $data;
     }
     public function render()
     {
-        $data = $this->getData();
+        if (Auth::user()->canAny(["member.detail.info-total-transaksi", "member.detail.info-total-belanja", "member.detail.info-total-benefit"])) {
+            $data = $this->getData();
+        } else {
+            return $this->dispatch('alert', status: 'error', message: 'Kamu Tidak Memiliki Akses');
+        }
 
         return view('livewire.data-master.member.member-detail.member-card-info-transaksi', compact('data'));
     }

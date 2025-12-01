@@ -2,6 +2,7 @@
 namespace App\Livewire\DataMaster\Dokter\DokterDetail;
 
 use App\Traits\CustomDataTable;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -54,6 +55,9 @@ class DokterListBarangTerjual extends Component
 
     public function render()
     {
+        if (! Auth::user()->can("dokter.detail.info-barang-terjual")) {
+            return $this->dispatch('alert', status: 'error', message: 'Kamu Tidak Memiliki Akses');
+        }
         $barang_terlaris = $this->getData();
 
         return view('livewire.data-master.dokter.dokter-detail.dokter-list-barang-terjual', compact('barang_terlaris'));

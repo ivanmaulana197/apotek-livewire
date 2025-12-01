@@ -9,13 +9,15 @@
 
     <div class="grid grid-cols-12 gap-3">
         <div class="col-span-12 md:col-span-6 lg:col-span-4">
-            @livewire('data-master.supplier.supplier-form')
+            @canany(['supplier.create', 'supplier.edit'])
+                @livewire('data-master.supplier.supplier-form')
+            @endcanany
         </div>
         <div class="col-span-12 md:col-span-6 lg:col-span-8">
-            @livewire('data-master.supplier.supplier-list')
+            @can('supplier.list')
+                @livewire('data-master.supplier.supplier-list')
+            @endcan
         </div>
     </div>
 
 </div>
-
-

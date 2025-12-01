@@ -64,8 +64,8 @@
                                         <x-partials.logo></x-partials.logo>
 
                                     </div>
-                                    <div class="items-center gap-2 p-5 lg:p-0 lg:flex">
-                                        <div class="items-center lg:flex">
+                                    <div class="items-center gap-2 p-5 lg:py-4 lg:px-0 lg:flex">
+                                        {{-- <div class="items-center lg:flex">
                                             <div
                                                  class="hs-dropdown h-[70px] flex items-center  [--strategy:static] lg:[--strategy:absolute] [--adaptive:none] sm:[--trigger:hover]  relative group/menu">
                                                 <button type="button"
@@ -160,22 +160,18 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div>
+                                        </div> --}}
+                                        <div class="lg:flex">
                                             <a href="{{ route('home') }}" wire:navigate
                                                class="flex items-center w-full gap-3 px-2 py-2 rounded-md lg:w-auto lg:py-1 lg:px-2 lg:text-base text-md lg:gap-0 header-link text-link dark:text-darklink hover:text-primary dark:hover:text-primary">
                                                 <span class="iconify solar--screencast-2-line-duotone text-xl me-1"></span>
                                                 Home
                                             </a>
                                         </div>
-                                        {{-- <div>
-                                            <a href="{{ route('home-full') }}" wire:navigate class="flex items-center w-full gap-3 px-2 py-2 rounded-md lg:w-auto lg:py-1 lg:px-2 lg:text-base text-md lg:gap-0 header-link text-link dark:text-darklink hover:text-primary dark:hover:text-primary">
-                                                <iconify-icon icon="solar:chart-line-duotone" class="text-xl me-1"></iconify-icon>
-                                                Home-Full
-                                            </a>
-                                        </div> --}}
+
                                         <div>
-                                            <a href="{{ route('transaksi') }}" wire:navigate class="flex items-center w-full gap-3 px-2 py-2 rounded-md lg:w-auto lg:py-1 lg:px-2 lg:text-base text-md lg:gap-0 header-link text-link dark:text-darklink hover:text-primary dark:hover:text-primary">
+                                            <a href="{{ route('transaksi') }}" wire:navigate
+                                               class="flex items-center w-full gap-3 px-2 py-2 rounded-md lg:w-auto lg:py-1 lg:px-2 lg:text-base text-md lg:gap-0 header-link text-link dark:text-darklink hover:text-primary dark:hover:text-primary">
                                                 <span class="iconify f7--list-bullet-below-rectangle text-xl me-1"></span>
                                                 Transaksi
                                             </a>

@@ -19,9 +19,9 @@
                 </div>
             </div>
         </div>
-
-        <livewire:barang.barang-list />
-
+        @can('barang.list')
+            <livewire:barang.barang-list />
+        @endcan
     </div>
 
 </div>

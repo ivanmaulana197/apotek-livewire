@@ -18,8 +18,9 @@
                     </button>
                 </div>
             </div>
-
-            @livewire('faktur.faktur-list')
+            @canany(['faktur.list-own', 'faktur.list-all'])
+                @livewire('faktur.faktur-list')
+            @endcanany
         </div>
     </div>
 

@@ -33,7 +33,8 @@
                     </div>
                 </div>
             </div>
-            <button @click="
+            @can('faktur.cetak-laporan')
+                <button @click="
                     const params = new URLSearchParams();
 
                     params.append('date[start]', '{{ $created_at['start'] ?? null }}');
@@ -51,9 +52,10 @@
                     const url = '{{ route('cetak.laporan-faktur') }}' + '?' + params.toString();
                     window.open(url, '_blank');
                 "
-                    class="btn btn-sm btn-primary flex-none">
-                Cetak Laporan
-            </button>
+                        class="btn btn-sm btn-primary flex-none">
+                    Cetak Laporan
+                </button>
+            @endcan
 
         </div>
     </div>

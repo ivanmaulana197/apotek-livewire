@@ -25,6 +25,8 @@
         </x-slot:message>
     </x-badge>
 
-    <livewire:informasi.info-barang-habis.info-barang-habis-list lazy />
+    @can('info-barang-habis.list')
+        <livewire:informasi.info-barang-habis.info-barang-habis-list lazy />
+    @endcan
 
 </div>

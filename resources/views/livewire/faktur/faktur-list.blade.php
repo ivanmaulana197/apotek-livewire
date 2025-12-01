@@ -16,37 +16,43 @@
     {{-- @include('faktur.components.advance-search-faktur') --}}
 
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-        <div class="bg-blue-200 dark:bg-blue-800/40 p-4 mx-2 my-1 rounded-2xl flex justify-between items-center shadow">
-            <div>
-                <h3 class="text-gray-500 dark:text-gray-400  font-semibold">Jumlah Faktur</h3>
-                <h3 class="font-bold text-2xl mb-1">@nominal($rekap->total_faktur ?? '0')</h3>
-            </div>
+        @can('faktur.info-jumlah-faktur')
+            <div class="bg-blue-200 dark:bg-blue-800/40 p-4 mx-2 my-1 rounded-2xl flex justify-between items-center shadow">
+                <div>
+                    <h3 class="text-gray-500 dark:text-gray-400  font-semibold">Jumlah Faktur</h3>
+                    <h3 class="font-bold text-2xl mb-1">@nominal($rekap->total_faktur ?? '0')</h3>
+                </div>
 
-            <div class="bg-blue-400/60 dark:bg-blue-300 text-blue-600 dark:text-sky-800 rounded-xl p-3 shadow">
-                <span class="iconify solar--chart-bold-duotone text-2xl font-bold "></span>
+                <div class="bg-blue-400/60 dark:bg-blue-300 text-blue-600 dark:text-sky-800 rounded-xl p-3 shadow">
+                    <span class="iconify solar--chart-bold-duotone text-2xl font-bold "></span>
+                </div>
             </div>
-        </div>
+        @endcan
 
-        <div class="bg-green-200 dark:bg-green-800/40 p-4 mx-2 my-1 rounded-2xl flex justify-between items-center shadow">
-            <div>
-                <h3 class="text-gray-500 dark:text-gray-400 font-semibold">Total Pengeluaran</h3>
-                <h3 class="font-bold text-2xl mb-1">Rp. @nominal($rekap->total_lunas ?? '0')</h3>
-            </div>
+        @can('faktur.info-total-pengeluaran')
+            <div class="bg-green-200 dark:bg-green-800/40 p-4 mx-2 my-1 rounded-2xl flex justify-between items-center shadow">
+                <div>
+                    <h3 class="text-gray-500 dark:text-gray-400 font-semibold">Total Pengeluaran</h3>
+                    <h3 class="font-bold text-2xl mb-1">Rp. @nominal($rekap->total_lunas ?? '0')</h3>
+                </div>
 
-            <div class="bg-green-400/50 dark:bg-green-300 text-green-800 dark:text-emerald-800 rounded-xl p-3 shadow">
-                <span class="iconify solar--hand-money-linear text-2xl font-bold "></span>
+                <div class="bg-green-400/50 dark:bg-green-300 text-green-800 dark:text-emerald-800 rounded-xl p-3 shadow">
+                    <span class="iconify solar--hand-money-linear text-2xl font-bold "></span>
+                </div>
             </div>
-        </div>
-        <div class="bg-red-200 dark:bg-red-800/40 p-4 mx-2 my-1 rounded-2xl flex justify-between items-center shadow">
-            <div>
-                <h3 class="text-gray-500 dark:text-gray-400 font-semibold">Total Hutang</h3>
-                <h3 class="font-bold text-2xl mb-1">Rp. @nominal($rekap->total_belum_lunas ?? '0')</h3>
-            </div>
+        @endcan
+        @can('faktur.info-total-hutang')
+            <div class="bg-red-200 dark:bg-red-800/40 p-4 mx-2 my-1 rounded-2xl flex justify-between items-center shadow">
+                <div>
+                    <h3 class="text-gray-500 dark:text-gray-400 font-semibold">Total Hutang</h3>
+                    <h3 class="font-bold text-2xl mb-1">Rp. @nominal($rekap->total_belum_lunas ?? '0')</h3>
+                </div>
 
-            <div class="bg-red-400/50 dark:bg-red-300 text-red-800 dark:text-emerald-800 rounded-xl p-3 shadow">
-                <span class="iconify solar--hand-money-linear text-2xl font-bold "></span>
+                <div class="bg-red-400/50 dark:bg-red-300 text-red-800 dark:text-emerald-800 rounded-xl p-3 shadow">
+                    <span class="iconify solar--hand-money-linear text-2xl font-bold "></span>
+                </div>
             </div>
-        </div>
+        @endcan
     </div>
 
     <x-datatable nama_table="faktur" :$perPage placeholder_search="Masukan No. Kwitansi / Nama Supplier, dll">
@@ -148,24 +154,32 @@
                     <x-table.td class="text-center">
 
                         <x-dropdown text="Aksi" wire:key='dropdown-{{ $faktur->id }}'>
-                            <x-dropdown.item class="bg-warning hover:bg-warningemphasis" href="{{ route('faktur.edit', $faktur->id) }}" wire:navigate>
-                                <span class="iconify basil--edit-outline"></span>
-                                <span class="text-sm">Edit</span>
-                            </x-dropdown.item>
-                            <x-dropdown.item class="bg-primary hover:bg-primaryemphasis" href="#"
-                                             @click=" $wire.dispatch('alert-confirm', {id: '{{ $faktur->id }}', method: 'update-status-faktur', text: 'Apakah anda yakin mengubah status Faktur?'}); ">
-                                <span class="iconify fluent--pen-sync-24-filled"></span>
-                                <span class="text-sm">Ubah Status</span>
-                            </x-dropdown.item>
-                            <x-dropdown.item class="bg-info hover:bg-infoemphasis" href="{{ route('faktur.detail', $faktur->id) }}" wire:navigate>
-                                <span class="iconify solar--eye-bold"></span>
-                                <span class="text-sm">Detail</span>
-                            </x-dropdown.item>
-                            <x-dropdown.item class="bg-error hover:bg-erroremphasis" href="#"
-                                             @click=" $wire.dispatch('alert-confirm', {id: '{{ $faktur->id }}', method: 'delete-faktur', text: 'Apakah anda yakin menghapus Faktur?'}); ">
-                                <span class="iconify basil--trash-outline"></span>
-                                <span class="text-sm">Hapus</span>
-                            </x-dropdown.item>
+                            @canany(['faktur.edit-all', 'faktur.edit-own'])
+                                <x-dropdown.item class="bg-warning hover:bg-warningemphasis" href="{{ route('faktur.edit', $faktur->id) }}" wire:navigate>
+                                    <span class="iconify basil--edit-outline"></span>
+                                    <span class="text-sm">Edit</span>
+                                </x-dropdown.item>
+                            @endcan
+                            @can('faktur.ubah-status')
+                                <x-dropdown.item class="bg-primary hover:bg-primaryemphasis" href="#"
+                                                 @click=" $wire.dispatch('alert-confirm', {id: '{{ $faktur->id }}', method: 'update-status-faktur', text: 'Apakah anda yakin mengubah status Faktur?'}); ">
+                                    <span class="iconify fluent--pen-sync-24-filled"></span>
+                                    <span class="text-sm">Ubah Status</span>
+                                </x-dropdown.item>
+                            @endcan
+                            @canany(['faktur.detail-all', 'faktur.detail-own'])
+                                <x-dropdown.item class="bg-info hover:bg-infoemphasis" href="{{ route('faktur.detail', $faktur->id) }}" wire:navigate>
+                                    <span class="iconify solar--eye-bold"></span>
+                                    <span class="text-sm">Detail</span>
+                                </x-dropdown.item>
+                            @endcan
+                            @canany(['faktur.delete-all', 'faktur.delete-own'])
+                                <x-dropdown.item class="bg-error hover:bg-erroremphasis" href="#"
+                                                 @click=" $wire.dispatch('alert-confirm', {id: '{{ $faktur->id }}', method: 'delete-faktur', text: 'Apakah anda yakin menghapus Faktur?'}); ">
+                                    <span class="iconify basil--trash-outline"></span>
+                                    <span class="text-sm">Hapus</span>
+                                </x-dropdown.item>
+                            @endcan
                         </x-dropdown>
                         {{-- <x-table.action-button @click=" $wire.dispatch('alert-confirm', {id: '{{ $faktur->id }}', method: 'update-status-faktur', text: 'Apakah anda yakin mengubah status Faktur?'}); "
                                                tooltip="Ubah Status ke : {{ $faktur->status == 'LUNAS' ? 'BELUM LUNAS' : 'LUNAS' }}">

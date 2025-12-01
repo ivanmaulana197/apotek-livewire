@@ -4,6 +4,7 @@ namespace App\Livewire\Transaksi;
 use App\Helpers\FormatHelper;
 use App\Models\Transaksi\Transaksi;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -21,38 +22,47 @@ class TransaksiCardInfo extends Component
     #[On('update_value_shift_transaksi')]
     public function updateShiftTransaksi($value)
     {
-        $this->shift_transaksi = $value;
+        if (Auth::user()->can("transaksi.filter-transaksi")) {
+            $this->shift_transaksi = $value;
+        }
     }
 
     #[On('update_value_filter_date')]
     public function updateFilterDate($value)
     {
-        $this->filter_date = $value;
+        if (Auth::user()->can("transaksi.filter-transaksi")) {
+            $this->filter_date = $value;
+        }
     }
 
     protected function updateStatusTanggal()
     {
-        if (! empty($this->filter_date['start']) && ! empty($this->filter_date['end'])) {
-            $start = Carbon::parse($this->filter_date['start']);
-            $end   = Carbon::parse($this->filter_date['end']);
+        if (Auth::user()->can("transaksi.filter-transaksi")) {
+            if (! empty($this->filter_date['start']) && ! empty($this->filter_date['end'])) {
+                $start = Carbon::parse($this->filter_date['start']);
+                $end   = Carbon::parse($this->filter_date['end']);
 
-            if ($start->equalTo($end)) {
-                $this->status_tanggal = $start->isToday()
-                    ? 'hari ini'
-                    : $start->diffForHumans(now()->startOfDay(), Carbon::DIFF_RELATIVE_TO_NOW, false, 1);
+                if ($start->equalTo($end)) {
+                    $this->status_tanggal = $start->isToday()
+                        ? 'hari ini'
+                        : $start->diffForHumans(now()->startOfDay(), Carbon::DIFF_RELATIVE_TO_NOW, false, 1);
+                } else {
+                    $this->status_tanggal =
+                    FormatHelper::formatDate($this->filter_date['start']) .
+                    ' - ' .
+                    FormatHelper::formatDate($this->filter_date['end']);
+                }
             } else {
-                $this->status_tanggal =
-                FormatHelper::formatDate($this->filter_date['start']) .
-                ' - ' .
-                FormatHelper::formatDate($this->filter_date['end']);
+                $this->status_tanggal = 'SEMUA';
             }
-        } else {
-            $this->status_tanggal = 'SEMUA';
         }
     }
 
     public function getDataTransaksi()
     {
+        if (! Auth::user()->canAny(['transaksi.info-total-transaksi-by-metode-pembayaran', 'transaksi.info-total-transaksi-umum', 'transaksi.info-total-transaksi-resep', 'transaksi.info-total-jumlah-transaksi'])) {
+            return $this->dispatch('alert', status: 'error', message: 'Kamu Tidak Memiliki Akses');
+        }
         $rekap = Transaksi::query()
             ->join('metode_pembayaran', 'metode_pembayaran.id', '=', 'transaksi.id_metode_pembayaran')
             ->when($this->filter_date ?? null, function ($query, $item) {

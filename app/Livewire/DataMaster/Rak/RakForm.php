@@ -1,11 +1,11 @@
 <?php
-
 namespace App\Livewire\DataMaster\Rak;
 
-use Livewire\Component;
 use App\Models\DataMaster\Rak;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\On;
+use Livewire\Component;
 
 class RakForm extends Component
 {
@@ -25,39 +25,51 @@ class RakForm extends Component
 
     public function save()
     {
-        $validate = $this->validate();
-        $rak = Rak::create($validate);
-        if ($this->isModal) {
-            $this->dispatch('toggle-modal-rak', rakModal: false);
+        if (Auth::user()->can('rak.create')) {
+            $validate = $this->validate();
+            $rak      = Rak::create($validate);
+            if ($this->isModal) {
+                $this->dispatch('toggle-modal-rak', rakModal: false);
+            }
+            $this->dispatch('alert', status: 'success', message: 'Berhasil Menambahkan Rak');
+            $this->resetForm();
+            $this->dispatch('rak-created', rak: $rak);
+        } else {
+            $this->dispatch('alert', status: 'error', message: 'Anda tidak memiliki izin untuk menambahkan Rak');
         }
-        $this->dispatch('alert', status: 'success', message: 'Berhasil Menambahkan Rak');
-        $this->resetForm();
-        $this->dispatch('rak-created', rak: $rak);
     }
 
     #[On('edit-rak')]
     public function editFormRak(Rak $rak)
     {
-        $this->isEdit = true;
-        $this->rak = $rak;
-        $this->nama = $rak->nama;
+        if (Auth::user()->can('rak.edit')) {
+            $this->isEdit = true;
+            $this->rak    = $rak;
+            $this->nama   = $rak->nama;
+        } else {
+            $this->dispatch('alert', status: 'error', message: 'Anda tidak memiliki izin untuk mengedit Rak');
+        }
     }
 
     public function update()
     {
-        $validate = $this->validate();
-        $rak = tap($this->rak)->update($validate);
+        if (Auth::user()->can('rak.edit')) {
+            $validate = $this->validate();
+            $rak      = tap($this->rak)->update($validate);
 
-        $this->dispatch('alert', status: 'info', message: 'Berhasil Mengupdate Rak');
-        $this->resetForm();
-        $this->dispatch('rak-created', rak: $rak);
+            $this->dispatch('alert', status: 'info', message: 'Berhasil Mengupdate Rak');
+            $this->resetForm();
+            $this->dispatch('rak-created', rak: $rak);
+        } else {
+            $this->dispatch('alert', status: 'error', message: 'Anda tidak memiliki izin untuk mengupdate Rak');
+        }
     }
 
-    #[On('close-modal-rak')]  
+    #[On('close-modal-rak')]
     public function resetForm()
     {
         $this->isEdit = false;
-        $this->rak = new Rak();
-        $this->nama = null;
+        $this->rak    = new Rak();
+        $this->nama   = null;
     }
 }

@@ -3,6 +3,7 @@ namespace App\Livewire\Barang;
 
 use App\Helpers\PembulatanHelper;
 use App\Models\Barang\Barang;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class BarangIndex extends Component
@@ -10,28 +11,33 @@ class BarangIndex extends Component
 
     public function pembulatanAll()
     {
-        PembulatanHelper::init();
-        $barangs = Barang::query()
-            ->select('id', 'id_satuan_utama', 'harga_jual_utama', 'persen_jual_utama')
-            ->with(['opsi_harga', 'opsi_satuan', 'satuan_utama:id,nama'])->get();
+        if (Auth::user()->can('barang.pembulatan-all')) {
 
-        foreach ($barangs as $barang) {
-            $barang->append('all_satuan');
-            $temp                      = PembulatanHelper::pembulatanHargaBarang($barang->toArray());
-            $barang->harga_jual_utama  = $temp['harga_jual_utama'];
-            $barang->persen_jual_utama = $temp['persen_jual_utama'];
+            PembulatanHelper::init();
+            $barangs = Barang::query()
+                ->select('id', 'id_satuan_utama', 'harga_jual_utama', 'persen_jual_utama')
+                ->with(['opsi_harga', 'opsi_satuan', 'satuan_utama:id,nama'])->get();
 
-            // Hapus opsi harga lama
-            $barang->opsi_harga()->delete();
+            foreach ($barangs as $barang) {
+                $barang->append('all_satuan');
+                $temp                      = PembulatanHelper::pembulatanHargaBarang($barang->toArray());
+                $barang->harga_jual_utama  = $temp['harga_jual_utama'];
+                $barang->persen_jual_utama = $temp['persen_jual_utama'];
 
-            // Tambah opsi harga baru
-            foreach ($temp['opsi_harga'] as $opsi_harga) {
-                // pastikan kolom id_barang dihapus agar tidak bentrok (karena create() akan otomatis isi)
-                unset($opsi_harga['id_barang']);
-                unset($opsi_harga['id']); // jika ada id lama
-                $barang->opsi_harga()->create($opsi_harga);
+                // Hapus opsi harga lama
+                $barang->opsi_harga()->delete();
+
+                // Tambah opsi harga baru
+                foreach ($temp['opsi_harga'] as $opsi_harga) {
+                    // pastikan kolom id_barang dihapus agar tidak bentrok (karena create() akan otomatis isi)
+                    unset($opsi_harga['id_barang']);
+                    unset($opsi_harga['id']); // jika ada id lama
+                    $barang->opsi_harga()->create($opsi_harga);
+                }
+                $barang->save();
             }
-            $barang->save();
+        } else {
+            $this->dispatch('alert', status: 'error', message: 'Kamu Tidak Memiliki Akses');
         }
     }
 

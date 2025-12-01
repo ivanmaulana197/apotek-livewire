@@ -28,8 +28,10 @@
             </div>
         </form>
     </div>
-    <x-modal name="profesi">
-        @livewire('data-master.profesi.profesi-form', ['isModal' => true])
-    </x-modal>
+    @can('profesi.create')
+        <x-modal name="profesi">
+            @livewire('data-master.profesi.profesi-form', ['isModal' => true])
+        </x-modal>
+    @endcan
     {{-- Success is as dangerous as failure. --}}
 </div>

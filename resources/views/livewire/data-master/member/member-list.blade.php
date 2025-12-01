@@ -43,17 +43,23 @@
                             {!! $this->highlight($member->profesi->nama) !!}
                         </x-table.td>
                         <x-table.td class="text-center">
-                            <x-table.action-button tooltip="Detail" color="info" type="href" wire:navigate
-                                                   href="{{ route('data-master.member.detail', $member->id) }}">
-                                <span class="iconify tabler--info-circle text-lg"></span>
-                            </x-table.action-button>
-                            <x-table.action-button tooltip="Edit" color="warning" @click="$dispatch('edit-member',{member:'{{ $member->id }}'})">
-                                <span class="iconify tabler--edit-circle text-lg"></span>
-                            </x-table.action-button>
-                            <x-table.action-button tooltip="Hapus" color="error"
-                                                   @click="$wire.dispatch('alert-confirm', { id: '{{ $member->id }}', method: 'delete-member' });">
-                                <span class="iconify tabler--trash-x-filled text-lg"></span>
-                            </x-table.action-button>
+                            @can('member.detail')
+                                <x-table.action-button tooltip="Detail" color="info" type="href" wire:navigate
+                                                       href="{{ route('data-master.member.detail', $member->id) }}">
+                                    <span class="iconify tabler--info-circle text-lg"></span>
+                                </x-table.action-button>
+                            @endcan
+                            @can('member.edit')
+                                <x-table.action-button tooltip="Edit" color="warning" @click="$dispatch('edit-member',{member:'{{ $member->id }}'})">
+                                    <span class="iconify tabler--edit-circle text-lg"></span>
+                                </x-table.action-button>
+                            @endcan
+                            @can('member.delete')
+                                <x-table.action-button tooltip="Hapus" color="error"
+                                                       @click="$wire.dispatch('alert-confirm', { id: '{{ $member->id }}', method: 'delete-member' });">
+                                    <span class="iconify tabler--trash-x-filled text-lg"></span>
+                                </x-table.action-button>
+                            @endcan
                         </x-table.td>
                     </x-table.tr>
                 @empty

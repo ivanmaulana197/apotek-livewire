@@ -82,19 +82,23 @@
                             @endif
                         </x-table.td>
                         <x-table.td class="text-center">
-                            {{-- <x-table.action-button tooltip="Detail" color="secondary" type="href" href="{{ route('promo.detail', $item->id) }}" wire:navigate> --}}
-                            <x-table.action-button tooltip="Detail" color="info"
-                                                   @click="$dispatch('toggle-modal-detailpromo', { detailpromoModal: true }); $dispatch('detail-promo',{id_promo: '{{ $item->id }}'})">
-                                <span class="iconify tabler--eye text-lg"></span>
-                            </x-table.action-button>
-                            <x-table.action-button tooltip="Edit" color="warning" type="href" href="{{ route('promo.edit', $item->id) }}" wire:navigate>
-                                {{-- <x-table.action-button tooltip="Edit" color="warning" @click="$dispatch('toggle-modal-promo', { promoModal: true }); $dispatch('edit-promo',{promo: '{{ $item->id }}'})"> --}}
-                                <span class="iconify tabler--edit-circle text-lg"></span>
-                            </x-table.action-button>
-                            <x-table.action-button tooltip="Hapus" color="error"
-                                                   @click="$wire.dispatch('alert-confirm', { id: '{{ $item->id }}', method: 'delete-promo' });">
-                                <span class="iconify tabler--trash-x-filled text-lg"></span>
-                            </x-table.action-button>
+                            @can('promo.detail')
+                                <x-table.action-button tooltip="Detail" color="info"
+                                                       @click="$dispatch('toggle-modal-detailpromo', { detailpromoModal: true }); $dispatch('detail-promo',{id_promo: '{{ $item->id }}'})">
+                                    <span class="iconify tabler--eye text-lg"></span>
+                                </x-table.action-button>
+                            @endcan
+                            @can('promo.edit')
+                                <x-table.action-button tooltip="Edit" color="warning" type="href" href="{{ route('promo.edit', $item->id) }}" wire:navigate>
+                                    <span class="iconify tabler--edit-circle text-lg"></span>
+                                </x-table.action-button>
+                            @endcan
+                            @can('promo.delete')
+                                <x-table.action-button tooltip="Hapus" color="error"
+                                                       @click="$wire.dispatch('alert-confirm', { id: '{{ $item->id }}', method: 'delete-promo' });">
+                                    <span class="iconify tabler--trash-x-filled text-lg"></span>
+                                </x-table.action-button>
+                            @endcan
                         </x-table.td>
                     </x-table.tr>
                 @empty

@@ -46,6 +46,9 @@ class InfoBarangExpiredList extends Component
 
     public function submit($id_stok_barang)
     {
+        if (! Auth::user()->can('info-barang-expired.trigger')) {
+            return $this->dispatch('alert', status: 'error', message: 'Kamu Tidak Memiliki Akses');
+        }
         try {
             // dd($this->jumlah_dilaporkan, $this->status, $this->new_tgl_expired);
             $stokBatchBarang = StokBatchBarang::with('barang:id,id_satuan_utama')->find($id_stok_barang);
@@ -123,6 +126,9 @@ class InfoBarangExpiredList extends Component
 
     public function triggerCeklistStokBarang()
     {
+        if (! Auth::user()->can('info-barang-expired.trigger')) {
+            return $this->dispatch('alert', status: 'error', message: 'Kamu Tidak Memiliki Akses');
+        }
         try {
             // dd($this->ceklistStokBarang);
             $this->validate(['status_ceklist' => 'required|in:HAPUS INFO,EXPIRED BUANG,EXPIRED GANTI / RETUR,EXPIRED RETUR,RUSAK BUANG,RUSAK GANTI,HILANG']);
@@ -193,6 +199,9 @@ class InfoBarangExpiredList extends Component
 
     public function hapusInfo($id_stok_barang)
     {
+        if (! Auth::user()->can('info-barang-expired.trigger')) {
+            return $this->dispatch('alert', status: 'error', message: 'Kamu Tidak Memiliki Akses');
+        }
         StokBatchBarang::find($id_stok_barang)->delete();
         $this->dispatch('alert', status: 'success', message: 'Berhasil Menghapus Info Data Barang');
     }
@@ -235,6 +244,9 @@ class InfoBarangExpiredList extends Component
 
     public function render()
     {
+        if (! Auth::user()->can('info-barang-expired.list')) {
+            return $this->dispatch('alert', status: 'error', message: 'Kamu Tidak Memiliki Akses');
+        }
         $data = $this->getQuery();
         return view('livewire.informasi.info-barang-expired.info-barang-expired-list', ['stok_batch_barang' => $data]);
     }

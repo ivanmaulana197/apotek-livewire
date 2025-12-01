@@ -84,25 +84,37 @@
         <div class="card mb-2">
             <div class="card-body p-2">
                 <div class="flex flex-wrap gap-2">
-                    <a wire:navigate href="{{ route('data.barang.detail', $id_barang) }}"
-                       class="btn btn-sm bg-dark text-blue-400 hover:text-blue-500 dark:text-blue-600 hover:bg-gray-700 dark:bg-gray-200  dark:hover:bg-gray-300 ">
-                        <span class="iconify solar--eye-bold text-lg"></span> Detail
-                        Barang</a>
-                    <a wire:navigate href="{{ route('data.barang.edit', $id_barang) }}"
-                       class="btn btn-sm bg-dark text-yellow-500 hover:text-yellow-600 dark:text-orange-400 hover:dark:text-orange-300 hover:bg-gray-700 dark:bg-gray-200 dark:hover:bg-gray-300"><span
-                              class="iconify tabler--edit-circle text-lg"></span> Edit Barang</a>
-                    <a wire:navigate href="{{ route('data.barang.detail.faktur', $id_barang) }}"
-                       class="btn btn-sm bg-dark text-white hover:bg-gray-700 dark:bg-gray-200 dark:text-dark dark:hover:bg-gray-300">Detail
-                        Faktur Barang</a>
-                    <a wire:navigate href="{{ route('data.barang.detail.stok', $id_barang) }}"
-                       class="btn btn-sm bg-dark text-white hover:bg-gray-700 dark:bg-gray-200 dark:text-dark dark:hover:bg-gray-300">Detail
-                        Stok Barang</a>
-                    <a wire:navigate href="{{ route('data.barang.detail.expired', $id_barang) }}"
-                       class="btn btn-sm bg-dark text-white hover:bg-gray-700 dark:bg-gray-200 dark:text-dark dark:hover:bg-gray-300">Detail
-                        Expired Barang</a>
-                    <a wire:navigate href="{{ route('data.barang.detail.transaksi', $id_barang) }}"
-                       class="btn btn-sm bg-dark text-white hover:bg-gray-700 dark:bg-gray-200 dark:text-dark dark:hover:bg-gray-300">Detail Transaksi
-                        Barang</a>
+                    @can('barang.detail')
+                        <a wire:navigate href="{{ route('data.barang.detail', $id_barang) }}"
+                           class="btn btn-sm bg-dark text-blue-400 hover:text-blue-500 dark:text-blue-600 hover:bg-gray-700 dark:bg-gray-200  dark:hover:bg-gray-400 ">
+                            <span class="iconify solar--eye-bold text-lg"></span> Detail
+                            Barang</a>
+                    @endcan
+                    @can('barang.edit')
+                        <a wire:navigate href="{{ route('data.barang.edit', $id_barang) }}"
+                           class="btn btn-sm bg-dark text-yellow-500 hover:text-yellow-600 dark:text-orange-400 hover:dark:text-orange-300 hover:bg-gray-700 dark:bg-gray-200 dark:hover:bg-gray-400"><span
+                                  class="iconify tabler--edit-circle text-lg"></span> Edit Barang</a>
+                    @endcan
+                    @can('barang.detail-faktur')
+                        <a wire:navigate href="{{ route('data.barang.detail.faktur', $id_barang) }}"
+                           class="btn btn-sm bg-dark text-white hover:bg-gray-700 dark:bg-gray-200 dark:text-dark dark:hover:bg-gray-400">Detail
+                            Faktur Barang</a>
+                    @endcan
+                    @can('barang.detail-stok')
+                        <a wire:navigate href="{{ route('data.barang.detail.stok', $id_barang) }}"
+                           class="btn btn-sm bg-dark text-white hover:bg-gray-700 dark:bg-gray-200 dark:text-dark dark:hover:bg-gray-400">Detail
+                            Stok Barang</a>
+                    @endcan
+                    @can('barang.detail-barang-expired')
+                        <a wire:navigate href="{{ route('data.barang.detail.expired', $id_barang) }}"
+                           class="btn btn-sm bg-dark text-white hover:bg-gray-700 dark:bg-gray-200 dark:text-dark dark:hover:bg-gray-400">Detail
+                            Expired Barang</a>
+                    @endcan
+                    @can('barang.detail-transaksi')
+                        <a wire:navigate href="{{ route('data.barang.detail.transaksi', $id_barang) }}"
+                           class="btn btn-sm bg-dark text-white hover:bg-gray-700 dark:bg-gray-200 dark:text-dark dark:hover:bg-gray-400">Detail Transaksi
+                            Barang</a>
+                    @endcan
                 </div>
             </div>
         </div>
@@ -140,9 +152,11 @@
             <div class="card-body">
                 <div class="card-title" x-text="'List Stok Barang : '+barang.nama"></div>
 
-                <div>
-                    <button class="btn btn-sm" @click="$dispatch('toggle-modal-edit_stok_barang', {edit_stok_barangModal: true})">Tambah Stok +</button>
-                </div>
+                @can('barang.stok-barang.create')
+                    <div>
+                        <button class="btn btn-sm" @click="$dispatch('toggle-modal-edit_stok_barang', {edit_stok_barangModal: true})">Tambah Stok +</button>
+                    </div>
+                @endcan
 
                 <x-table nama="stok_barang" height="h-full">
                     <x-table.thead>
@@ -183,20 +197,23 @@
                                     <span x-show="!item.isEdit" x-text="item.harga_beli ? 'Rp. '+item.harga_beli : '-'"></span>
                                 </x-table.td>
                                 <x-table.td class="text-center">
-                                    <x-table.action-button x-show="!item.isEdit" tooltip="Edit" color="warning" @click="editStokBarang(index)">
-                                        <span class="iconify tabler--edit-circle text-lg"></span>
-                                    </x-table.action-button>
-                                    <x-table.action-button x-show="item.isEdit" tooltip="Batalkan" color="secondary" @click="cancelStokBarang(index)">
-                                        <span class="iconify mdi--close text-lg"></span>
-                                    </x-table.action-button>
-                                    <x-table.action-button x-show="item.isEdit" tooltip="Simpan" color="success" @click="updateStokBarang(index)">
-                                        <span class="iconify tabler--check text-lg"></span>
-                                    </x-table.action-button>
-
-                                    <x-table.action-button x-show="!item.isEdit" tooltip="Hapus" color="error"
-                                                           @click="$wire.dispatch('alert-confirm', { id: item.id, method: 'delete-stok-barang' });">
-                                        <span class="iconify tabler--trash-x-filled text-lg"></span>
-                                    </x-table.action-button>
+                                    @can('barang.stok-barang.edit')
+                                        <x-table.action-button x-show="!item.isEdit" tooltip="Edit" color="warning" @click="editStokBarang(index)">
+                                            <span class="iconify tabler--edit-circle text-lg"></span>
+                                        </x-table.action-button>
+                                        <x-table.action-button x-show="item.isEdit" tooltip="Batalkan" color="secondary" @click="cancelStokBarang(index)">
+                                            <span class="iconify mdi--close text-lg"></span>
+                                        </x-table.action-button>
+                                        <x-table.action-button x-show="item.isEdit" tooltip="Simpan" color="success" @click="updateStokBarang(index)">
+                                            <span class="iconify tabler--check text-lg"></span>
+                                        </x-table.action-button>
+                                    @endcan
+                                    @can('barang.stok-barang.delete')
+                                        <x-table.action-button x-show="!item.isEdit" tooltip="Hapus" color="error"
+                                                               @click="$wire.dispatch('alert-confirm', { id: item.id, method: 'delete-stok-barang' });">
+                                            <span class="iconify tabler--trash-x-filled text-lg"></span>
+                                        </x-table.action-button>
+                                    @endcan
 
                                 </x-table.td>
 
@@ -222,17 +239,19 @@
                                 </p>
                             </x-table.td>
                             <x-table.td class="text-center">
-                                <x-table.action-button x-show="!isEditStok" tooltip="Edit" color="warning"
-                                                       @click="$focus.focus($refs.inputs); isEditStok = true;">
-                                    <span class="iconify tabler--edit-circle text-lg"></span>
-                                </x-table.action-button>
-                                <x-table.action-button x-show="isEditStok" tooltip="Batalkan" color="secondary"
-                                                       @click="isEditStok = false; barang.stok = temp_stok_sistem_barang;">
-                                    <span class="iconify mdi--close text-lg"></span>
-                                </x-table.action-button>
-                                <x-table.action-button x-show="isEditStok" tooltip="Simpan" type="submit" color="success">
-                                    <span class="iconify tabler--check text-lg"></span>
-                                </x-table.action-button>
+                                @can('barang.edit')
+                                    <x-table.action-button x-show="!isEditStok" tooltip="Edit" color="warning"
+                                                           @click="$focus.focus($refs.inputs); isEditStok = true;">
+                                        <span class="iconify tabler--edit-circle text-lg"></span>
+                                    </x-table.action-button>
+                                    <x-table.action-button x-show="isEditStok" tooltip="Batalkan" color="secondary"
+                                                           @click="isEditStok = false; barang.stok = temp_stok_sistem_barang;">
+                                        <span class="iconify mdi--close text-lg"></span>
+                                    </x-table.action-button>
+                                    <x-table.action-button x-show="isEditStok" tooltip="Simpan" type="submit" color="success">
+                                        <span class="iconify tabler--check text-lg"></span>
+                                    </x-table.action-button>
+                                @endcan
                                 </form>
                             </x-table.td>
                         </x-table.tr>
@@ -241,9 +260,11 @@
 
                 </x-table>
 
-                <x-modal name="edit_stok_barang">
-                    <livewire:barang.barang-detail.components.stok-barang-form :id_barang="$barang['id']" :all_satuan="$barang['all_satuan']" :nama_satuan_utama="$barang['satuan_utama']['nama']" />
-                </x-modal>
+                @can('barang.stok-barang.edit')
+                    <x-modal name="edit_stok_barang">
+                        <livewire:barang.barang-detail.components.stok-barang-form :id_barang="$barang['id']" :all_satuan="$barang['all_satuan']" :nama_satuan_utama="$barang['satuan_utama']['nama']" />
+                    </x-modal>
+                @endcan
 
             </div>
         </div>

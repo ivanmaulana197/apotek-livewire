@@ -2,6 +2,7 @@
 namespace App\Livewire\DataMaster\Profesi;
 
 use App\Models\DataMaster\Profesi;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -23,6 +24,9 @@ class ProfesiForm extends Component
 
     public function save()
     {
+        if (! Auth::user()->can('profesi.create')) {
+            return $this->dispatch('alert', status: 'error', message: 'Anda Tidak Memiliki Akses');
+        }
         $validate = $this->validate();
         $profesi  = Profesi::create($validate);
         if ($this->isModal) {
@@ -36,6 +40,9 @@ class ProfesiForm extends Component
     #[On('edit-profesi')]
     public function editFormSupplier(Profesi $profesi)
     {
+        if (! Auth::user()->can('profesi.update')) {
+            return $this->dispatch('alert', status: 'error', message: 'Anda Tidak Memiliki Akses');
+        }
         $this->isEdit  = true;
         $this->profesi = $profesi;
         $this->nama    = $profesi->nama;
@@ -43,6 +50,9 @@ class ProfesiForm extends Component
 
     public function update()
     {
+        if (! Auth::user()->can('profesi.update')) {
+            return $this->dispatch('alert', status: 'error', message: 'Anda Tidak Memiliki Akses');
+        }
         $validate = $this->validate();
         $profesi  = tap($this->profesi)->update($validate);
 

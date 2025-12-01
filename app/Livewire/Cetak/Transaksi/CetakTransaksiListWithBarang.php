@@ -28,10 +28,18 @@ class CetakTransaksiListWithBarang extends Component
         if (request()->has('id_barang')) {
             $this->id_barang = request('id_barang');
         }
-        if (Auth::user()->hasRole('admin')) {
+        if (Auth::user()->can('transaksi.cetak-laporan-all')) {
             $this->by_user = request('by_user', 'SEMUA');
-        } else {
+        } elseif (Auth::user()->can('transaksi.cetak-laporan-own')) {
             $this->by_user = Auth::user()->id;
+        } else {
+            return redirect()->back()->with([
+                'alert' => [
+                    'title'   => 'Tidak Diizinkan',
+                    'message' => 'Anda tidak memiliki akses yang diperlukan.',
+                    'icon'    => 'error', // Ikon SweetAlert ('success', 'error', 'warning', 'info')
+                ],
+            ]);
         }
 
         $this->shift_transaksi = request('shift', GeneralHelper::checkModeShift());

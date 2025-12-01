@@ -3,6 +3,7 @@ namespace App\Livewire\DataMaster\Supplier;
 
 use App\Enums\SupplierAsalEnum;
 use App\Models\DataMaster\Supplier;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
@@ -35,49 +36,61 @@ class SupplierForm extends Component
     }
     public function save()
     {
-        try {
-            $validate = $this->validate();
-            DB::BeginTransaction();
-            $supplier = Supplier::create($validate);
-            DB::commit();
-            $this->dispatch('toggle-modal-supplier', supplierModal: false);
-            $this->dispatch('alert', status: 'success', message: 'Berhasil Menambahkan Supplier');
-            $this->resetForm();
-            $this->dispatch('supplier-created', supplier: $supplier);
-        } catch (\Exception $e) {
-            DB::rollBack(); // Batalkan transaksi jika terjadi error
-            $this->dispatch('alert', status: 'error', message: 'Gagal Menambahkan Supplier', subtitle: $e->getMessage());
-            throw $e;
+        if (Auth::user()->can('supplier.create')) {
+            try {
+                $validate = $this->validate();
+                DB::BeginTransaction();
+                $supplier = Supplier::create($validate);
+                DB::commit();
+                $this->dispatch('toggle-modal-supplier', supplierModal: false);
+                $this->dispatch('alert', status: 'success', message: 'Berhasil Menambahkan Supplier');
+                $this->resetForm();
+                $this->dispatch('supplier-created', supplier: $supplier);
+            } catch (\Exception $e) {
+                DB::rollBack(); // Batalkan transaksi jika terjadi error
+                $this->dispatch('alert', status: 'error', message: 'Gagal Menambahkan Supplier', subtitle: $e->getMessage());
+                throw $e;
+            }
+        } else {
+            $this->dispatch('alert', status: 'error', message: 'Kamu Tidak Memiliki Akses');
         }
     }
 
     #[On('edit-supplier')]
     public function editFormSupplier(Supplier $supplier)
     {
-        $this->isEdit   = true;
-        $this->supplier = $supplier;
-        $this->nama     = $supplier->nama;
-        $this->asal     = $supplier->asal;
-        $this->dispatch('selected-asal', selected: $supplier->asal);
-        $this->alamat   = $supplier->alamat;
-        $this->no_hp    = $supplier->no_hp;
-        $this->is_pajak = $supplier->is_pajak;
+        if (Auth::user()->can('supplier.edit')) {
+            $this->isEdit   = true;
+            $this->supplier = $supplier;
+            $this->nama     = $supplier->nama;
+            $this->asal     = $supplier->asal;
+            $this->dispatch('selected-asal', selected: $supplier->asal);
+            $this->alamat   = $supplier->alamat;
+            $this->no_hp    = $supplier->no_hp;
+            $this->is_pajak = $supplier->is_pajak;
+        } else {
+            $this->dispatch('alert', status: 'error', message: 'Kamu Tidak Memiliki Akses');
+        }
     }
 
     public function update()
     {
-        try {
-            $validate = $this->validate();
-            DB::BeginTransaction();
-            $supplier = tap($this->supplier)->update($validate);
-            DB::commit();
-            $this->dispatch('alert', status: 'info', message: 'Berhasil Mengupdate Supplier');
-            $this->resetForm();
-            $this->dispatch('supplier-created', supplier: $supplier->id);
-        } catch (\Exception $e) {
-            DB::rollBack(); // Batalkan transaksi jika terjadi error
-            $this->dispatch('alert', status: 'error', message: 'Gagal Mengupdate Supplier', subtitle: $e->getMessage());
-            throw $e;
+        if (Auth::user()->can('supplier.edit')) {
+            try {
+                $validate = $this->validate();
+                DB::BeginTransaction();
+                $supplier = tap($this->supplier)->update($validate);
+                DB::commit();
+                $this->dispatch('alert', status: 'info', message: 'Berhasil Mengupdate Supplier');
+                $this->resetForm();
+                $this->dispatch('supplier-created', supplier: $supplier->id);
+            } catch (\Exception $e) {
+                DB::rollBack(); // Batalkan transaksi jika terjadi error
+                $this->dispatch('alert', status: 'error', message: 'Gagal Mengupdate Supplier', subtitle: $e->getMessage());
+                throw $e;
+            }
+        } else {
+            $this->dispatch('alert', status: 'error', message: 'Kamu Tidak Memiliki Akses');
         }
     }
 
@@ -98,7 +111,11 @@ class SupplierForm extends Component
 
     public function render()
     {
-        $this->supplierAsalEnum = SupplierAsalEnum::toArray();
-        return view('livewire.data-master.supplier.supplier-form');
+        if (Auth::user()->canAny(['supplier.create', 'supplier.edit'])) {
+            $this->supplierAsalEnum = SupplierAsalEnum::toArray();
+            return view('livewire.data-master.supplier.supplier-form');
+        } else {
+            $this->dispatch('alert', status: 'error', message: 'Anda tidak memiliki akses untuk menambah atau mengupdate supplier');
+        }
     }
 }

@@ -3,6 +3,7 @@ namespace App\Livewire\Transaksi;
 
 use App\Helpers\FormatHelper;
 use App\Models\Transaksi\Transaksi;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -13,6 +14,7 @@ class TransaksiBarangDetailModal extends Component
     #[On('set-transaksi-barang')]
     public function setTransaksiBarang($id_transaksi)
     {
+
         $this->transaksi = Transaksi::with([
             'detail_transaksi.detail_barang' => function ($q) {
                 $q->with(['barang:id,nama', 'satuan:id,nama'])->orderBy('id_barang');
@@ -22,10 +24,13 @@ class TransaksiBarangDetailModal extends Component
         ])->select(['id'])
             ->findOrFail($id_transaksi);
 
+        if (! Auth::user()->can('transaksi.detail-all') && ! (Auth::user()->can('transaksi.detail-own') && $this->transaksi->id_user == Auth::user()->id)) {
+            return $this->dispatch('alert', status: 'error', message: 'Kamu Tidak Memiliki Akses');
+        }
+
         $diskonPromos = $this->transaksi->transaksi_list_promo
             ->where('tipe_promo', '!=', 'TRANSAKSI')
             ->keyBy('id_barang');
-        // dd($diskonPromos);
 
         $this->transaksi->detail_transaksi->map(function ($item, $key) use ($diskonPromos) {
             $next               = $this->transaksi->detail_transaksi->get($key + 1)?->detail_barang;

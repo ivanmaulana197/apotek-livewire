@@ -26,14 +26,18 @@
                         </x-table.td>
 
                         <x-table.td class="text-center">
-                            <x-table.action-button tooltip="Edit" color="warning"
-                                                   @click="$dispatch('edit-metodePembayaran',{metodePembayaran:'{{ $metodePembayaran->id }}'})">
-                                <span class="iconify tabler--edit-circle text-lg"></span>
-                            </x-table.action-button>
-                            <x-table.action-button tooltip="Hapus" color="error"
-                                                   @click="$wire.dispatch('alert-confirm', { id: '{{ $metodePembayaran->id }}', method: 'delete-metodePembayaran' });">
-                                <span class="iconify tabler--trash-x-filled text-lg"></span>
-                            </x-table.action-button>
+                            @can('metode-pembayaran.edit')
+                                <x-table.action-button tooltip="Edit" color="warning"
+                                                       @click="$dispatch('edit-metodePembayaran',{metodePembayaran:'{{ $metodePembayaran->id }}'})">
+                                    <span class="iconify tabler--edit-circle text-lg"></span>
+                                </x-table.action-button>
+                            @endcan
+                            @can('metode-pembayaran.delete')
+                                <x-table.action-button tooltip="Hapus" color="error"
+                                                       @click="$wire.dispatch('alert-confirm', { id: '{{ $metodePembayaran->id }}', method: 'delete-metodePembayaran' });">
+                                    <span class="iconify tabler--trash-x-filled text-lg"></span>
+                                </x-table.action-button>
+                            @endcan
                         </x-table.td>
                     </x-table.tr>
                 @empty

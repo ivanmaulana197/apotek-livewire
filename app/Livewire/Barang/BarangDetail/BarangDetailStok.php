@@ -4,6 +4,7 @@ namespace App\Livewire\Barang\BarangDetail;
 use App\Helpers\FormatHelper;
 use App\Models\Barang\Barang;
 use App\Models\Barang\StokBatchBarang;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -45,6 +46,9 @@ class BarangDetailStok extends Component
 
     public function updateStokBarang($index)
     {
+        if (! Auth::user()->can('barang.stok-barang.edit')) {
+            return $this->dispatch('alert', status: 'error', message: 'Anda Tidak Memiliki Hak Akses untuk Mengupdate Stok Barang');
+        }
         try {
             $this->formattedForm($index);
             $this->validate([
@@ -81,6 +85,9 @@ class BarangDetailStok extends Component
     #[On('delete-stok-barang')]
     public function deleteStokBarang($id)
     {
+        if (! Auth::user()->can('barang.stok-barang.delete')) {
+            return $this->dispatch('alert', status: 'error', message: 'Anda Tidak Memiliki Hak Akses untuk Menghapus Stok Barang');
+        }
         try {
             DB::beginTransaction();
             StokBatchBarang::find($id)->delete();
@@ -103,6 +110,9 @@ class BarangDetailStok extends Component
 
     public function updateStokSistemBarang()
     {
+        if (! Auth::user()->can('barang.edit')) {
+            return $this->dispatch('alert', status: 'error', message: 'Anda Tidak Memiliki Hak Akses untuk Mengupdate Stok Sistem Barang');
+        }
         try {
             $this->barang['stok'] = FormatHelper::formatStringToNumber($this->barang['stok']);
             $this->validate([
@@ -126,7 +136,6 @@ class BarangDetailStok extends Component
 
     public function render()
     {
-
         return view('livewire.barang.barang-detail.barang-detail-stok');
     }
 }

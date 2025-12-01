@@ -3,6 +3,7 @@ namespace App\Livewire\Faktur;
 
 use App\Models\Faktur\Faktur;
 use App\Traits\CustomDataTable;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -21,6 +22,15 @@ class FakturDetail extends Component
         },
             'supplier:id,nama'])
             ->findOrFail($id);
+        if (! Auth::user()->can('faktur.detail-all') || ! (Auth::user()->can('faktur.detail-own') && $this->faktur->id_user == Auth::user()->id)) {
+            return redirect()->back()->with([
+                'alert' => [
+                    'title'   => 'Tidak Diizinkan',
+                    'message' => 'Anda tidak memiliki akses yang diperlukan.',
+                    'icon'    => 'error', // Ikon SweetAlert ('success', 'error', 'warning', 'info')
+                ],
+            ]);
+        }
         // dd($this->faktur->toArray());
     }
 

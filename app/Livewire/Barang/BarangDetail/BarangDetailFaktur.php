@@ -11,7 +11,6 @@ class BarangDetailFaktur extends Component
     public function mount($id)
     {
         $this->barang = Barang::select('id', 'nama')->find($id)->toArray();
-
     }
 
     public function render()

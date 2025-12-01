@@ -2,6 +2,7 @@
 namespace App\Livewire\DataMaster\Kategori;
 
 use App\Models\DataMaster\Kategori;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -24,32 +25,45 @@ class KategoriForm extends Component
 
     public function save()
     {
-        $validate = $this->validate();
-        $kategori = Kategori::create($validate);
-        if ($this->isModal) {
-            $this->dispatch('toggle-modal-kategori', kategoriModal: false);
+        if (Auth::user()->can('kategori.create')) {
+            $validate = $this->validate();
+            $kategori = Kategori::create($validate);
+            if ($this->isModal) {
+                $this->dispatch('toggle-modal-kategori', kategoriModal: false);
+            }
+            $this->dispatch('alert', status: 'success', message: 'Berhasil Menambahkan Kategori');
+            $this->resetForm();
+            $this->dispatch('kategori-created', kategori: $kategori);
+        } else {
+            $this->dispatch('alert', status: 'error', message: 'Anda tidak memiliki izin untuk menambahkan Kategori');
         }
-        $this->dispatch('alert', status: 'success', message: 'Berhasil Menambahkan Kategori');
-        $this->resetForm();
-        $this->dispatch('kategori-created', kategori: $kategori);
     }
 
     #[On('edit-kategori')]
     public function editFormSupplier(Kategori $kategori)
     {
-        $this->isEdit   = true;
-        $this->kategori = $kategori;
-        $this->nama     = $kategori->nama;
+        if (Auth::user()->can('kategori.edit')) {
+            $this->isEdit   = true;
+            $this->kategori = $kategori;
+            $this->nama     = $kategori->nama;
+        } else {
+            $this->dispatch('alert', status: 'error', message: 'Anda tidak memiliki izin untuk mengedit Kategori');
+        }
     }
 
     public function update()
     {
-        $validate = $this->validate();
-        $kategori = tap($this->kategori)->update($validate);
+        if (Auth::user()->can('kategori.edit')) {
 
-        $this->dispatch('alert', status: 'info', message: 'Berhasil Mengupdate Kategori');
-        $this->resetForm();
-        $this->dispatch('kategori-created', kategori: $kategori);
+            $validate = $this->validate();
+            $kategori = tap($this->kategori)->update($validate);
+
+            $this->dispatch('alert', status: 'info', message: 'Berhasil Mengupdate Kategori');
+            $this->resetForm();
+            $this->dispatch('kategori-created', kategori: $kategori);
+        } else {
+            $this->dispatch('alert', status: 'error', message: 'Anda tidak memiliki izin untuk mengedit Kategori');
+        }
     }
 
     #[On('close-modal-kategori')]

@@ -8,15 +8,16 @@
     </x-breadcrumb>
 
     <div class="grid grid-cols-12 gap-3">
-        <div class="col-span-12 md:col-span-6 lg:col-span-4">
-            @livewire('data-master.satuan.satuan-form')
-        </div>
-        <div class="col-span-12 md:col-span-6 lg:col-span-8">
-            @livewire('data-master.satuan.satuan-list')
-        </div>
+        @can('satuan.create')
+            <div class="col-span-12 md:col-span-6 lg:col-span-4">
+                @livewire('data-master.satuan.satuan-form')
+            </div>
+        @endcan
+        @can('satuan.list')
+            <div class="col-span-12 md:col-span-6 lg:col-span-8">
+                @livewire('data-master.satuan.satuan-list')
+            </div>
+        @endcan
     </div>
 
-
 </div>
-
-

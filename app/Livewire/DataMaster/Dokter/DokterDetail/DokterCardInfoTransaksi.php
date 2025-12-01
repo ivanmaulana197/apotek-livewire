@@ -2,6 +2,7 @@
 namespace App\Livewire\DataMaster\Dokter\DokterDetail;
 
 use App\Models\Transaksi\Transaksi;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -33,6 +34,9 @@ class DokterCardInfoTransaksi extends Component
 
     public function render()
     {
+        if (! Auth::user()->canAny(["dokter.detail.info-total-tebus-obat", "dokter.detail.info-total-transaksi", "dokter.detail.info-total-belanja", "dokter.detail.info-total-benefit"])) {
+            return $this->dispatch('alert', status: 'error', message: 'Kamu Tidak Memiliki Akses');
+        }
         // $this->data = $this->getData();
         $data = $this->getData();
         return view('livewire.data-master.dokter.dokter-detail.dokter-card-info-transaksi', compact('data'));

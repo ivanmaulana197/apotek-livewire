@@ -13,8 +13,10 @@ class CetakStokOpname extends Component
     {
         $this->created_at  = $created_at;
         $this->stokOpnames = StokOpnameHistory::query()
-            ->with('barang:id,nama,id_satuan_utama', 'barang.satuan_utama:id,nama')
-            ->where('created_at', $created_at)->get();
+            ->leftJoin('barang', 'stok_opname_histori.id_barang', '=', 'barang.id')
+            ->leftJoin('satuan as satuan_utama', 'satuan_utama.id', '=', 'barang.id_satuan_utama')
+            ->select('stok_opname_histori.*', 'barang.nama', 'satuan_utama.nama as satuan_utama_nama')
+            ->where('stok_opname_histori.created_at', $created_at)->get();
     }
 
     #[Layout('components.layouts.cetak-laporan')]

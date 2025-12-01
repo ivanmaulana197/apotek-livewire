@@ -23,13 +23,17 @@
                             </h6>
                         </x-table.td>
                         <x-table.td class="text-center">
-                            <x-table.action-button tooltip="Edit" color="warning" @click="$dispatch('edit-satuan',{satuan:'{{ $satuan->id }}'})">
-                                <span class="iconify tabler--edit-circle text-lg"></span>
-                            </x-table.action-button>
-                            <x-table.action-button tooltip="Hapus" color="error"
-                                                   @click="$wire.dispatch('alert-confirm', { id: '{{ $satuan->id }}', method: 'delete-satuan' });">
-                                <span class="iconify tabler--trash-x-filled text-lg"></span>
-                            </x-table.action-button>
+                            @can('satuan.edit')
+                                <x-table.action-button tooltip="Edit" color="warning" @click="$dispatch('edit-satuan',{satuan:'{{ $satuan->id }}'})">
+                                    <span class="iconify tabler--edit-circle text-lg"></span>
+                                </x-table.action-button>
+                            @endcan
+                            @can('satuan.delete')
+                                <x-table.action-button tooltip="Hapus" color="error"
+                                                       @click="$wire.dispatch('alert-confirm', { id: '{{ $satuan->id }}', method: 'delete-satuan' });">
+                                    <span class="iconify tabler--trash-x-filled text-lg"></span>
+                                </x-table.action-button>
+                            @endcan
                         </x-table.td>
                     </x-table.tr>
                 @empty

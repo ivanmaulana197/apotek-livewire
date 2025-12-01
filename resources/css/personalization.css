@@ -5618,6 +5618,22 @@ html[data-layout="horizontal"] .remove-ps {
         .page-wrapper {
         margin-left: 75px;
     }
+    [data-layout="vertical"] body[data-sidebartype="mini-sidebar"] .logo-img {
+        width: 40px;
+        overflow: hidden;
+    }
+    [data-layout="vertical"]
+        body[data-sidebartype="mini-sidebar"]
+        .left-sidebar:hover
+        .logo-img {
+        width: 100%;
+    }
+    [data-layout="vertical"]
+        body[data-sidebartype="mini-sidebar"]
+        .left-sidebar:hover
+        .logo-img {
+        width: 100%;
+    }
 }
 
 .toast-onload {

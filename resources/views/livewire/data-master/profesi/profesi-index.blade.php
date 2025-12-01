@@ -8,14 +8,16 @@
     </x-breadcrumb>
 
     <div class="grid grid-cols-12 gap-3">
-        <div class="col-span-12 md:col-span-6 lg:col-span-4">
-            @livewire('data-master.profesi.profesi-form')
-        </div>
-        <div class="col-span-12 md:col-span-6 lg:col-span-8">
-            @livewire('data-master.profesi.profesi-list')
-        </div>
+        @can('profesi.create')
+            <div class="col-span-12 md:col-span-6 lg:col-span-4">
+                @livewire('data-master.profesi.profesi-form')
+            </div>
+        @endcan
+        @can('profesi.list')
+            <div class="col-span-12 md:col-span-6 lg:col-span-8">
+                @livewire('data-master.profesi.profesi-list')
+            </div>
+        @endcan
     </div>
 
 </div>
-
-

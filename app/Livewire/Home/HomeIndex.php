@@ -7,6 +7,7 @@ use App\Models\Barang\StokBatchBarang;
 use App\Models\Transaksi\Transaksi;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
@@ -19,21 +20,25 @@ class HomeIndex extends Component
 
     public function mount()
     {
-        $this->chartDate = [
-            'start' => Carbon::now()->startOfMonth()->toDateString(), // awal bulan
-            'end'   => Carbon::today()->toDateString(),               // hari ini
-        ];
-
-        $this->chartPendapatan = $this->getDataChartPendapatan();
+        if (Auth::user()->can('home.grafik-pendapatan')) {
+            $this->chartDate = [
+                'start' => Carbon::now()->startOfMonth()->toDateString(), // awal bulan
+                'end'   => Carbon::today()->toDateString(),               // hari ini
+            ];
+            $this->chartPendapatan = $this->getDataChartPendapatan();
+        }
     }
 
     public function updatedTipeChart($value)
     {
+        if (! Auth::user()->canAny(['home.grafik-transaksi', 'home.grafik-pendapatan'])) {
+            return $this->dispatch('alert', status: 'error', message: 'Kamu Tidak Memiliki Akses');
+        }
         $this->reset('chartPendapatan');
         // Update data chart
-        if ($this->tipe_chart == 'PENDAPATAN') {
+        if ($this->tipe_chart == 'PENDAPATAN' && Auth::user()->can('home.grafik-pendapatan')) {
             $data = $this->chartPendapatan = $this->getDataChartPendapatan();
-        } else if ($this->tipe_chart == 'TRANSAKSI') {
+        } else if ($this->tipe_chart == 'TRANSAKSI' && Auth::user()->can('home.grafik-transaksi')) {
             $data = $this->chartTransaksi = $this->getDataChartTransaksi();
         }
         // $this->chartPendapatan = $this->getDataChartPendapatan();
@@ -41,10 +46,14 @@ class HomeIndex extends Component
         // Dispatch event dengan parameter yang benar
 
         $this->dispatch('updateChart', data: $data, tipe: $value);
+
     }
 
     public function updatedChartDate($value)
     {
+        if (! Auth::user()->canAny(['home.grafik-transaksi', 'home.grafik-pendapatan'])) {
+            return $this->dispatch('alert', status: 'error', message: 'Kamu Tidak Memiliki Akses');
+        }
         // Pastikan chartDate tidak null
         if (! $this->chartDate || ! isset($this->chartDate['start']) || ! isset($this->chartDate['end'])) {
             return;
@@ -52,14 +61,15 @@ class HomeIndex extends Component
 
         $this->reset('chartPendapatan');
         // Update data chart
-        if ($this->tipe_chart == 'PENDAPATAN') {
+        if ($this->tipe_chart == 'PENDAPATAN' && Auth::user()->can('home.grafik-pendapatan')) {
             $data = $this->chartPendapatan = $this->getDataChartPendapatan();
-        } else if ($this->tipe_chart == 'TRANSAKSI') {
+        } else if ($this->tipe_chart == 'TRANSAKSI' && Auth::user()->can('home.grafik-transaksi')) {
             $data = $this->chartTransaksi = $this->getDataChartTransaksi();
         }
 
         // Dispatch event dengan parameter yang benar
         $this->dispatch('updateChart', data: $data, tipe: $this->tipe_chart);
+
     }
 
     public function getDataChartTransaksi()
@@ -120,15 +130,19 @@ class HomeIndex extends Component
 
     public function fetchData()
     {
+        if (! Auth::user()->canAny(['home.grafik-transaksi', 'home.grafik-pendapatan'])) {
+            return $this->dispatch('alert', status: 'error', message: 'Kamu Tidak Memiliki Akses');
+        }
         $this->reset('chartPendapatan');
         // Update data chart
-        if ($this->tipe_chart == 'PENDAPATAN') {
+        if ($this->tipe_chart == 'PENDAPATAN' && Auth::user()->can('home.grafik-pendapatan')) {
             $data = $this->chartPendapatan = $this->getDataChartPendapatan();
-        } else if ($this->tipe_chart == 'TRANSAKSI') {
+        } else if ($this->tipe_chart == 'TRANSAKSI' && Auth::user()->can('home.grafik-transaksi')) {
             $data = $this->chartTransaksi = $this->getDataChartTransaksi();
         }
 
         $this->dispatch('updateChart', data: $data, tipe: $this->tipe_chart);
+
         $this->getData();
 
     }
@@ -163,14 +177,19 @@ class HomeIndex extends Component
 
     public function getData()
     {
-        $data_transaksi                                             = Transaksi::where('status', 'TERJUAL')->whereDate('created_at', now())->selectRaw('SUM(total_bayar) as pendapatan, COUNT(*) as total_transaksi')->first();
-        [$this->persentase_pendapatan, $this->persentase_transaksi] = $this->getPersentaseTransaksi($data_transaksi);
-        $this->pendapatan                                           = $data_transaksi->pendapatan;
-        $this->obat_hampir_habis                                    = Barang::whereColumn('stok', '<=', 'stok_min')->count();
-        $this->total_transaksi                                      = $data_transaksi->total_transaksi;
+        if (Auth::user()->canAny(['home.info-pendapatan-harian', 'home.info-total-transaksi'])) {
+            $data_transaksi                                             = Transaksi::where('status', 'TERJUAL')->whereDate('created_at', now())->selectRaw('SUM(total_bayar) as pendapatan, COUNT(*) as total_transaksi')->first();
+            [$this->persentase_pendapatan, $this->persentase_transaksi] = $this->getPersentaseTransaksi($data_transaksi);
+            $this->pendapatan                                           = $data_transaksi->pendapatan;
+            $this->total_transaksi                                      = $data_transaksi->total_transaksi;
+        }
+        if (Auth::user()->can('home.info-barang-habis')) {
+            $this->obat_hampir_habis = Barang::whereColumn('stok', '<=', 'stok_min')->count();
+        }
         // $data_barang = Transaksi::where('status', 'TERJUAL')->whereDate('created_at', now())->selectRaw('COUNT(*) as barang_habis, COUNT(*) as barang_expired')->first();
-        $this->barang_kadaluarsa = StokBatchBarang::whereDate('tgl_expired', '<=', Carbon::now()->addMonths(3))->count();
-        // dd($data_transaksi);
+        if (Auth::user()->can('home.info-barang-expired')) {
+            $this->barang_kadaluarsa = StokBatchBarang::whereDate('tgl_expired', '<=', Carbon::now()->addMonths(3))->count();
+        }
     }
 
     public function render()

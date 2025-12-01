@@ -2,6 +2,7 @@
 namespace App\Livewire\DataMaster\Member\MemberDetail;
 
 use App\Traits\CustomDataTable;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -54,6 +55,9 @@ class MemberListBarangTerjual extends Component
 
     public function render()
     {
+        if (! Auth::user()->can('member.detail.list-barang-terlaris')) {
+            return $this->dispatch('alert', status: 'error', message: 'Kamu Tidak Memiliki Akses');
+        }
         $barang_terlaris = $this->getData();
         return view('livewire.data-master.member.member-detail.member-list-barang-terjual', compact('barang_terlaris'));
     }

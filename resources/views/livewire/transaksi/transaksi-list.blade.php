@@ -3,7 +3,8 @@
         <div class="card-title flex flex-wrap justify-between">
             <h6 class="text-xl font-bold">{{ $title ?? 'List Transaksi' }}</h6>
             @if (!$id_dokter && !$id_member)
-                <button @click="
+                @canany(['transaksi.cetak-laporan-all', 'transaksi.cetak-laporan-own'])
+                    <button @click="
                         let url = '';
                         @if ($id_barang) url = '{{ route('cetak.transaksi-barang', $id_barang) }}';
                         @else
@@ -15,7 +16,8 @@
 
                         window.open(url, '_blank');
                     "
-                        class="btn btn-sm btn-primary">Cetak Transaksi</button>
+                            class="btn btn-sm btn-primary">Cetak Transaksi</button>
+                @endcanany
             @endif
         </div>
 
@@ -26,10 +28,10 @@
         @else
             @php
                 $cek_shift = now()->hour < 16;
-                $cek = !auth()->user()->can('transaksi.advance-search') && $cek_shift;
+                $cek = !auth()->user()->can('transaksi.filter-transaksi') && $cek_shift;
             @endphp
             <x-datatable nama_table="transaksi" :perPage="$perPage" placeholder_search="Masukan No Transaksi">
-                @if (auth()->user()->can('transaksi.advance-search') || $cek_shift)
+                @if (auth()->user()->can('transaksi.filter-transaksi') || $cek_shift)
                     <div class="w-svw sm:w-56" wire:ignore>
                         <x-form.select name="shift_transaksi" :direction=false :empty-option=false wire:model.live='shift_transaksi'>
                             <x-slot:custom-option>
@@ -40,11 +42,11 @@
                         </x-form.select>
                     </div>
                 @endif
-                @if (auth()->user()->can('transaksi.advance-search'))
+                @can('transaksi.filter-transaksi')
                     <div class="w-svw sm:w-80" wire:ignore>
                         <x-form.input-date :bigRange="$big_range_date" nama="filter_date" model="filter_date" :select_date='$filter_date'></x-form.input-date>
                     </div>
-                @endif
+                @endcan
             </x-datatable>
         @endif
 
@@ -69,35 +71,47 @@
                         <x-table.td class="text-center">{{ $transaksis->firstItem() + $index }}</x-table.td>
                         <x-table.td class="text-center min-w-28">
                             <x-dropdown text="Aksi" wire:key='dropdown-{{ $transaksi->id }}'>
-                                <x-dropdown.item href="{{ route('cetak.struk-pembayaran', ['id_transaksi' => $transaksi->id]) }}"
-                                                 onclick="window.open(this.href,'_blank','width=800,height=700'); return false;">
-                                    <span class="iconify tabler--printer text-lg"></span>
-                                    Cetak Struk
-                                </x-dropdown.item>
-                                <x-dropdown.item href="#"
-                                                 @click="$wire.dispatch('alert-confirm', { id: '{{ $transaksi->id }}', method: 'retur-transaksi' });">
-                                    <span class="iconify tabler--truck-return text-lg"></span>
-                                    Retur
-                                </x-dropdown.item>
-                                <x-dropdown.item href="{{ route('transaksi.detail', ['id_transaksi' => $transaksi->id]) }}" wire:navigate>
-                                    <span class="iconify tabler--eye-search text-lg"></span>
-                                    Detail
-                                </x-dropdown.item>
-                                <x-dropdown.item href="#"
-                                                 @click="$wire.dispatch('alert-confirm', { id: '{{ $transaksi->id }}', method: 'change-shift-transaksi' });">
-                                    <span class="iconify tabler--truck-return text-lg"></span>
-                                    Pindah Ke Shift {{ $transaksi->shift_transaksi == 'PAGI' ? 'MALAM' : 'PAGI' }}
-                                </x-dropdown.item>
+                                @canany(['cetak.struk-pembayaran-own', 'cetak.struk-pembayaran-all'])
+                                    <x-dropdown.item href="{{ route('cetak.struk-pembayaran', ['id_transaksi' => $transaksi->id]) }}"
+                                                     onclick="window.open(this.href,'_blank','width=800,height=700'); return false;">
+                                        <span class="iconify tabler--printer text-lg"></span>
+                                        Cetak Struk
+                                    </x-dropdown.item>
+                                @endcanany
+                                @can('transaksi.retur')
+                                    <x-dropdown.item href="#"
+                                                     @click="$wire.dispatch('alert-confirm', { id: '{{ $transaksi->id }}', method: 'retur-transaksi' });">
+                                        <span class="iconify tabler--truck-return text-lg"></span>
+                                        Retur
+                                    </x-dropdown.item>
+                                @endcan
+                                @canany(['transaksi.detail-all', 'transaksi.detail-own'])
+                                    <x-dropdown.item href="{{ route('transaksi.detail', ['id_transaksi' => $transaksi->id]) }}" wire:navigate>
+                                        <span class="iconify tabler--eye-search text-lg"></span>
+                                        Detail
+                                    </x-dropdown.item>
+                                @endcanany
+                                @can('transaksi.change-shift-transaksi')
+                                    <x-dropdown.item href="#"
+                                                     @click="$wire.dispatch('alert-confirm', { id: '{{ $transaksi->id }}', method: 'change-shift-transaksi' });">
+                                        <span class="iconify tabler--truck-return text-lg"></span>
+                                        Pindah Ke Shift {{ $transaksi->shift_transaksi == 'PAGI' ? 'MALAM' : 'PAGI' }}
+                                    </x-dropdown.item>
+                                @endcan
                             </x-dropdown>
 
                         </x-table.td>
                         <x-table.td>{{ $transaksi->tgl_created }}</x-table.td>
                         <x-table.td>
-                            <button class="underline"
-                                    @click="$wire.dispatch('set-transaksi-barang', { id_transaksi: '{{ $transaksi->id }}'});
+                            @canany(['transaksi.detail-all', 'transaksi.detail-own'])
+                                <button class="underline"
+                                        @click="$wire.dispatch('set-transaksi-barang', { id_transaksi: '{{ $transaksi->id }}'});
                                     $wire.dispatch('toggle-modal-transaksi_barang_detail',{transaksi_barang_detailModal:true})">
+                                    {{ $transaksi->no_transaksi }}
+                                </button>
+                            @else
                                 {{ $transaksi->no_transaksi }}
-                            </button>
+                            @endcanany
                             <h6 class="font-semibold">{{ $transaksi->jenis_transaksi }}</h6>
                         </x-table.td>
                         <x-table.td>{{ $transaksi->nama_pasien ?? $transaksi->nama_member }}</x-table.td>

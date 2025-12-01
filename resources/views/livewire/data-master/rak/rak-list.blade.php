@@ -20,18 +20,22 @@
                             {!! $this->highlight($rak->nama) !!}
                         </x-table.td>
                         <x-table.td class="flex justify-center items-center gap-1">
-                            {{-- <div class="flex justify-center"> --}}
+
                             <x-table.action-button tooltip="Rak Barang" color="info" class="text-sm" type="href" href="/" wire:navigate>
                                 Rak Barang
                             </x-table.action-button>
-                            <x-table.action-button tooltip="Edit" color="warning" @click="$dispatch('edit-rak',{rak:'{{ $rak->id }}'})">
-                                <span class="iconify tabler--edit-circle text-lg"></span>
-                            </x-table.action-button>
-                            <x-table.action-button tooltip="Hapus" color="error"
-                                                   @click="$wire.dispatch('alert-confirm', { id: '{{ $rak->id }}', method: 'delete-rak' });">
-                                <span class="iconify tabler--trash-x-filled text-lg"></span>
-                            </x-table.action-button>
-                            {{-- </div> --}}
+                            @can('rak.edit')
+                                <x-table.action-button tooltip="Edit" color="warning" @click="$dispatch('edit-rak',{rak:'{{ $rak->id }}'})">
+                                    <span class="iconify tabler--edit-circle text-lg"></span>
+                                </x-table.action-button>
+                            @endcan
+                            @can('rak.delete')
+                                <x-table.action-button tooltip="Hapus" color="error"
+                                                       @click="$wire.dispatch('alert-confirm', { id: '{{ $rak->id }}', method: 'delete-rak' });">
+                                    <span class="iconify tabler--trash-x-filled text-lg"></span>
+                                </x-table.action-button>
+                            @endcan
+
                         </x-table.td>
                     </x-table.tr>
                 @empty

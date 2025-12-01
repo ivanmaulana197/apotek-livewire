@@ -16,21 +16,27 @@
                 <a class="btn btn-sm bg-secondary hover:bg-secondaryemphasis" href="{{ route('faktur') }}" wire:navigate>
                     Kembali
                 </a>
-                <a class="btn btn-sm hover:bg-primaryemphasis" href="{{ route('faktur.tambah') }}" wire:navigate>
-                    + Faktur Masuk
-                </a>
-                <a class="btn btn-sm bg-warning hover:bg-warningemphasis" href="{{ route('faktur.edit', $faktur->id) }}" wire:navigate>
-                    Edit
-                </a>
-                <button class="btn btn-sm bg-info hover:bg-infoemphasis hs-tooltip"
-                        @click=" $wire.dispatch('alert-confirm', {id: '{{ $faktur->id }}', method: 'update-status-faktur', text: 'Apakah anda yakin mengubah status Faktur?'}); ">
-                    <span
-                          class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-1 px-2 bg-gray-900 text-xs font-medium text-white rounded shadow-sm dark:bg-slate-700">
-                        Ubah Status ke : {{ $faktur->status == 'LUNAS' ? 'BELUM LUNAS' : 'LUNAS' }}
-                    </span>
-                    <span class="iconify fluent--pen-sync-24-filled"></span>
-                    <span class="text-sm">Ubah Status</span>
-                </button>
+                @can('faktur.create')
+                    <a class="btn btn-sm hover:bg-primaryemphasis" href="{{ route('faktur.tambah') }}" wire:navigate>
+                        + Faktur Masuk
+                    </a>
+                @endcan
+                @canany(['faktur.edit-all', 'faktur.edit-own'])
+                    <a class="btn btn-sm bg-warning hover:bg-warningemphasis" href="{{ route('faktur.edit', $faktur->id) }}" wire:navigate>
+                        Edit
+                    </a>
+                @endcanany
+                @can('faktur.ubah-status')
+                    <button class="btn btn-sm bg-info hover:bg-infoemphasis hs-tooltip"
+                            @click=" $wire.dispatch('alert-confirm', {id: '{{ $faktur->id }}', method: 'update-status-faktur', text: 'Apakah anda yakin mengubah status Faktur?'}); ">
+                        <span
+                              class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-1 px-2 bg-gray-900 text-xs font-medium text-white rounded shadow-sm dark:bg-slate-700">
+                            Ubah Status ke : {{ $faktur->status == 'LUNAS' ? 'BELUM LUNAS' : 'LUNAS' }}
+                        </span>
+                        <span class="iconify fluent--pen-sync-24-filled"></span>
+                        <span class="text-sm">Ubah Status</span>
+                    </button>
+                @endcan
 
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-4 mb-2">

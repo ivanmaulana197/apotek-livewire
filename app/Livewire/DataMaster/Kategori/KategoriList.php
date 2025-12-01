@@ -19,7 +19,7 @@ class KategoriList extends Component
     #[On('delete-kategori')]
     public function delete(Kategori $id): void
     {
-        if (Auth::user()->hasRole('admin')) {
+        if (Auth::user()->can('kategori.delete')) {
             //nanti update yang mempunyai permission
             $id->delete();
             $this->dispatch('alert', message: 'Berhasil Menghapus Kategori');
@@ -31,7 +31,6 @@ class KategoriList extends Component
     #[On('kategori-created')]
     public function render()
     {
-
         $data = Kategori::search($this->search, ['nama'])
             ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);

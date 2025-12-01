@@ -3,6 +3,7 @@ namespace App\Livewire\Cetak;
 
 use App\Models\Setting;
 use App\Models\Transaksi\Transaksi;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -58,6 +59,16 @@ class StrukPembayaran extends Component
             ->leftjoin('dokter', 'dokter.id', '=', 'transaksi.id_dokter')
             ->select('transaksi.*', 'member.nama as nama_member', 'pasien.nama_pasien', 'dokter.nama as nama_dokter')
             ->find($this->id_transaksi);
+
+        if (! Auth::user()->can('cetak.struk-pembayaran-all') && ! (Auth::user()->can('cetak.struk-pembayaran-own') && $this->transaksi->id_user == Auth::user()->id)) {
+            return redirect()->back()->with([
+                'alert' => [
+                    'title'   => 'Tidak Diizinkan',
+                    'message' => 'Anda tidak memiliki akses yang diperlukan.',
+                    'icon'    => 'error', // Ikon SweetAlert ('success', 'error', 'warning', 'info')
+                ],
+            ]);
+        }
 
         $diskonPromos = $this->transaksi->transaksi_list_promo
             ->where('tipe_promo', 'BARANG DISKON')

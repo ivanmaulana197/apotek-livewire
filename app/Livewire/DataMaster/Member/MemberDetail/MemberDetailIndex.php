@@ -3,6 +3,7 @@ namespace App\Livewire\DataMaster\Member\MemberDetail;
 
 use App\Models\DataMaster\Member;
 use App\Models\DataMaster\Profesi;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
@@ -15,43 +16,66 @@ class MemberDetailIndex extends Component
 
     public function mount($id_member)
     {
-        $this->isEdit      = false;
-        $this->member      = Member::with('profesi:id,nama')->find($id_member)->toArray();
-        $this->filter_date = [
-            'start' => now()->startOfMonth()->format('Y-m-d'),
-            'end'   => now()->endOfMonth()->format('Y-m-d'),
-        ];
+        if (Auth::user()->can('member.detail')) {
+            $this->isEdit      = false;
+            $this->member      = Member::with('profesi:id,nama')->find($id_member)->toArray();
+            $this->filter_date = [
+                'start' => now()->startOfMonth()->format('Y-m-d'),
+                'end'   => now()->endOfMonth()->format('Y-m-d'),
+            ];
 
-        // $this->dispatch('selected-profesi', selected: $this->member['id_profesi']);
-        $this->temp = $this->member;
+            // $this->dispatch('selected-profesi', selected: $this->member['id_profesi']);
+            $this->temp = $this->member;
+        } else {
+            return redirect()->back()->with([
+                'alert' => [
+                    'title'   => 'Tidak Diizinkan',
+                    'message' => 'Anda tidak memiliki akses yang diperlukan.',
+                    'icon'    => 'error', // Ikon SweetAlert ('success', 'error', 'warning', 'info')
+                ],
+            ]);
+        }
 
     }
 
     public function updatedFilterDate($value)
     {
-        if (! $value) {
-            $this->filter_date = [
-                'start' => now()->format('Y-m-d'),
-                'end'   => now()->format('Y-m-d'),
-            ];
+        if (Auth::user()->canAny(["member.cetak-laporan-by-member", "member.detail.list-barang-terlaris", "member.detail.list-data-transaksi"])) {
+            if (! $value) {
+                $this->filter_date = [
+                    'start' => now()->format('Y-m-d'),
+                    'end'   => now()->format('Y-m-d'),
+                ];
+            }
+            $this->dispatch('update_value_filter_date', value: $this->filter_date);
+        } else {
+            return $this->dispatch('alert', status: 'error', message: 'Kamu Tidak Memiliki Akses');
         }
-        $this->dispatch('update_value_filter_date', value: $this->filter_date);
 
     }
 
     public function edit()
     {
+        if (! Auth::user()->can('member.edit')) {
+            return $this->dispatch('alert', status: 'error', message: 'Kamu Tidak Memiliki Akses');
+        }
         $this->isEdit = true;
     }
 
     public function cancel()
     {
+        if (! Auth::user()->can('member.edit')) {
+            return $this->dispatch('alert', status: 'error', message: 'Kamu Tidak Memiliki Akses');
+        }
         $this->isEdit = false;
         $this->member = $this->temp;
     }
 
     public function updateMember()
     {
+        if (! Auth::user()->can('member.edit')) {
+            return $this->dispatch('alert', status: 'error', message: 'Kamu Tidak Memiliki Akses');
+        }
         // dd($this->member);
         $data = $this->validate([
             'member.nama'       => 'required',

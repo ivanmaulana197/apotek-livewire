@@ -2,6 +2,7 @@
 namespace App\Livewire\DataMaster\Dokter\DokterDetail;
 
 use App\Models\DataMaster\Dokter;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class DokterDetailIndex extends Component
@@ -36,6 +37,9 @@ class DokterDetailIndex extends Component
 
     public function edit()
     {
+        if (! Auth::user()->can('dokter.edit')) {
+            return $this->dispatch('error', message: 'Anda tidak memiliki izin untuk mengedit dokter');
+        }
         $this->isEdit = true;
         $this->dispatch('edit-dokter');
     }
@@ -48,6 +52,9 @@ class DokterDetailIndex extends Component
 
     public function updateDokter()
     {
+        if (! Auth::user()->can('dokter.edit')) {
+            return $this->dispatch('error', message: 'Anda tidak memiliki izin untuk mengedit dokter');
+        }
         $data = $this->validate([
             'dokter.nama'      => 'required',
             'dokter.spesialis' => 'required',

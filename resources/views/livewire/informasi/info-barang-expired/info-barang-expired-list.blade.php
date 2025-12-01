@@ -23,31 +23,33 @@
 
         <x-datatable nama_table="stok_batch_barang" :$perPage></x-datatable>
 
-        <div class="flex flex-col sm:flex-row gap-x-4 gap-y-2" x-show="ceklistStokBarang.length > 0">
-            <div class="flex flex-row flex-wrap items-center">
-                <label class="font-semibold me-2"> <span x-text="ceklistStokBarang.length"></span> Terpilih: </label>
-                <label class="me-2"> Pilh Status :</label>
-                <x-form.select-alpine name="status_ceklist" placeholder="Status" :direction=false class="min-w-56" x-model="statusCeklist"
-                                      error-name="status_ceklist">
-                    <x-slot:custom-option>
-                        <option value="HAPUS INFO">HAPUS INFO</option>
-                        <option value="EXPIRED BUANG">EXPIRED BUANG</option>
-                        <option value="EXPIRED GANTI / RETUR">EXPIRED GANTI / RETUR</option>
-                        <option value="RUSAK BUANG">RUSAK BUANG</option>
-                        <option value="RUSAK GANTI">RUSAK GANTI</option>
-                        <option value="HILANG">HILANG</option>
-                    </x-slot:custom-option>
-                </x-form.select-alpine>
+        @can('info-barang-expired.trigger')
+            <div class="flex flex-col sm:flex-row gap-x-4 gap-y-2" x-show="ceklistStokBarang.length > 0">
+                <div class="flex flex-row flex-wrap items-center">
+                    <label class="font-semibold me-2"> <span x-text="ceklistStokBarang.length"></span> Terpilih: </label>
+                    <label class="me-2"> Pilh Status :</label>
+                    <x-form.select-alpine name="status_ceklist" placeholder="Status" :direction=false class="min-w-56" x-model="statusCeklist"
+                                          error-name="status_ceklist">
+                        <x-slot:custom-option>
+                            <option value="HAPUS INFO">HAPUS INFO</option>
+                            <option value="EXPIRED BUANG">EXPIRED BUANG</option>
+                            <option value="EXPIRED GANTI / RETUR">EXPIRED GANTI / RETUR</option>
+                            <option value="RUSAK BUANG">RUSAK BUANG</option>
+                            <option value="RUSAK GANTI">RUSAK GANTI</option>
+                            <option value="HILANG">HILANG</option>
+                        </x-slot:custom-option>
+                    </x-form.select-alpine>
+                </div>
+                <div class="flex flex-row flex-wrap items-center" x-show="statusCeklist == 'EXPIRED GANTI / RETUR' || statusCeklist == 'RUSAK GANTI'">
+                    <x-form.label label="Tgl Expired Baru" />
+                    <x-alpine.form.input-date :ranges=false minDate='{{ now()->toDateString() }}' :singleDatePicker=true errorName="new_tgl_expired_ceklist"
+                                              nama="new_tgl_expired_ceklist" placeholder="Tgl Expired Baru" x-model="newTglExpiredCeklist" />
+                </div>
+                <div class="min-w-28">
+                    <button class="btn btn-sm hover:bg-primaryemphasis w-fit" wire:click='triggerCeklistStokBarang'>Submit</button>
+                </div>
             </div>
-            <div class="flex flex-row flex-wrap items-center" x-show="statusCeklist == 'EXPIRED GANTI / RETUR' || statusCeklist == 'RUSAK GANTI'">
-                <x-form.label label="Tgl Expired Baru" />
-                <x-alpine.form.input-date :ranges=false minDate='{{ now()->toDateString() }}' :singleDatePicker=true errorName="new_tgl_expired_ceklist"
-                                          nama="new_tgl_expired_ceklist" placeholder="Tgl Expired Baru" x-model="newTglExpiredCeklist" />
-            </div>
-            <div class="min-w-28">
-                <button class="btn btn-sm hover:bg-primaryemphasis w-fit" wire:click='triggerCeklistStokBarang'>Submit</button>
-            </div>
-        </div>
+        @endcan
 
         {{-- @if ($ceklistInfoBarang)
             <div class="flex flex-col sm:flex-row gap-x-4 gap-y-2">
@@ -87,7 +89,9 @@
                 <x-table.th-sortable :sortBy="$sortBy" :sortDir="$sortDir" label="Jumlah" name="jumlah" />
                 <x-table.th label="Jumlah Yang Dilaporkan" />
                 <x-table.th label="Keterangan Status" />
-                <x-table.th label="Aksi" />
+                @can('info-barang-expired.trigger')
+                    <x-table.th label="Aksi" />
+                @endcan
             </x-table.thead>
             <x-table.tbody>
                 @php
@@ -130,16 +134,16 @@
                                                           errorName="new_tgl_expired.{{ $item->id }}" :ranges=false />
                             </div>
                         </x-table.td>
-                        <x-table.td>
-
-                            <x-table.action-button tooltip="Submit" color="success" @click="submit('{{ $item->id }}')">
-                                <i class="ti ti-check"></i> <span class="text-sm">Submit</span>
-                            </x-table.action-button>
-                            <x-table.action-button tooltip="Hapus Info" color="error" wire:click="hapusInfo('{{ $item->id }}')">
-                                <i class="ti ti-trash"></i> <span class="text-sm">Hapus Info</span>
-                            </x-table.action-button>
-
-                        </x-table.td>
+                        @can('info-barang-expired.trigger')
+                            <x-table.td>
+                                <x-table.action-button tooltip="Submit" color="success" @click="submit('{{ $item->id }}')">
+                                    <i class="ti ti-check"></i> <span class="text-sm">Submit</span>
+                                </x-table.action-button>
+                                <x-table.action-button tooltip="Hapus Info" color="error" wire:click="hapusInfo('{{ $item->id }}')">
+                                    <i class="ti ti-trash"></i> <span class="text-sm">Hapus Info</span>
+                                </x-table.action-button>
+                            </x-table.td>
+                        @endcan
 
                     </x-table.tr>
                 @empty

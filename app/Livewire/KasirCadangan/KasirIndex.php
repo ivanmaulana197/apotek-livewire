@@ -27,6 +27,15 @@ class KasirIndex extends Component
         if ($id_pesanan_kasir) {
             $this->pesanan_kasir = PesananKasir::query()
                 ->findOrFail($id_pesanan_kasir);
+            if (! Auth::user()->can('kasir-show-all') && ! (Auth::user()->can('kasir-show-own') && $this->pesanan_kasir->id_user == Auth::id())) {
+                return redirect()->back()->with([
+                    'alert' => [
+                        'title'   => 'Tidak Diizinkan',
+                        'message' => 'Anda tidak memiliki akses yang diperlukan.',
+                        'icon'    => 'error', // Ikon SweetAlert ('success', 'error', 'warning', 'info')
+                    ],
+                ]);
+            }
         } else {
             $this->pesanan_kasir = PesananKasir::query()
                 ->where('id_user', Auth::id())
@@ -140,13 +149,18 @@ class KasirIndex extends Component
 
     public function tambahPesananKasir()
     {
-        $this->createPesananKasir();
-        session()->flash('alert', [
-            'title'   => 'Berhasil!',
-            'message' => 'Berhasil Membuat Pesanan Kasir Baru',
-            'icon'    => 'success', // Bisa 'success', 'error', 'warning', dll.
-        ]);
-        return $this->redirect(route('kasir-cadangan'), true);
+        if (Auth::user()->can('pesanan-kasir.create')) {
+            $this->createPesananKasir();
+            session()->flash('alert', [
+                'title'   => 'Berhasil!',
+                'message' => 'Berhasil Membuat Pesanan Kasir Baru',
+                'icon'    => 'success', // Bisa 'success', 'error', 'warning', dll.
+            ]);
+            return $this->redirect(route('kasir-cadangan'), true);
+        } else {
+            $this->dispatch('alert', message: 'Kamu Tidak Memiliki Akses', status: 'error');
+        }
+
     }
 
     public function createPesananKasir()

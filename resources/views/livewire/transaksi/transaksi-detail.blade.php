@@ -31,10 +31,12 @@
                 <div class="card-body py-3 px-5 gap-0">
                     <div class="card-title mb-0 flex flex-wrap justify-between">
                         <h6>Data Transaksi</h6>
-                        <button class="btn btn-sm" @click="cetakStrukPembayaran">
-                            <span class="iconify tabler--printer text-lg"></span>
-                            Cetak Struk
-                        </button>
+                        @canany(['cetak.struk-pembayaran-own', 'cetak.struk-pembayaran-all'])
+                            <button class="btn btn-sm" @click="cetakStrukPembayaran">
+                                <span class="iconify tabler--printer text-lg"></span>
+                                Cetak Struk
+                            </button>
+                        @endcanany
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-x-2">
                         <x-form.text-display label="No Transaksi" class="bg-gray-200 dark:bg-gray-800" value="{{ $transaksi->no_transaksi }}" />

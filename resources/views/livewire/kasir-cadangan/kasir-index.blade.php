@@ -12,7 +12,9 @@
                         <div class="col-span-6 lg:col-span-2">
                             <div class="flex items-center justify-end">
                                 <button class="btn btn-sm bg-success hover:bg-successemphasis" wire:click='tambahPesananKasir'>+ New</button>
-                                <livewire:kasir-cadangan.pesanan-kasir-list :pesanan_kasir_selected='$pesanan_kasir->id' />
+                                @can('pesanan-kasir')
+                                    <livewire:kasir-cadangan.pesanan-kasir-list :pesanan_kasir_selected='$pesanan_kasir->id' />
+                                @endcan
                             </div>
                         </div>
                         <div class="col-span-6 lg:col-span-3">
@@ -34,7 +36,6 @@
 
                     </div>
                 </div>
-                {{-- @include('livewire.pemasukan.barang-pesanan-pemasukan-form') --}}
                 <livewire:kasir-cadangan.barang-pesanan-form :$pesanan_kasir :persen_resep="$setting->persentase_jual_resep" :$list_total_jumlah_dalam_satuan_utama />
                 {{-- <livewire:kasir.barang-pesanan-kasir.barang-pesanan-kasir-form :$pesanan_kasir :persen_resep="$setting->persentase_jual_resep" /> --}}
 

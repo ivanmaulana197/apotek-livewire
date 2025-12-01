@@ -18,14 +18,15 @@ class DokterList extends Component
     }
 
     #[On('delete-dokter')]
-    public function delete(Dokter $id): void
+    public function delete(Dokter $id)
     {
-        if (Auth::user()->hasRole('admin')) { //nanti update yang mempunyai permission
-            $id->delete();
-            $this->dispatch('alert', message: 'Berhasil Menghapus Dokter');
-        } else {
-            $this->dispatch('alert', message: 'Kamu Tidak Memiliki Akses', status: 'error');
+        if (! Auth::user()->can('dokter.delete')) {
+            return $this->dispatch('alert', status: 'error', message: 'Anda tidak memiliki izin untuk menghapus dokter');
         }
+
+        $id->delete();
+        $this->dispatch('alert', message: 'Berhasil Menghapus Dokter');
+
     }
 
     #[On('dokter-created')]

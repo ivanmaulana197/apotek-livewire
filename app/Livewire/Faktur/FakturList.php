@@ -6,6 +6,7 @@ use App\Models\Barang\StokBatchBarang;
 use App\Models\DataMaster\Supplier;
 use App\Models\Faktur\Faktur;
 use App\Traits\CustomDataTable;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
@@ -28,24 +29,33 @@ class FakturList extends Component
 
     public function mount()
     {
+
         $this->sortBy                = $this->defaultSortBy                = 'faktur.updated_at';
         $this->filters['created_at'] = [
             'start' => now()->startOfMonth(),
             'end'   => now()->endOfMonth(),
         ];
+
     }
 
     #[On('update-status-faktur')]
     public function updateStatusFaktur($id)
     {
+        if (! Auth::user()->can('faktur.ubah-status')) {
+            return $this->dispatch('alert', message: 'Kamu Tidak Memiliki Akses', status: 'error');
+        }
         $faktur         = Faktur::find($id);
         $faktur->status = $faktur->status == 'LUNAS' ? 'BELUM LUNAS' : 'LUNAS';
         $faktur->save();
+
     }
 
     #[On('delete-faktur')]
-    public function deleteFaktur($id)
+    public function deleteFaktur(Faktur $id)
     {
+        if (! Auth::user()->can('faktur.delete-all') && ! (Auth::user()->can('faktur.delete-own') && $id->id_user == Auth::user()->id)) {
+            return $this->dispatch('alert', message: 'Kamu Tidak Memiliki Akses', status: 'error');
+        }
         try {
             DB::beginTransaction(); // Hapus faktur
             $faktur = Faktur::with(['detail_faktur.detail_barang.barang:id,nama,kode,id_satuan_utama,stok,stok_min'])->findOrFail($id);
@@ -81,51 +91,76 @@ class FakturList extends Component
 
     public function getFaktur()
     {
-        // return Faktur::with(['supplier:id,nama'])
-        //     ->select('faktur.*')
-        //     ->join('supplier', 'faktur.id_supplier', '=', 'supplier.id')
-        //     ->join('users', 'faktur.id_user', '=', 'users.id')
-        //     ->search($this->search, ['faktur.no_faktur', 'faktur.total_biaya', 'faktur.status'], ['supplier' => ['supplier.nama'], 'user' => ['nama']])
-        //     ->filter($this->filters);
+        if (! Auth::user()->canAny(["faktur.list-all", "faktur.list-own"])) {
+            return $this->dispatch('alert', message: 'Kamu Tidak Memiliki Akses', status: 'error');
+        }
 
-        return Faktur::query()
-            ->with(['supplier:id,nama', 'user:id,name'])
-            ->when($this->id_barang, function ($query) {
-                $query->whereHas('detail_faktur_barang', function ($query) {
-                    $query->where('id_barang', $this->id_barang);
+        if (Auth::user()->can('faktur.list-all')) {
+            return Faktur::query()
+                ->with(['supplier:id,nama', 'user:id,name'])
+                ->when($this->id_barang, function ($query) {
+                    $query->whereHas('detail_faktur_barang', function ($query) {
+                        $query->where('id_barang', $this->id_barang);
+                    })
+                        ->with(['detail_faktur_barang' => function ($query) {
+                            $query->select('jumlah', 'tgl_expired', 'id_satuan', 'id_barang')
+                                ->with(['satuan:id,nama', 'barang:id,id_satuan_utama', 'barang.satuan_utama:id,nama']);
+                        }]);
                 })
-                    ->with(['detail_faktur_barang' => function ($query) {
-                        $query->select('jumlah', 'tgl_expired', 'id_satuan', 'id_barang')
-                            ->with(['satuan:id,nama', 'barang:id,id_satuan_utama', 'barang.satuan_utama:id,nama']);
-                    }]);
-            })
-            ->search($this->search,
-                ['no_faktur', 'total_biaya'],
-                ['supplier' => ['nama'], 'user' => ['name']])
-            ->filter($this->filters)
-            ->orderBy($this->sortBy, $this->sortDir)->paginate($this->perPage)
-        ;
+                ->search($this->search,
+                    ['no_faktur', 'total_biaya'],
+                    ['supplier' => ['nama'], 'user' => ['name']])
+                ->filter($this->filters)
+                ->orderBy($this->sortBy, $this->sortDir)->paginate($this->perPage)
+            ;
+        } elseif (Auth::user()->can('faktur.list-own')) {
+            return Faktur::query()
+                ->with(['supplier:id,nama', 'user:id,name'])
+                ->when($this->id_barang, function ($query) {
+                    $query->whereHas('detail_faktur_barang', function ($query) {
+                        $query->where('id_barang', $this->id_barang);
+                    })
+                        ->with(['detail_faktur_barang' => function ($query) {
+                            $query->select('jumlah', 'tgl_expired', 'id_satuan', 'id_barang')
+                                ->with(['satuan:id,nama', 'barang:id,id_satuan_utama', 'barang.satuan_utama:id,nama']);
+                        }]);
+                })
+                ->where('id_user', Auth::user()->id)
+                ->search($this->search,
+                    ['no_faktur', 'total_biaya'],
+                    ['supplier' => ['nama'], 'user' => ['name']])
+                ->filter($this->filters)
+                ->orderBy($this->sortBy, $this->sortDir)->paginate($this->perPage)
+            ;
+        }
     }
 
     public function getDataRekapInfo()
     {
-        return Faktur::query()
-            ->when($this->id_barang, function ($query) {
-                $query->whereHas('detail_faktur_barang', function ($query) {
-                    $query->where('id_barang', $this->id_barang);
-                });
-            })
-            ->selectRaw('
-                    SUM(CASE WHEN status = "BELUM LUNAS" THEN total_biaya ELSE 0 END) AS total_belum_lunas,
-                    SUM(CASE WHEN status = "LUNAS" THEN total_biaya ELSE 0 END) AS total_lunas,
-                    COUNT(*) AS total_faktur
-                ')
-            ->filter($this->filters)
-            ->first();
+        if (Auth::user()->canAny(["faktur.info-jumlah-faktur", "faktur.info-total-pengeluaran", "faktur.info-total-hutang"])) {
+            return Faktur::query()
+                ->when($this->id_barang, function ($query) {
+                    $query->whereHas('detail_faktur_barang', function ($query) {
+                        $query->where('id_barang', $this->id_barang);
+                    });
+                })
+                ->selectRaw('
+                        SUM(CASE WHEN status = "BELUM LUNAS" THEN total_biaya ELSE 0 END) AS total_belum_lunas,
+                        SUM(CASE WHEN status = "LUNAS" THEN total_biaya ELSE 0 END) AS total_lunas,
+                        COUNT(*) AS total_faktur
+                    ')
+                ->filter($this->filters)
+                ->first();
+        } else {
+            return null;
+        }
     }
 
     public function render()
     {
+        if (! Auth::user()->canAny(["faktur.list-all", "faktur.list-own", "faktur.info-jumlah-faktur", "faktur.info-total-pengeluaran", "faktur.info-total-hutang"])) {
+            return $this->dispatch('alert', status: 'error', message: 'Kamu Tidak Memiliki Akses');
+        }
         $data  = $this->getFaktur();
         $rekap = $this->getDataRekapInfo();
         return view('livewire.faktur.faktur-list', ['fakturs' => $data, 'rekap' => $rekap]);

@@ -113,6 +113,9 @@ class KasirPembayaran extends Component
 
     public function handlePembayaran()
     {
+        if (! Auth::user()->can('kasir') || (! Auth::user()->can('kasir-show-all') && ! (Auth::user()->can('kasir-show-own') && $this->pesanan_kasir->id_user == Auth::user()->id))) {
+            return $this->dispatch('alert', message: 'Anda tidak memiliki izin untuk melakukan pembayaran', status: 'error');
+        }
         try {
             $this->bayar     = FormatHelper::formatStringToNumber($this->bayar);
             $this->kembalian = FormatHelper::formatStringToNumber($this->kembalian);

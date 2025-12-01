@@ -27,10 +27,18 @@ class CetakLaporanTransaksi extends Component
             'end'   => request('date.end', now()->format('Y-m-d')),
         ];
         $this->shift_transaksi = request('shift', GeneralHelper::checkModeShift());
-        if (Auth::user()->hasRole('admin')) {
+        if (Auth::user()->can('transaksi.cetak-laporan-all')) {
             $this->by_user = request('by_user', 'SEMUA');
-        } else {
+        } elseif (Auth::user()->can('transaksi.cetak-laporan-own')) {
             $this->by_user = Auth::user()->id;
+        } else {
+            return redirect()->back()->with([
+                'alert' => [
+                    'title'   => 'Tidak Diizinkan',
+                    'message' => 'Anda tidak memiliki akses yang diperlukan.',
+                    'icon'    => 'error', // Ikon SweetAlert ('success', 'error', 'warning', 'info')
+                ],
+            ]);
         }
     }
 

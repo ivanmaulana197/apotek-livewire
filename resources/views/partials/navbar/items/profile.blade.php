@@ -8,10 +8,10 @@
             </div>
             <div class="hidden sm:block">
                 <h6 class="mb-1 text-base font-bold text-dark dark:text-white profile-name">
-                    Mike Nielsen
+                    {{ auth()->user()->name }}
                 </h6>
                 <p class="mb-0 text-sm leading-tight text-link dark:text-darklink">
-                    Admin
+                    {{ auth()->user()->formatRoleList() ?? '-' }}
                 </p>
             </div>
         </div>
@@ -30,13 +30,12 @@
                         <img src="{{ asset('/') }}assets/images/profile/user-1.jpg" class="h-[90px] w-[90px] rounded-full object-cover" alt="profile">
                         <div class="">
                             <h5 class="card-title">
-                                Mike Nielsen
+                                {{ auth()->user()->name }}
                             </h5>
-                            <span class="card-subtitle">super
-                                admin</span>
+                            <span class="card-subtitle">{{ auth()->user()->formatRoleList() ?? '-' }}</span>
                             <p class="flex items-center mt-1 mb-0 ">
                                 <span class="iconify solar--mailbox-line-duotone text-base me-1"></span>
-                                info@spike.com
+                                {{ auth()->user()->email }}
                             </p>
                         </div>
                     </div>
@@ -58,7 +57,7 @@
                                 </div>
                             </a>
                         </li>
-                        <li>
+                        {{-- <li>
                             <a href="main/app-email.html" class="relative flex items-center gap-5 p-2 rounded-sm bg-hover group">
                                 <span
                                       class="flex items-center justify-center p-2 rounded-sm bg-lightsuccess dark:bg-darksuccess hover:bg-success group text-success hover:text-white">
@@ -89,7 +88,7 @@
                                         To-do and Daily Tasks</p>
                                 </div>
                             </a>
-                        </li>
+                        </li> --}}
                     </ul>
                 </div>
             </div>

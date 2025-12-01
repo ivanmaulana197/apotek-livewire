@@ -1,13 +1,12 @@
 <?php
-
 namespace App\Livewire\DataMaster\Profesi;
 
-use Livewire\Component;
-use Livewire\Attributes\On;
-use Livewire\WithPagination;
-use App\Traits\CustomDataTable;
 use App\Models\DataMaster\Profesi;
+use App\Traits\CustomDataTable;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\On;
+use Livewire\Component;
+use Livewire\WithPagination;
 
 class ProfesiList extends Component
 {
@@ -18,15 +17,15 @@ class ProfesiList extends Component
         $this->dispatch('alert-confirm', id: $id, method: 'delete-profesi');
     }
     #[On('delete-profesi')]
-    public function delete(Profesi $id): void
+    public function delete(Profesi $id)
     {
-        if (Auth::user()->hasRole('admin')) {
-            //nanti update yang mempunyai permission
-            $id->delete();
-            $this->dispatch('alert', message: 'Berhasil Menghapus Profesi');
-        } else {
-            $this->dispatch('alert', message: 'Kamu Tidak Memiliki Akses', status: 'error');
+        if (! Auth::user()->can('profesi.delete')) {
+            return $this->dispatch('alert', message: 'Kamu Tidak Memiliki Akses', status: 'error');
         }
+
+        $id->delete();
+        $this->dispatch('alert', message: 'Berhasil Menghapus Profesi');
+
     }
 
     #[On('profesi-created')]

@@ -1,9 +1,9 @@
 <?php
-
 namespace App\Livewire\Settings\SettingApotek;
 
 use App\Helpers\FormatHelper;
 use App\Models\Setting;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class SettingApotekIndex extends Component
@@ -24,21 +24,24 @@ class SettingApotekIndex extends Component
 
     public function save()
     {
+        if (! Auth::user()->can('setting.edit')) {
+            return $this->dispatch('alert', status: 'error', message: 'Kamu Tidak Memiliki Akses');
+        }
         try {
             $this->formatterNumber(false);
             $this->validate([
-                'setting.nama' => 'required',
-                'setting.alamat' => 'required',
-                'setting.kabupaten' => 'required',
-                'setting.email' => 'required',
-                'setting.no_telp' => 'required',
+                'setting.nama'                    => 'required',
+                'setting.alamat'                  => 'required',
+                'setting.kabupaten'               => 'required',
+                'setting.email'                   => 'required',
+                'setting.no_telp'                 => 'required',
                 'setting.pembulatan_harga_barang' => 'required|numeric',
-                'setting.pembulatan_resep' => 'required|numeric',
-                'setting.pembulatan_total' => 'required|numeric',
-                'setting.persentase_jual' => 'required|numeric',
-                'setting.persentase_jual_resep' => 'required|numeric',
-            ],[
-                'required' => 'Input Wajib Di Isi'
+                'setting.pembulatan_resep'        => 'required|numeric',
+                'setting.pembulatan_total'        => 'required|numeric',
+                'setting.persentase_jual'         => 'required|numeric',
+                'setting.persentase_jual_resep'   => 'required|numeric',
+            ], [
+                'required' => 'Input Wajib Di Isi',
             ]);
             Setting::first()->update($this->setting);
             $this->dispatch('alert', status: 'success', message: 'Berhasil Mengupdate Setting');
@@ -55,7 +58,7 @@ class SettingApotekIndex extends Component
         $this->setting = Setting::first()->toArray();
         $this->formatterNumber('formatNumberToString');
         return view('livewire.settings.setting-apotek.setting-apotek-index', [
-            'setting'=>$this->setting
+            'setting' => $this->setting,
         ]);
     }
 }

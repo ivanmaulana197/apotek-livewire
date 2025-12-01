@@ -25,13 +25,17 @@
                             </h6>
                         </x-table.td>
                         <x-table.td class="text-center">
-                            <x-table.action-button tooltip="Edit" color="warning" @click="$dispatch('edit-kategori',{kategori:'{{ $kategori->id }}'})">
-                                <span class="iconify tabler--edit-circle text-lg"></span>
-                            </x-table.action-button>
-                            <x-table.action-button tooltip="Hapus" color="error"
-                                                   @click="$wire.dispatch('alert-confirm', { id: '{{ $kategori->id }}', method: 'delete-kategori' });">
-                                <span class="iconify tabler--trash-x-filled text-lg"></span>
-                            </x-table.action-button>
+                            @can('kategori.edit')
+                                <x-table.action-button tooltip="Edit" color="warning" @click="$dispatch('edit-kategori',{kategori:'{{ $kategori->id }}'})">
+                                    <span class="iconify tabler--edit-circle text-lg"></span>
+                                </x-table.action-button>
+                            @endcan
+                            @can('kategori.delete')
+                                <x-table.action-button tooltip="Hapus" color="error"
+                                                       @click="$wire.dispatch('alert-confirm', { id: '{{ $kategori->id }}', method: 'delete-kategori' });">
+                                    <span class="iconify tabler--trash-x-filled text-lg"></span>
+                                </x-table.action-button>
+                            @endcan
                         </x-table.td>
                     </x-table.tr>
                 @empty

@@ -3,9 +3,11 @@
     <div class="card-body">
         <div class="items-center justify-between mb-2 sm:flex">
             <h5 class="card-title text-md">List Dokter</h5>
-            <a href="{{ route('cetak.laporan-dokter') }}" target="_blank" class="btn btn-sm btn-primary">
-                Cetak Bulan <span x-text="moment().format('MMMM YYYY')"></span>
-            </a>
+            @can('dokter.cetak-laporan')
+                <a href="{{ route('cetak.laporan-dokter') }}" target="_blank" class="btn btn-sm btn-primary">
+                    Cetak Bulan <span x-text="moment().format('MMMM YYYY')"></span>
+                </a>
+            @endcan
 
         </div>
 
@@ -41,17 +43,23 @@
                             {!! $this->highlight($dokter->spesialis ?? '-') !!}
                         </x-table.td>
                         <x-table.td class="text-center">
-                            <x-table.action-button tooltip="Detail" color="info" type="href" wire:navigate
-                                                   href="{{ route('data-master.dokter.detail', $dokter->id) }}">
-                                <span class="iconify tabler--info-circle text-lg"></span>
-                            </x-table.action-button>
-                            <x-table.action-button tooltip="Edit" color="warning" @click="$dispatch('edit-dokter',{dokter:'{{ $dokter->id }}'})">
-                                <span class="iconify tabler--edit-circle text-lg"></span>
-                            </x-table.action-button>
-                            <x-table.action-button tooltip="Hapus" color="error"
-                                                   @click="$wire.dispatch('alert-confirm', { id: '{{ $dokter->id }}', method: 'delete-dokter' });">
-                                <span class="iconify tabler--trash-x-filled text-lg"></span>
-                            </x-table.action-button>
+                            @can('dokter.detail')
+                                <x-table.action-button tooltip="Detail" color="info" type="href" wire:navigate
+                                                       href="{{ route('data-master.dokter.detail', $dokter->id) }}">
+                                    <span class="iconify tabler--info-circle text-lg"></span>
+                                </x-table.action-button>
+                            @endcan
+                            @can('dokter.edit')
+                                <x-table.action-button tooltip="Edit" color="warning" @click="$dispatch('edit-dokter',{dokter:'{{ $dokter->id }}'})">
+                                    <span class="iconify tabler--edit-circle text-lg"></span>
+                                </x-table.action-button>
+                            @endcan
+                            @can('dokter.delete')
+                                <x-table.action-button tooltip="Hapus" color="error"
+                                                       @click="$wire.dispatch('alert-confirm', { id: '{{ $dokter->id }}', method: 'delete-dokter' });">
+                                    <span class="iconify tabler--trash-x-filled text-lg"></span>
+                                </x-table.action-button>
+                            @endcan
                         </x-table.td>
                     </x-table.tr>
                 @empty

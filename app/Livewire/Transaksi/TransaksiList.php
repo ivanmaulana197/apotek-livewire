@@ -5,6 +5,7 @@ use App\Helpers\FormatHelper;
 use App\Models\Barang\StokBatchBarang;
 use App\Models\Transaksi\Transaksi;
 use App\Traits\CustomDataTable;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Livewire\Attributes\On;
@@ -36,6 +37,9 @@ class TransaksiList extends Component
 
     public function updatedFilterDate($value)
     {
+        if (! Auth::user()->can("transaksi.filter-transaksi")) {
+            return $this->dispatch('alert', status: 'error', message: 'Kamu Tidak Memiliki Akses');
+        }
         if (! $value) {
             $this->filter_date = [
                 'start' => now()->format('Y-m-d'),
@@ -53,12 +57,18 @@ class TransaksiList extends Component
 
     public function updatedShiftTransaksi($value)
     {
+        if (! Auth::user()->can("transaksi.filter-transaksi")) {
+            return $this->dispatch('alert', status: 'error', message: 'Kamu Tidak Memiliki Akses');
+        }
         $this->dispatch('update_value_shift_transaksi', value: $value);
     }
 
     #[On('change-shift-transaksi')]
     public function gantiShiftTransaksi($id)
     {
+        if (! Auth::user()->can("transaksi.change-shift-transaksi")) {
+            return $this->dispatch('alert', status: 'error', message: 'Kamu Tidak Memiliki Akses');
+        }
         $transaksi = Transaksi::select('id', 'shift_transaksi')->find($id);
         $transaksi->update(['shift_transaksi' => $transaksi->shift_transaksi == 'PAGI' ? 'MALAM' : 'PAGI']);
         $this->dispatch('update_transaksi');
@@ -67,6 +77,9 @@ class TransaksiList extends Component
     #[On('retur-transaksi')]
     public function retur($id)
     {
+        if (! Auth::user()->can('transaksi.retur')) {
+            return $this->dispatch('alert', status: 'error', message: 'Kamu Tidak Memiliki Akses');
+        }
         try {
             DB::beginTransaction();
             // 1️⃣ Ambil transaksi dan semua data terkait sekaligus (tanpa eager yang berlebih)
@@ -134,13 +147,13 @@ class TransaksiList extends Component
 
     public function getDataTransaksi()
     {
+        if (Auth::user()->can('transaksi.list-all')) {
+            $transaksi_all = true;
+        } elseif (Auth::user()->can('transaksi.list-own')) {
+            $transaksi_all = false;
+        }
 
         $query = Transaksi::query()
-        // ->with([
-        //     'metode_pembayaran:id,nama',
-        //     'pasien:id,nama_pasien',
-        //     'member:id,nama',
-        // ])
             ->join('metode_pembayaran as mp', 'mp.id', '=', 'transaksi.id_metode_pembayaran')
             ->leftJoin('member as m', 'm.id', '=', 'transaksi.id_member')
             ->leftJoin('pasien as p', 'p.id', '=', 'transaksi.id_pasien')
@@ -165,6 +178,9 @@ class TransaksiList extends Component
                 $query->whereHas('detail_transaksi_barang', function ($query) {
                     $query->where('id_barang', $this->id_barang);
                 });
+            })
+            ->when(! $transaksi_all, function ($query) {
+                $query->where('id_user', Auth::user()->id);
             })
             ->search(
                 $this->search,
@@ -198,6 +214,9 @@ class TransaksiList extends Component
 
     public function render()
     {
+        if (! Auth::user()->canAny(['transaksi.list-all', 'transaksi.list-own'])) {
+            return $this->dispatch('alert', status: 'error', message: 'Kamu Tidak Memiliki Akses');
+        }
         $data = $this->getDataTransaksi();
 
         $data = $this->formatterData($data);

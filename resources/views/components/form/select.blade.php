@@ -92,6 +92,7 @@ Livewire.on('update_{{ $name }}', ({ data, selected }) => {
     @isset($label)
         <x-form.label label="{{ $label }}" />
     @endisset
+
     <div class="{{ $addValue ? 'col-span-10' : 'col-span-12' }}">
         <div wire:ignore wire:key="select-{{ $name }}">
             <select id="{{ $name }}-select" {{ $attributes->merge(['class' => 'rounded-md']) }} {{-- class="py-2 px-3 pe-6 border block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-primary focus:ring-blue-500 form-control" --}}>

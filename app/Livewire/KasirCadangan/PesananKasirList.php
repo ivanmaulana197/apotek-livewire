@@ -22,8 +22,7 @@ class PesananKasirList extends Component
     #[On('delete-pesanan-kasir')]
     public function delete(PesananKasir $id, $message = 'Berhasil Menghapus Pesanan Kasir')
     {
-
-        if (Auth::check() && (Auth::user()->hasRole('admin') || $id->id_user == Auth::user()->id)) {
+        if (Auth::user()->can('pesanan-kasir.delete-all') || (Auth::user()->can('pesanan-kasir.delete-own') && $id->id_user == Auth::user()->id)) {
             $id->barang_pesanan_kasir()->delete();
             $id->promo_pesanan_kasir()->delete();
             $id->delete();
@@ -48,18 +47,21 @@ class PesananKasirList extends Component
     // #[On('update_pesanan_kasir')]
     public function render()
     {
-        if (Auth::check() && Auth::user()->hasRole('admin')) {
+        // if (Auth::user()->hasRole('admin')) {
+        if (Auth::user()->can('pesanan-kasir.list-all')) {
             $data = PesananKasir::query()
             // ->with(['user:id,name'])
                 ->join('users', 'users.id', '=', 'pesanan_kasir.id_user')
                 ->select(['pesanan_kasir.id', 'no_pesanan_kasir', 'mode_shift', 'mode_kasir', 'id_user', 'total_harga', 'pesanan_kasir.updated_at', 'users.name as nama_user'])
                 ->orderByDesc('pesanan_kasir.updated_at')->paginate(5);
-        } else {
+        } elseif (Auth::user()->can('pesanan-kasir.list-own')) {
             $data = PesananKasir::query()
             // ->with(['user:id,name'])
                 ->join('users', 'users.id', '=', 'pesanan_kasir.id_user')
                 ->select(['pesanan_kasir.id', 'no_pesanan_kasir', 'mode_shift', 'mode_kasir', 'id_user', 'total_harga', 'pesanan_kasir.updated_at', 'users.name as nama_user'])
                 ->where('id_user', Auth::user()->id)->orderByDesc('pesanan_kasir.updated_at')->paginate(5);
+        } else {
+            return $this->dispatch('alert', message: 'Kamu Tidak Memiliki Akses', status: 'error');
         }
         return view('livewire.kasir-cadangan.pesanan-kasir-list', [
             'pesanan_kasirs' => $data,

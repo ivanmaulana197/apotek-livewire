@@ -50,6 +50,9 @@ class FakturForm extends Component
 
     public function save()
     {
+        if (! Auth::user()->can('faktur.create')) {
+            return $this->dispatch('alert', message: 'Kamu Tidak Memiliki Akses', status: 'error');
+        }
         try {
             $this->form->formattedForm(false);
             $validate = $this->validate();
@@ -112,19 +115,32 @@ class FakturForm extends Component
 
     public function edit($id_faktur)
     {
-        $faktur          = Faktur::findOrFail($id_faktur);
+        $faktur = Faktur::findOrFail($id_faktur);
+        if (! Auth::user()->can('faktur.edit-all') || ! (Auth::user()->can('faktur.edit-own') && $faktur->id_user == Auth::user()->id)) {
+            return redirect()->back()->with([
+                'alert' => [
+                    'title'   => 'Tidak Diizinkan',
+                    'message' => 'Anda tidak memiliki akses yang diperlukan.',
+                    'icon'    => 'error',
+                ],
+            ]);
+
+        }
         $this->id_faktur = $faktur->id;
         $this->form->setValue($faktur);
     }
 
     public function update()
     {
+        $faktur = Faktur::findOrFail($this->id_faktur);
+        if (! Auth::user()->can('faktur.edit-all') || ! (Auth::user()->can('faktur.edit-own') && $faktur->id_user == Auth::user()->id)) {
+            return $this->dispatch('alert', message: 'Kamu Tidak Memiliki Akses', status: 'error');
+        }
         $this->form->formattedForm(false);
         $validate = $this->validate();
-        // dd($validate);
         try {
             DB::beginTransaction();
-            $faktur = Faktur::findOrFail($this->id_faktur);
+
             $faktur->update($validate);
             DB::commit();
             return $this->redirect(route('faktur'), true);
