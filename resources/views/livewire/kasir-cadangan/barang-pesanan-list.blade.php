@@ -59,7 +59,7 @@
                         item.promo_barang = this.promo[item.id_barang] ?? null;
                     }
                 });
-                console.log(this.barang_pesanan);
+
             },
             editPesananBarang(id_barang_pesanan) {
                 this.isEditBarang[id_barang_pesanan] = true;
@@ -214,7 +214,6 @@
                     type
                 }) => {
                     if (type === 'form') return;
-                    console.log(id_promo_barang, id_barang)
                     let total_jumlah_dalam_satuan_utama = this.getTotalJumlahDalamSatuanUtama(id_barang);
                     let total_harga_barang = this.barang_pesanan.filter(item => item.id_barang === id_barang)
                         .reduce((sum, item) => sum + item.sub_total, 0);

@@ -31,7 +31,7 @@
                 <div class="card-body py-3 px-5 gap-0">
                     <div class="card-title mb-0 flex flex-wrap justify-between">
                         <h6>Data Transaksi</h6>
-                        @canany(['cetak.struk-pembayaran-own', 'cetak.struk-pembayaran-all'])
+                        @canany(['kasir.cetak.struk-pembayaran-own', 'kasir.cetak.struk-pembayaran-all'])
                             <button class="btn btn-sm" @click="cetakStrukPembayaran">
                                 <span class="iconify tabler--printer text-lg"></span>
                                 Cetak Struk

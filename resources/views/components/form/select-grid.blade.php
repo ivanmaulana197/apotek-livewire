@@ -67,19 +67,14 @@ Livewire.on('{{ $mainSelect ?? $name }}-created', (event) => {
 })
 @endif
 Livewire.on('selected_{{ $name }}', ({ selected }) => {
-    console.log(selected);
-
     select{{ $name }}.setValue(selected);
 });
 Livewire.on('update_{{ $name }}', ({ data, selected }) => {
     if (!window.select{{ $name }}) {
         initialTom()
     }
-    console.log(data);
 
     if (data) {
-        console.log('{{ $name }} ada data');
-
         select{{ $name }}.clear();
         select{{ $name }}.clearOptions();
         select{{ $name }}.addOptions(data);

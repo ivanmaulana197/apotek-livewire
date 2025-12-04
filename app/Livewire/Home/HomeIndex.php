@@ -155,8 +155,11 @@ class HomeIndex extends Component
             ->whereDay('created_at', '<', Carbon::now()->day)
             ->selectRaw('SUM(total_bayar) as pendapatan, COUNT(*) as total_transaksi')->first();
 
-        $rata_pendapatan_bulan_ini = $total_bulan_ini->pendapatan / (Carbon::now()->day - 1);
-        $rata_transaksi_bulan_ini  = $total_bulan_ini->total_transaksi / (Carbon::now()->day - 1);
+        $hari_ke = Carbon::now()->day;
+        $divider = max(1, $hari_ke - 1); // minimal nilai 1
+
+        $rata_pendapatan_bulan_ini = $total_bulan_ini->pendapatan / $divider;
+        $rata_transaksi_bulan_ini  = $total_bulan_ini->total_transaksi / $divider;
         if ($rata_pendapatan_bulan_ini > 0) {
             $selisih_pendapatan    = $data_transaksi->pendapatan - $rata_pendapatan_bulan_ini;
             $persentase_pendapatan = ($selisih_pendapatan / $rata_pendapatan_bulan_ini) * 100;

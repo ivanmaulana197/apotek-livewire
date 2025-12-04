@@ -71,7 +71,7 @@
                         <x-table.td class="text-center">{{ $transaksis->firstItem() + $index }}</x-table.td>
                         <x-table.td class="text-center min-w-28">
                             <x-dropdown text="Aksi" wire:key='dropdown-{{ $transaksi->id }}'>
-                                @canany(['cetak.struk-pembayaran-own', 'cetak.struk-pembayaran-all'])
+                                @canany(['kasir.cetak.struk-pembayaran-own', 'kasir.cetak.struk-pembayaran-all'])
                                     <x-dropdown.item href="{{ route('cetak.struk-pembayaran', ['id_transaksi' => $transaksi->id]) }}"
                                                      onclick="window.open(this.href,'_blank','width=800,height=700'); return false;">
                                         <span class="iconify tabler--printer text-lg"></span>

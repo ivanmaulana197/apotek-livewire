@@ -13,8 +13,10 @@
             <x-form.input label="Email User" wire:model='email' error-name="email" />
             <x-form.select label="Role User" multiple name='roles_selected' placeholder="Role" :data-option="$this->roles" option-label='name' option-value='id'
                            wire:model='roles_selected' errorName="roles_selected.*"></x-form.select>
-            <x-form.input label="Password User" type="password" wire:model='password' error-name="password" />
-            <x-form.input label="Password Confirm User" type="password" wire:model='password_confirmation' error-name="password_confirmation" />
+            @if (!$isEdit)
+                <x-form.input label="Password User" type="password" wire:model='password' error-name="password" />
+                <x-form.input label="Password Confirm User" type="password" wire:model='password_confirmation' error-name="password_confirmation" />
+            @endif
 
             <div class="flex gap-3 justify-end mt-6">
                 <button type="submit" class="btn btn-sm">

@@ -22,7 +22,8 @@ class UserForm extends Component
     {
         if (Auth::user()->can('user.create')) {
             $validate = $this->validate();
-            $user     = User::create($validate);
+            dd($validate);
+            $user = User::create($validate);
             $user->syncRoles($this->roles_selected);
             if ($this->isModal) {
                 $this->dispatch('toggle-modal-user', userModal: false);
@@ -39,12 +40,20 @@ class UserForm extends Component
     public function editFormUser(User $user)
     {
         if (Auth::user()->can('user.edit')) {
+            //jika dia super admin tidak bisa update super admin
+            if ($user->hasRole('Super Admin')) {
+                if (! Auth::user()->hasRole('Super Admin')) {
+                    $this->dispatch('alert', status: 'error', message: 'Anda tidak dapat mengupdate Super Admin');
+                    return;
+                }
+            }
             $user->load('roles');
             $this->isEdit         = true;
             $this->user           = $user;
             $this->name           = $user->name;
             $this->email          = $user->email;
             $this->roles_selected = $user->roles->pluck('id')->toArray();
+            $this->dispatch('selected-roles_selected', selected: $this->roles_selected);
         } else {
             $this->dispatch('alert', status: 'error', message: 'Anda tidak memiliki izin untuk mengupdate user');
         }
@@ -77,9 +86,10 @@ class UserForm extends Component
         return view('livewire.data-master.user.user-form');
     }
 
-    protected function resetForm()
+    public function resetForm()
     {
         $this->reset(['isEdit', 'user', 'name', 'email', 'password', 'roles_selected', 'password_confirmation']);
+        $this->dispatch('selected-roles_selected', selected: null);
     }
 
     protected function rules()
@@ -100,6 +110,10 @@ class UserForm extends Component
     #[Computed(persist: true, seconds: 3600, cache: true)]
     public function roles()
     {
-        return Role::select('id', 'name')->get();
+        if (Auth::user()->hasRole('Super Admin')) {
+            return Role::select('id', 'name')->get();
+        } else {
+            return Role::select('id', 'name')->where('name', '!=', 'Super Admin')->get();
+        }
     }
 }

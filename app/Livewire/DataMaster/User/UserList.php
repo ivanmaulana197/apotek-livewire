@@ -16,6 +16,10 @@ class UserList extends Component
     public function delete(User $id): void
     {
         if (Auth::user()->can('user.delete')) { //nanti update yang mempunyai permission
+            if ($id->hasRole('Super Admin')) {
+                $this->dispatch('alert', message: 'Tidak Bisa Menghapus Super Admin', status: 'error');
+                return;
+            }
             $id->delete();
             $this->dispatch('alert', message: 'Berhasil Menghapus User');
         } else {

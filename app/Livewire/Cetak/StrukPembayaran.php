@@ -60,7 +60,7 @@ class StrukPembayaran extends Component
             ->select('transaksi.*', 'member.nama as nama_member', 'pasien.nama_pasien', 'dokter.nama as nama_dokter')
             ->find($this->id_transaksi);
 
-        if (! Auth::user()->can('cetak.struk-pembayaran-all') && ! (Auth::user()->can('cetak.struk-pembayaran-own') && $this->transaksi->id_user == Auth::user()->id)) {
+        if (! Auth::user()->can('kasir.cetak.struk-pembayaran-all') && ! (Auth::user()->can('kasir.cetak.struk-pembayaran-own') && $this->transaksi->id_user == Auth::user()->id)) {
             return redirect()->back()->with([
                 'alert' => [
                     'title'   => 'Tidak Diizinkan',

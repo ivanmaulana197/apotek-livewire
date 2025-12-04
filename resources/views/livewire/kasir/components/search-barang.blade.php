@@ -8,7 +8,6 @@
     {{-- <x-form.label label="Pilih Barang" /> --}}
 
     <div class="col-span-12">
-
         <div x-init="window.selectSearchBarang = new TomSelect('#barang_search', {
             //  maxOptions: 10,
             maxItems: 1,
@@ -38,6 +37,10 @@
                     callback(option);
                 })
             },
+        });
+        Livewire.on('focus-select-barang', () => {
+            selectSearchBarang.clear();
+            $('#barang_search-ts-control').focus();
         });" wire:ignore>
             {{-- <input id="barang_search" type="text" class="form-input mt-1 block w-full" placeholder="Cari Barang..." wire:model.live='selectedBarang'/> --}}
             <div x-data="{
@@ -56,17 +59,6 @@
                 </select>
             </div>
         </div>
-
-        @script
-            <script>
-                document.addEventListener('livewire:navigated', () => {
-                    Livewire.on('focus-select-barang', () => {
-                        $('#barang_search-ts-control').focus();
-                        selectSearchBarang.clear();
-                    });
-                });
-            </script>
-        @endscript
 
     </div>
 </div>

@@ -42,11 +42,11 @@
                 Livewire.on('struk-pembayaran', ({
                     id_transaksi
                 }) => {
-                    @canAny(['cetak.struk-pembayaran-own', 'cetak.struk-pembayaran-all'])
+                    @canany(['kasir.cetak.struk-pembayaran-own', 'kasir.cetak.struk-pembayaran-all'])
                         const url = "{{ route('cetak.struk-pembayaran', ['id_transaksi' => '__ID__']) }}"
                             .replace('__ID__', id_transaksi);
                         window.open(url, '_blank', 'width=700,height=600');
-                    @endcanAny
+                    @endcanany
                 })
             },
 
@@ -134,14 +134,13 @@
 
                 <template x-if="mode_kasir == 'RESEP'">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-3">
-                        <x-form.input label="Nama Pasien" class="text-xs bg-gray-200 dark:bg-gray-800" wire:model.live='nama_pasien' errorName="nama_pasien"
+                        <x-form.input label="Nama Pasien" class="text-xs" wire:model.live='nama_pasien' errorName="nama_pasien"
                                       onkeyup="formatToUpperCase(this)" />
 
-                        <x-form.input label="Alamat Pasien" class="text-xs bg-gray-200 dark:bg-gray-800" wire:model.live='alamat_pasien'
-                                      errorName="alamat_pasien" onkeyup="formatToUpperCase(this)" />
+                        <x-form.input label="Alamat Pasien" class="text-xs" wire:model.live='alamat_pasien' errorName="alamat_pasien"
+                                      onkeyup="formatToUpperCase(this)" />
 
-                        <x-form.input label="No. HP Pasien" class="text-xs bg-gray-200 dark:bg-gray-800" wire:model.live='no_hp_pasien'
-                                      errorName="no_hp_pasien" />
+                        <x-form.input label="No. HP Pasien" class="text-xs" wire:model.live='no_hp_pasien' errorName="no_hp_pasien" />
 
                         <x-form.select name="dokter" label="Pilih Dokter" :dataOption="$dokters" optionValue="id" optionLabel="nama" :addValue=true
                                        :itemSelected="$dokter_pasien" wire:model.live='dokter_pasien' errorName="dokter_pasien" />
@@ -174,6 +173,7 @@
 
         </div>
     </form>
+
     <x-modal name="member" size="xl">
         @livewire('data-master.member.member-form', ['isModal' => true])
     </x-modal>

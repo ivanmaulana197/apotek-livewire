@@ -54,7 +54,7 @@
                                                  color='emerald'></x-partials.sidebar.item>
                     @endcan
 
-                    @canany(['user', 'supplier', 'rak', 'kategori', 'member', 'profesi', 'satuan', 'dokter'])
+                    @canany(['user', 'supplier', 'rak', 'kategori', 'member', 'profesi', 'satuan', 'dokter', 'role', 'metode-pembayaran'])
                         <x-partials.sidebar.item title="Data Master" icon="simple-icons--databricks" color="blue" :menuLevel="true" name="data-master">
                             @can('user')
                                 <x-partials.sidebar.subitem name="data-master/data-user" href="{{ route('data-master.user') }}" color="blue">Data
@@ -92,6 +92,10 @@
                                 <x-partials.sidebar.subitem name="data-master/data-metode-pembayaran" href="{{ route('data-master.metode-pembayaran') }}"
                                                             color="blue">Data Metode Pembayaran</x-partials.sidebar.subitem>
                             @endcan
+                            @can('role')
+                                <x-partials.sidebar.subitem name="data-master/data-role" href="{{ route('data-master.role') }}" color="blue">Data
+                                    Role</x-partials.sidebar.subitem>
+                            @endcan
                         </x-partials.sidebar.item>
                     @endcanany
                     @canany(['info-barang-expired', 'info-barang-habis'])
@@ -107,14 +111,18 @@
                         </x-partials.sidebar.item>
                     @endcanany
 
-                    @canany(['transaksi.cetak-laporan-all', 'transaksi.cetak-laporan-own', 'faktur.cetak-laporan'])
+                    {{-- @canany(['transaksi.cetak-laporan-all', 'transaksi.cetak-laporan-own', 'faktur.cetak-laporan'])
+                        @canany(['faktur.cetak-laporan', 'transaksi.filter-transaksi']) --}}
+                    @canany(['laporan-transaksi', 'laporan-faktur'])
                         <x-partials.sidebar.item title="Laporan" icon="simple-icons--databricks" color="blue" :menuLevel="true" name="laporan">
-                            @canany(['transaksi.cetak-laporan-all', 'transaksi.cetak-laporan-own'])
+                            {{-- @canany(['transaksi.cetak-laporan-all', 'transaksi.cetak-laporan-own']) --}}
+                            @can('laporan-transaksi')
                                 <x-partials.sidebar.subitem name="laporan/transaksi" href="{{ route('laporan.transaksi') }}" color="blue">
                                     Laporan Transaksi
                                 </x-partials.sidebar.subitem>
-                            @endcanany
-                            @can('faktur.cetak-laporan')
+                            @endcan
+
+                            @can('laporan-faktur')
                                 <x-partials.sidebar.subitem name="laporan/faktur" href="{{ route('laporan.faktur') }}" color="blue">
                                     Laporan Faktur
                                 </x-partials.sidebar.subitem>

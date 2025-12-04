@@ -180,7 +180,7 @@ class TransaksiList extends Component
                 });
             })
             ->when(! $transaksi_all, function ($query) {
-                $query->where('id_user', Auth::user()->id);
+                $query->where('transaksi.id_user', Auth::user()->id);
             })
             ->search(
                 $this->search,

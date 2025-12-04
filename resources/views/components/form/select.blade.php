@@ -78,8 +78,6 @@ Livewire.on('update_{{ $name }}', ({ data, selected }) => {
     }
 
     if (data) {
-        // console.log('{{ $name }} ada data');
-
         select{{ $name }}.clear();
         select{{ $name }}.clearOptions();
         select{{ $name }}.addOptions(data);
@@ -92,6 +90,16 @@ Livewire.on('update_{{ $name }}', ({ data, selected }) => {
     @isset($label)
         <x-form.label label="{{ $label }}" />
     @endisset
+
+    @php
+        if (
+            !auth()
+                ->user()
+                ->can($name . '.create')
+        ) {
+            $addValue = false;
+        }
+    @endphp
 
     <div class="{{ $addValue ? 'col-span-10' : 'col-span-12' }}">
         <div wire:ignore wire:key="select-{{ $name }}">

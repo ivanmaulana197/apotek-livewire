@@ -75,7 +75,6 @@
                     tom.setValue('');
                     return;
                 }
-                // console.log(id_select);
                 $wire.fetchSingleItem(id_select).then(item => {
                     item = item.data;
                     tom.addOption({

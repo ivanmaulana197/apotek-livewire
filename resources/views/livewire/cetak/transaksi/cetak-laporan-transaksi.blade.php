@@ -71,6 +71,24 @@
                 </div>
                 <!-- Detail -->
                 <div class="p-4">
+                    <div class="mx-4 mb-4">
+                        @if ($item->member)
+                            <p class="text-sm ">Member: <span class="font-bold">{{ $item->member->nama }}</span></p>
+                            <p class="text-sm ">Profesi: <span class="font-bold">{{ $item->member->profesi->nama }}</span></p>
+                            <p class="text-sm ">Alamat: <span class="font-bold">{{ $item->member->alamat ?? '-' }}</span></p>
+                            <p class="text-sm ">No. HP: <span class="font-bold">{{ $item->member->no_hp ?? '-' }}</span></p>
+                        @endif
+                        @if ($item->pasien)
+                            <p class="text-sm ">Pasien: <span class="font-bold">{{ $item->pasien->nama_pasien }}</span></p>
+                            <p class="text-sm ">Alamat: <span class="font-bold">{{ $item->pasien->alamat_pasien ?? '-' }}</span></p>
+                            <p class="text-sm ">No. HP: <span class="font-bold">{{ $item->pasien->no_hp_pasien ?? '-' }}</span></p>
+                        @endif
+                        @if ($item->dokter)
+                            <p class="text-sm ">Dokter: <span class="font-bold">{{ $item->dokter->nama }}</span></p>
+                            <p class="text-sm ">Spesialis: <span class="font-bold">{{ $item->dokter->spesialis }}</span></p>
+                        @endif
+                    </div>
+
                     <table class="w-full text-sm">
                         <thead class="bg-gray-100">
                             <tr>

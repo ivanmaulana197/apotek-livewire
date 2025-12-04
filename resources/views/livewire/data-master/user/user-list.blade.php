@@ -31,14 +31,20 @@
                         </x-table.td>
 
                         <x-table.td class="flex justify-center">
-                            <x-table.action-button tooltip="Edit" color="warning" @click="$dispatch('edit-user',{user:'{{ $user->id }}'})">
-                                <span class="iconify tabler--edit-circle text-lg"></span>
-                            </x-table.action-button>
+                            @can('user.edit')
+                                @if (!$user->hasRole('Super Admin') || auth()->user()->hasRole('Super Admin'))
+                                    <x-table.action-button tooltip="Edit" color="warning" @click="$dispatch('edit-user',{user:'{{ $user->id }}'})">
+                                        <span class="iconify tabler--edit-circle text-lg"></span>
+                                    </x-table.action-button>
+                                @endif
+                            @endcan
                             @can('user.delete')
-                                <x-table.action-button tooltip="Hapus" color="error"
-                                                       @click="$wire.dispatch('alert-confirm', { id: '{{ $user->id }}', method: 'delete-user' });">
-                                    <span class="iconify tabler--trash-x-filled text-lg"></span>
-                                </x-table.action-button>
+                                @if (!$user->hasRole('Super Admin'))
+                                    <x-table.action-button tooltip="Hapus" color="error"
+                                                           @click="$wire.dispatch('alert-confirm', { id: '{{ $user->id }}', method: 'delete-user' });">
+                                        <span class="iconify tabler--trash-x-filled text-lg"></span>
+                                    </x-table.action-button>
+                                @endif
                             @endcan
                         </x-table.td>
 

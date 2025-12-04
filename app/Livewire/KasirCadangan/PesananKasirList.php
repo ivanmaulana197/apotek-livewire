@@ -47,7 +47,6 @@ class PesananKasirList extends Component
     // #[On('update_pesanan_kasir')]
     public function render()
     {
-        // if (Auth::user()->hasRole('admin')) {
         if (Auth::user()->can('pesanan-kasir.list-all')) {
             $data = PesananKasir::query()
             // ->with(['user:id,name'])

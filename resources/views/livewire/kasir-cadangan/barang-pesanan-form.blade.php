@@ -74,7 +74,6 @@
                 // a. Ubah jumlah ke satuan utama
                 let jumlah_dalam_su = this.calculateJumlahDalamSatuanUtama(jumlah, this.id_satuan);
                 this.jumlah_dalam_satuan_utama = jumlah_dalam_su;
-                console.log(this.jumlah_dalam_satuan_utama);
                 // b. Total jumlah yang sudah ada + input
                 let total_jumlah = this.getTotalJumlahDalamSatuanUtama(this.data_barang.id) + jumlah_dalam_su;
                 this.total_jumlah_dalam_satuan_utama_by_barang = total_jumlah;

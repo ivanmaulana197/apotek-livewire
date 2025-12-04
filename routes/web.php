@@ -22,7 +22,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/kasir', action: Livewire\KasirCadangan\KasirIndex::class)->middleware('permission:kasir')->name('kasir-cadangan');
     Route::get('/kasir/{id_pesanan_kasir}', action: Livewire\KasirCadangan\KasirIndex::class)->middleware('permission:kasir-show-own|kasir-show-all')->name('kasir-cadangan.show');
 
-    Route::get("/cetak/struk-pembayaran/{id_transaksi}", Livewire\Cetak\StrukPembayaran::class)->middleware('permission:cetak.struk-pembayaran-own|cetak.struk-pembayaran-all')->name('cetak.struk-pembayaran');
+    Route::get("/cetak/struk-pembayaran/{id_transaksi}", Livewire\Cetak\StrukPembayaran::class)->middleware('permission:kasir.cetak.struk-pembayaran-own|kasir.cetak.struk-pembayaran-all')->name('cetak.struk-pembayaran');
 
     Route::get('/transaksi', Livewire\Transaksi\TransaksiIndex::class)->middleware('permission:transaksi')->name('transaksi');
     // Route::get('/cetak/transaksi-with-barang', Livewire\Cetak\Transaksi\CetakTransaksiListWithBarang::class)->name('cetak.transaksi-with-barang');
@@ -59,6 +59,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/data-member', action: Livewire\DataMaster\Member\MemberIndex::class)->middleware('permission:member')->name('data-master.member');
         Route::get('/data-member/{id_member}', action: Livewire\DataMaster\Member\MemberDetail\MemberDetailIndex::class)->middleware('permission:member.detail')->name('data-master.member.detail');
         Route::get('/data-metode-pembayaran', action: Livewire\DataMaster\MetodePembayaran\MetodePembayaranIndex::class)->middleware('permission:metode-pembayaran')->name('data-master.metode-pembayaran');
+        Route::get('/data-role', action: Livewire\DataMaster\Role\RoleIndex::class)->middleware('permission:role')->name('data-master.role');
+        Route::get('/data-role/tambah-role', action: Livewire\DataMaster\Role\RoleForm::class)->middleware('permission:role.create')->name('data-master.role.tambah');
+        Route::get('/data-role/edit-role/{id}', action: Livewire\DataMaster\Role\RoleForm::class)->middleware('permission:role.edit')->name('data-master.role.edit');
     });
 
     Route::get('/stok-opname', action: Livewire\StokOpname\StokOpnameIndex::class)->middleware('permission:stok-opname')->name('stok-opname');
@@ -80,7 +83,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::group(['prefix' => 'laporan'], function () {
-        Route::get('/transaksi', Livewire\Laporan\LaporanTransaksi::class)->middleware('permission:transaksi.cetak-laporan-all|transaksi.cetak-laporan-own')->name('laporan.transaksi');
+        Route::get('/transaksi', Livewire\Laporan\LaporanTransaksi::class)->middleware('permission:transaksi.cetak-laporan-all|transaksi.cetak-laporan-own', 'permission:transaksi.filter-transaksi')->name('laporan.transaksi');
         Route::get('/faktur', Livewire\Laporan\LaporanFaktur::class)->middleware('permission:faktur.cetak-laporan')->name('laporan.faktur');
     });
 

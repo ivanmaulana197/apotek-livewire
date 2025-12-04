@@ -9,16 +9,22 @@
 
     <div class="grid grid-cols-1 gap-3">
 
-        <div class="card">
-            <div class="card-body">
-                <div class="flex flex-wrap gap-x-3 gap-y-2">
-                    <a href="{{ route('data.barang.tambah') }}" wire:navigate class="btn btn-primary w-fit">+ Tambah Barang</a>
-                    <button class="btn bg-success hover:bg-successemphasis w-fit" wire:click='pembulatanAll'>
-                        <span class="iconify solar--pen-new-square-outline text-lg"></span> Pembulatan All
-                    </button>
+        @canany(['barang.create', 'barang.pembulatan-all'])
+            <div class="card">
+                <div class="card-body">
+                    <div class="flex flex-wrap gap-x-3 gap-y-2">
+                        @can('barang.create')
+                            <a href="{{ route('data.barang.tambah') }}" wire:navigate class="btn btn-primary w-fit">+ Tambah Barang</a>
+                        @endcan
+                        @can('barang.pembulatan-all')
+                            <button class="btn bg-success hover:bg-successemphasis w-fit" wire:click='pembulatanAll'>
+                                <span class="iconify solar--pen-new-square-outline text-lg"></span> Pembulatan All
+                            </button>
+                        @endcan
+                    </div>
                 </div>
             </div>
-        </div>
+        @endcanany
         @can('barang.list')
             <livewire:barang.barang-list />
         @endcan

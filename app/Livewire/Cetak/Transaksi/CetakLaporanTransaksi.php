@@ -22,10 +22,18 @@ class CetakLaporanTransaksi extends Component
 
     public function mount()
     {
-        $this->filter_date = [
-            'start' => request('date.start', now()->format('Y-m-d')),
-            'end'   => request('date.end', now()->format('Y-m-d')),
-        ];
+        if (Auth::user()->can('transaksi.filter-transaksi')) {
+            $this->filter_date = [
+                'start' => request('date.start', now()->format('Y-m-d')),
+                'end'   => request('date.end', now()->format('Y-m-d')),
+            ];
+        } else {
+            $this->filter_date = [
+                'start' => now()->format('Y-m-d'),
+                'end'   => now()->format('Y-m-d'),
+            ];
+        }
+
         $this->shift_transaksi = request('shift', GeneralHelper::checkModeShift());
         if (Auth::user()->can('transaksi.cetak-laporan-all')) {
             $this->by_user = request('by_user', 'SEMUA');
@@ -40,6 +48,7 @@ class CetakLaporanTransaksi extends Component
                 ],
             ]);
         }
+
     }
 
     public function getTransaksi()
@@ -60,8 +69,11 @@ class CetakLaporanTransaksi extends Component
             }, 'transaksi_list_promo' => function ($q) {
                 $q->where('tipe_promo', '!=', 'TRANSAKSI')
                     ->select('id_transaksi', 'id_barang', 'tipe_promo', 'nominal_promo', 'deskripsi');
-            }])
+            }, 'dokter', 'pasien', 'member.profesi'])
             ->join('users', 'users.id', '=', 'transaksi.id_user')
+        // ->leftJoin('dokter', 'dokter.id', '=', 'transaksi.id_dokter')
+        // ->leftJoin('pasien', 'pasien.id', '=', 'transaksi.id_pasien')
+        // ->leftJoin('pasien', 'pasien.id', '=', 'transaksi.id_pasien')
             ->join('metode_pembayaran', 'metode_pembayaran.id', '=', 'transaksi.id_metode_pembayaran')
             ->select('transaksi.*', 'users.name as nama_user', 'metode_pembayaran.nama as nama_metode_pembayaran')
             ->where('status', 'TERJUAL')

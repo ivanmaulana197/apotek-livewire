@@ -67,7 +67,7 @@
                 </div>
             </div>
         @endcan
-        @can('home.info-stok-barang')
+        @can('home.info-barang-habis')
             <div class="card">
                 <div class="card-body">
                     <div class="flex items-center justify-between">
@@ -117,6 +117,11 @@
             </div>
         @endcan
     </div>
+
+    @can('home.info-transaksi')
+        <livewire:transaksi.transaksi-card-info />
+    @endcan
+
     @canany(['home.grafik-pendapatan', 'home.grafik-transaksi'])
         <div class="grid grid-cols-1 gap-6 mb-5" x-data="dashboard">
             <div class="card border-gray-100">
@@ -341,7 +346,7 @@
                         }]);
 
                     }
-                    // console.log(data, tanggal, pendapatan);
+
 
 
                 })

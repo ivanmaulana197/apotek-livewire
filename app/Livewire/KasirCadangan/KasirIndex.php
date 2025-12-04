@@ -63,7 +63,7 @@ class KasirIndex extends Component
         $this->updateValueAllBarangPesananKasir();
         $this->list_total_jumlah_dalam_satuan_utama = $this->pesanan_kasir->barang_pesanan_kasir->groupBy('id_barang')
             ->map(fn($items) => $items->sum('jumlah_dalam_satuan_utama'))->toArray();
-
+        // dd($this->pesanan_kasir);
     }
 
     public function updateValueAllBarangPesananKasir()

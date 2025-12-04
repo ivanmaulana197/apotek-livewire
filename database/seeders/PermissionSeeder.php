@@ -12,24 +12,20 @@ class PermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        $admin  = Role::findByName('admin');
-        $barang = ['list barang', 'create barang', 'edit barang', 'read barang', 'delete barang'];
-        foreach ($barang as $item) {
-            Permission::create(["name" => $item]);
-        }
-        $admin->givePermissionTo($barang);
+        $admin = Role::findByName('Super Admin');
 
         $permission = [
             //home
             "home",
             'home.info-pendapatan-harian', 'home.info-total-transaksi', 'home.info-barang-habis', 'home.info-barang-expired',
+            'home.info-transaksi',
             "home.grafik-pendapatan", 'home.grafik-transaksi',
 
             //kasir
             'kasir', 'kasir-show-own', 'kasir-show-all',
             // 'kasir:simpan transaksi',
             'pesanan-kasir', "pesanan-kasir.list-own", 'pesanan-kasir.list-all', "pesanan-kasir.delete-own", "pesanan-kasir.delete-all", "pesanan-kasir.create",
-            'cetak.struk-pembayaran-own', 'cetak.struk-pembayaran-all',
+            'kasir.cetak.struk-pembayaran-own', 'kasir.cetak.struk-pembayaran-all',
 
             //faktur
             "faktur", "faktur.list-own", "faktur.list-all", "faktur.create", "faktur.edit-own", "faktur.edit-all", "faktur.detail-own", "faktur.detail-all", "faktur.delete-own", "faktur.delete-all",
@@ -50,6 +46,7 @@ class PermissionSeeder extends Seeder
             //transaksi
             "transaksi", "transaksi.cetak-laporan-own", "transaksi.cetak-laporan-all",
             "transaksi.info-total-transaksi-by-metode-pembayaran", "transaksi.info-total-transaksi-umum", "transaksi.info-total-transaksi-resep", "transaksi.info-total-jumlah-transaksi",
+            "transaksi.info-all-transaksi",
             "transaksi.detail-all", "transaksi.detail-own",
             "transaksi.list-all", "transaksi.list-own",
             "transaksi.filter-transaksi",
@@ -87,7 +84,10 @@ class PermissionSeeder extends Seeder
             'dokter.detail.list-data-barang-terjual', 'dokter.detail.list-data-transaksi',
             "dokter.detail.info-total-tebus-obat", "dokter.detail.info-total-transaksi",
             //metode pembayaran
-            "metode-pembayaran", "metode-pembayaran.list", "metode-pembayaran.create", "metode-pembayaran.edit", "metode-pembayaran.detail", "metode-pembayaran.delete",
+            "metode_pembayaran", "metode_pembayaran.list", "metode_pembayaran.create", "metode_pembayaran.edit", "metode_pembayaran.detail", "metode_pembayaran.delete",
+
+            //role
+            "role", "role.list", "role.create", "role.edit", "role.detail", "role.delete",
 
             //transaksi
             // "transaksi", "transaksi.list", "transaksi.create", "transaksi.edit", "transaksi.detail", "transaksi.delete",
@@ -109,11 +109,27 @@ class PermissionSeeder extends Seeder
         foreach ($permission as $item) {
             Permission::create(["name" => $item]);
         }
+
         $admin->givePermissionTo($permission);
-        $pegawai = Role::findByName('pegawai');
+        $admin = Role::findByName('Admin');
+        $admin->givePermissionTo($permission);
+        $pegawai = Role::findByName('Pegawai');
         $pegawai->givePermissionTo([
-            "home", 'home.info-pendapatan-harian', 'home.info-total-transaksi',
-            "kasir-show-own",
+            "barang", "barang.list", "barang.detail",
+            "dokter", "dokter.create", "dokter.list", "dokter.detail",
+
+            "home", 'home.info-pendapatan-harian', 'home.info-total-transaksi', "home.info-transaksi",
+
+            "kasir", "kasir-show-own", "kasir.cetak.struk-pembayaran-own",
+            "pesanan-kasir", "pesanan-kasir.list-own", "pesanan-kasir.delete-own", "pesanan-kasir.create",
+
+            "transaksi", "transaksi.cetak-laporan-own", "transaksi.detail-own", "transaksi.list-own",
+            "transaksi.info-total-transaksi-by-metode-pembayaran", "transaksi.info-total-transaksi-umum", "transaksi.info-total-transaksi-resep", "transaksi.info-total-jumlah-transaksi",
+            "transaksi.retur",
+
+            "member", "member.list", "member.detail", "member.create",
+
+            "metode_pembayaran", "metode_pembayaran.list", "metode_pembayaran.detail", "metode_pembayaran.create",
         ]);
 
     }

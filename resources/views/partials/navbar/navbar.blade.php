@@ -161,21 +161,33 @@
                                                 </div>
                                             </div>
                                         </div> --}}
-                                        <div class="lg:flex">
-                                            <a href="{{ route('home') }}" wire:navigate
-                                               class="flex items-center w-full gap-3 px-2 py-2 rounded-md lg:w-auto lg:py-1 lg:px-2 lg:text-base text-md lg:gap-0 header-link text-link dark:text-darklink hover:text-primary dark:hover:text-primary">
-                                                <span class="iconify solar--screencast-2-line-duotone text-xl me-1"></span>
-                                                Home
-                                            </a>
-                                        </div>
-
-                                        <div>
-                                            <a href="{{ route('transaksi') }}" wire:navigate
-                                               class="flex items-center w-full gap-3 px-2 py-2 rounded-md lg:w-auto lg:py-1 lg:px-2 lg:text-base text-md lg:gap-0 header-link text-link dark:text-darklink hover:text-primary dark:hover:text-primary">
-                                                <span class="iconify f7--list-bullet-below-rectangle text-xl me-1"></span>
-                                                Transaksi
-                                            </a>
-                                        </div>
+                                        @can('home')
+                                            <div class="lg:flex">
+                                                <a href="{{ route('home') }}" wire:navigate
+                                                   class="flex items-center w-full gap-3 px-2 py-2 rounded-md lg:w-auto lg:py-1 lg:px-2 lg:text-base text-md lg:gap-0 header-link text-link dark:text-darklink hover:text-primary dark:hover:text-primary">
+                                                    <span class="iconify solar--screencast-2-line-duotone text-xl me-1"></span>
+                                                    Home
+                                                </a>
+                                            </div>
+                                        @endcan
+                                        @can('transaksi')
+                                            <div>
+                                                <a href="{{ route('transaksi') }}" wire:navigate
+                                                   class="flex items-center w-full gap-3 px-2 py-2 rounded-md lg:w-auto lg:py-1 lg:px-2 lg:text-base text-md lg:gap-0 header-link text-link dark:text-darklink hover:text-primary dark:hover:text-primary">
+                                                    <span class="iconify f7--list-bullet-below-rectangle text-xl me-1"></span>
+                                                    Transaksi
+                                                </a>
+                                            </div>
+                                        @endcan
+                                        @can('barang.create')
+                                            <div>
+                                                <a href="{{ route('data.barang.tambah') }}" wire:navigate
+                                                   class="flex items-center w-full gap-3 px-2 py-2 rounded-md lg:w-auto lg:py-1 lg:px-2 lg:text-base text-md lg:gap-0 header-link text-link dark:text-darklink hover:text-primary dark:hover:text-primary">
+                                                    <span class="iconify f7--plus-app text-xl me-1"></span>
+                                                    New Barang
+                                                </a>
+                                            </div>
+                                        @endcan
                                     </div>
                                 </div>
                             </div>

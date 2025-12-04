@@ -19,6 +19,19 @@ class TransaksiCardInfo extends Component
     public $total_bayar, $total_bayar_tunai, $total_bayar_non_tunai;
     public $total_bayar_non_resep, $total_bayar_resep, $total_transaksi;
 
+    public function mount()
+    {
+        if (! $this->shift_transaksi) {
+            $this->shift_transaksi = 'SEMUA';
+        }
+        if (! $this->filter_date) {
+            $this->filter_date = [
+                'start' => now()->format('Y-m-d'),
+                'end'   => now()->format('Y-m-d'),
+            ];
+        }
+    }
+
     #[On('update_value_shift_transaksi')]
     public function updateShiftTransaksi($value)
     {
@@ -63,10 +76,18 @@ class TransaksiCardInfo extends Component
         if (! Auth::user()->canAny(['transaksi.info-total-transaksi-by-metode-pembayaran', 'transaksi.info-total-transaksi-umum', 'transaksi.info-total-transaksi-resep', 'transaksi.info-total-jumlah-transaksi'])) {
             return $this->dispatch('alert', status: 'error', message: 'Kamu Tidak Memiliki Akses');
         }
+        if (Auth::user()->can('transaksi.info-all-transaksi')) {
+            $user = null;
+        } else {
+            $user = Auth::user()->id;
+        }
         $rekap = Transaksi::query()
             ->join('metode_pembayaran', 'metode_pembayaran.id', '=', 'transaksi.id_metode_pembayaran')
             ->when($this->filter_date ?? null, function ($query, $item) {
                 $query->whereBetween('transaksi.created_at', ["{$item['start']} 00:00:00", "{$item['end']} 23:59:59"]);
+            })
+            ->when($user !== null, function ($query) use ($user) {
+                $query->where('transaksi.id_user', $user);
             })
             ->when(in_array($this->shift_transaksi, ['MALAM', 'PAGI']), function ($query) {
                 $query->where('shift_transaksi', $this->shift_transaksi);

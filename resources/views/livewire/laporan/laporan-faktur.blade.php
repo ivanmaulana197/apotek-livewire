@@ -44,7 +44,6 @@
                     params.append('tgl_jatuh_tempo[end]', '{{ $tgl_jatuh_tempo['end'] ?? null }}');
 
                     const suppliers = @js($id_suppliers ?? []);
-                    console.log(suppliers);
                     suppliers.forEach((id, index) => {
                         params.append(`id_suppliers[${index}]`, id);
                     });
