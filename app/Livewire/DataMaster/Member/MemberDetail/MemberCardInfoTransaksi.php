@@ -20,7 +20,7 @@ class MemberCardInfoTransaksi extends Component
     public function getData()
     {
         $data = DB::table('transaksi')
-            ->join('transaksi_list_promo', 'transaksi_list_promo.id_transaksi', '=', 'transaksi.id')
+            ->leftJoin('transaksi_list_promo', 'transaksi_list_promo.id_transaksi', '=', 'transaksi.id')
             ->where('id_member', $this->id_member)
             ->where('status', 'TERJUAL')
             ->whereBetween('transaksi.created_at', [

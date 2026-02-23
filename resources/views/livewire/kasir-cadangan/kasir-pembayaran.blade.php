@@ -180,9 +180,9 @@
     <x-modal name="dokter" size="lg">
         @livewire('data-master.dokter.dokter-form', ['isModal' => true])
     </x-modal>
-    <x-modal name="metode_pembayaran" size="lg">
+    {{-- <x-modal name="metode_pembayaran" size="lg">
         @livewire('data-master.metode-pembayaran.metode-pembayaran-form', ['isModal' => true])
-    </x-modal>
+    </x-modal> --}}
     <x-modal name="promo_transaksi" size="6xl">
         <livewire:kasir-cadangan.promo.promo-transaksi-list />
     </x-modal>

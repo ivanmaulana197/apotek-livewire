@@ -22,8 +22,7 @@ class UserForm extends Component
     {
         if (Auth::user()->can('user.create')) {
             $validate = $this->validate();
-            dd($validate);
-            $user = User::create($validate);
+            $user     = User::create($validate);
             $user->syncRoles($this->roles_selected);
             if ($this->isModal) {
                 $this->dispatch('toggle-modal-user', userModal: false);

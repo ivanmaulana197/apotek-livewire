@@ -85,7 +85,7 @@
             </div>
         </div>
     @endcanany
-    @canany('dokter.detail.list-data-barang-terjual', 'dokter.detail.list-data-transaksi')
+    @canany(['dokter.detail.list-data-barang-terjual', 'dokter.detail.list-data-transaksi'])
         <x-tab class="mt-2">
             <x-slot:tab>
                 @can('dokter.detail.list-data-barang-terjual')

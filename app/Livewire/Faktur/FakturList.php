@@ -51,7 +51,7 @@ class FakturList extends Component
     }
 
     #[On('delete-faktur')]
-    public function deleteFaktur(Faktur $id)
+    public function deleteFaktur($id)
     {
         if (! Auth::user()->can('faktur.delete-all') && ! (Auth::user()->can('faktur.delete-own') && $id->id_user == Auth::user()->id)) {
             return $this->dispatch('alert', message: 'Kamu Tidak Memiliki Akses', status: 'error');

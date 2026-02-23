@@ -131,6 +131,27 @@ class PermissionSeeder extends Seeder
 
             "metode_pembayaran", "metode_pembayaran.list", "metode_pembayaran.detail", "metode_pembayaran.create",
         ]);
+        $gudang = Role::findByName('Gudang');
+        $gudang->givePermissionTo([
+            "home", 'home.info-barang-habis', 'home.info-barang-expired',
+
+            "barang", "barang.list", "barang.detail",
+
+            "supplier", "supplier.list", "supplier.create", "supplier.detail",
+
+            //faktur
+            "faktur", "faktur.list-own", "faktur.create", "faktur.edit-own", "faktur.detail-own", "faktur.delete-own",
+            "faktur.info-jumlah-faktur", "faktur.info-total-pengeluaran", "faktur.info-total-hutang",
+            // "faktur.ubah-status", "faktur.cetak-laporan",
+
+            //info barang expired
+            "info-barang-expired", "info-barang-expired.list", "info-barang-expired.trigger",
+            //info barang habis
+            "info-barang-habis", "info-barang-habis.list",
+
+            "stok-opname", "stok-opname.list", "stok-opname.history", "stok-opname.cetak-laporan",
+            "stok-opname.refresh-stok-opname", "stok-opname.sinkronisasi-stok-keseluruhan", "stok-opname.cetak-form",
+        ]);
 
     }
 }

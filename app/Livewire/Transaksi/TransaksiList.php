@@ -23,6 +23,15 @@ class TransaksiList extends Component
     public function mount()
     {
         $this->sortBy = 'transaksi.created_at';
+        if (! $this->filter_date) {
+            $this->filter_date = [
+                'start' => now()->format('Y-m-d'),
+                'end'   => now()->format('Y-m-d'),
+            ];
+        }
+        if (! $this->shift_transaksi) {
+            $this->shift_transaksi = 'SEMUA';
+        }
         if ($this->id_barang) {
             $this->big_range_date  = true;
             $this->shift_transaksi = 'SEMUA';
@@ -33,6 +42,12 @@ class TransaksiList extends Component
         } elseif ($this->id_dokter || $this->id_member) {
             $this->shift_transaksi = 'SEMUA';
         }
+    }
+
+    #[On('update_value_filter_date')]
+    public function filterDate($value)
+    {
+        $this->filter_date = $value;
     }
 
     public function updatedFilterDate($value)
@@ -107,10 +122,11 @@ class TransaksiList extends Component
             $transaksi->update(['status' => 'RETUR']);
             DB::commit();
             $this->dispatch('update_transaksi');
+            $this->dispatch('alert', status: 'success', message: 'Berhasil Retur Transaksi');
         } catch (\Exception $e) {
             DB::rollBack();
-            $this->dispatch('error', message: $e->getMessage());
-            throw $e;
+            $this->dispatch('alert', status: 'error', message: 'Gagal Retur Transaksi');
+            return;
         }
 
     }

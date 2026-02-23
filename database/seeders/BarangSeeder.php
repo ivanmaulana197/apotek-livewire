@@ -15,7 +15,7 @@ class BarangSeeder extends Seeder
     {
         // Seed beberapa barang random
         Barang::factory()
-            ->count(200)
+            ->count(10)
             ->create();
 
         // Tambah contoh barang manual

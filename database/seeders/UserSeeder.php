@@ -16,7 +16,9 @@ class UserSeeder extends Seeder
         $adminRole   = Role::create(['name' => 'Super Admin']);
         $adminRole   = Role::create(['name' => 'Admin']);
         $pegawaiRole = Role::create(['name' => 'Pegawai']);
-        $admin       = User::factory()->create([
+        // Role::create(['name' => 'Kasir']);
+        Role::create(['name' => 'Gudang']);
+        $admin = User::factory()->create([
             'name'     => 'Test User',
             'email'    => 'test@example.com',
             'password' => Hash::make('password'),
@@ -31,8 +33,14 @@ class UserSeeder extends Seeder
             'email'    => 'pegawai@gmail.com',
             'password' => Hash::make('password'),
         ]);
+        $gudang = User::factory()->create([
+            'name'     => 'Gudang nih',
+            'email'    => 'gudang@gmail.com',
+            'password' => Hash::make('password'),
+        ]);
         $admin->assignRole('Super Admin');
         $admin_biasa->assignRole('Admin');
         $pegawai->assignRole('Pegawai');
+        $gudang->assignRole('Gudang');
     }
 }

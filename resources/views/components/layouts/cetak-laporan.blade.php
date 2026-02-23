@@ -5,13 +5,13 @@
             <div class="flex justify-between items-start">
                 <div>
                     {{-- nanti dipindah di livewire component agar mendapatkan datanya --}}
-                    <h1 class="text-3xl font-bold text-gray-800">TOKO SEJAHTERA</h1>
+                    <h1 class="text-3xl font-bold text-gray-800">Apotek Rajawali</h1>
                     <p class="text-sm text-gray-600 mt-1">
-                        Jl. Raya Kemerdekaan No. 123, Jakarta
+                        Jl. Rajawali, Bledanah, Karang Dalem, Kec. Sampang, Kabupaten Sampang
                     </p>
-                    <p class="text-sm text-gray-600">
+                    {{-- <p class="text-sm text-gray-600">
                         Telp: (021) 1234-5678 | Email: info@tokosejahtera.com
-                    </p>
+                    </p> --}}
                 </div>
                 <div class="mt-6 text-center no-print">
                     <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition">

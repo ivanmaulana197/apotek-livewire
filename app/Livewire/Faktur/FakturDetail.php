@@ -22,7 +22,7 @@ class FakturDetail extends Component
         },
             'supplier:id,nama'])
             ->findOrFail($id);
-        if (! Auth::user()->can('faktur.detail-all') || ! (Auth::user()->can('faktur.detail-own') && $this->faktur->id_user == Auth::user()->id)) {
+        if (! Auth::user()->can('faktur.detail-all') && ! (Auth::user()->can('faktur.detail-own') && $this->faktur->id_user == Auth::user()->id)) {
             return redirect()->back()->with([
                 'alert' => [
                     'title'   => 'Tidak Diizinkan',

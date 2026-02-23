@@ -1,5 +1,4 @@
 <?php
-
 namespace Database\Factories\DataMaster;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -17,7 +16,8 @@ class DokterFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'nama'      => $this->faker->unique()->name(),
+            'spesialis' => $this->faker->jobTitle(),
         ];
     }
 }

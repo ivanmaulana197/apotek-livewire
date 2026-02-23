@@ -114,6 +114,10 @@ class CetakLaporanFaktur extends Component
     #[Layout('components.layouts.cetak-laporan')]
     public function render()
     {
+        if ($this->id_suppliers != 'SEMUA') {
+            $ids             = is_array($this->id_suppliers) ? $this->id_suppliers : [$this->id_suppliers];
+            $this->suppliers = Supplier::select('id', 'nama')->whereIn('id', $ids)->get();
+        }
         $data = $this->getData();
         // dd($data->toArray());
         $dataInfo = $this->getDataInfo();

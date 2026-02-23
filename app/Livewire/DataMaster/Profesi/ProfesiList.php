@@ -2,6 +2,7 @@
 namespace App\Livewire\DataMaster\Profesi;
 
 use App\Models\DataMaster\Profesi;
+use App\Models\Promo\PromoProfesiMember;
 use App\Traits\CustomDataTable;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\On;
@@ -23,8 +24,13 @@ class ProfesiList extends Component
             return $this->dispatch('alert', message: 'Kamu Tidak Memiliki Akses', status: 'error');
         }
 
+        //
+        if (PromoProfesiMember::where('id_profesi', $id->id)->exists()) {
+            return $this->dispatch('alert', message: 'Profesi Ini Sedang Digunakan Pada Promo', status: 'error');
+        }
+
         $id->delete();
-        $this->dispatch('alert', message: 'Berhasil Menghapus Profesi');
+        $this->dispatch('alert', message: 'Berhasil Menghapus Profesi', status: 'success');
 
     }
 

@@ -1,7 +1,8 @@
 <?php
-
 namespace Database\Factories\DataMaster;
 
+use App\Models\DataMaster\Profesi;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +18,11 @@ class MemberFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'nama'       => strtoupper($this->faker->name()),
+            'alamat'     => $this->faker->streetAddress(),
+            'no_hp'      => $this->faker->numerify('08##########'),
+            'id_profesi' => Profesi::factory(),
+            'id_user'    => User::factory(),
         ];
     }
 }

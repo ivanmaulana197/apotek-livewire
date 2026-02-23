@@ -116,7 +116,7 @@ class FakturForm extends Component
     public function edit($id_faktur)
     {
         $faktur = Faktur::findOrFail($id_faktur);
-        if (! Auth::user()->can('faktur.edit-all') || ! (Auth::user()->can('faktur.edit-own') && $faktur->id_user == Auth::user()->id)) {
+        if (! Auth::user()->can('faktur.edit-all') && ! (Auth::user()->can('faktur.edit-own') && $faktur->id_user == Auth::user()->id)) {
             return redirect()->back()->with([
                 'alert' => [
                     'title'   => 'Tidak Diizinkan',
@@ -133,7 +133,7 @@ class FakturForm extends Component
     public function update()
     {
         $faktur = Faktur::findOrFail($this->id_faktur);
-        if (! Auth::user()->can('faktur.edit-all') || ! (Auth::user()->can('faktur.edit-own') && $faktur->id_user == Auth::user()->id)) {
+        if (! Auth::user()->can('faktur.edit-all') && ! (Auth::user()->can('faktur.edit-own') && $faktur->id_user == Auth::user()->id)) {
             return $this->dispatch('alert', message: 'Kamu Tidak Memiliki Akses', status: 'error');
         }
         $this->form->formattedForm(false);

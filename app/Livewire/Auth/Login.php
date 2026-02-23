@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Livewire\Auth;
 
 use Illuminate\Support\Facades\Auth;
@@ -9,13 +8,14 @@ use Livewire\Component;
 #[Layout('components.layouts.auth')]
 class Login extends Component
 {
-     public $email, $password, $remember = false;
+    public $email, $password, $remember = false;
 
     protected $rules = [
-        'email' => 'required|email',
+        'email'    => 'required|email',
         'password' => 'required',
     ];
-    public function submitLogin(){
+    public function submitLogin()
+    {
         $this->validate();
         if (Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
             // Redirect to the intended URL or a default page
@@ -25,8 +25,11 @@ class Login extends Component
         // dd('error');
 
         // Authentication failed
-        session()->flash('error', 'Email atau password salah');
+        // session()->flash('error', 'Email atau password salah');
+        $this->dispatch('alert', status: 'error', message: 'Email atau password salah');
         $this->password = '';
+        // return $this->redirect(route('login'), navigate: true);
+
     }
 
     public function render()

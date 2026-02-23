@@ -59,7 +59,7 @@
             </x-table.thead>
             <x-table.tbody>
                 @forelse ($promos as $index => $item)
-                    <x-table.tr wire:loading.remove>
+                    <x-table.tr wire:loading.remove wire:key='promo-{{ $item->id }}'>
                         <x-table.td class="text-center">{{ $promos->firstItem() + $index }}</x-table.td>
                         <x-table.td>
                             <h6 class="text-sm whitespace-normal line-clamp-2">{{ $item->nama }}</h6>

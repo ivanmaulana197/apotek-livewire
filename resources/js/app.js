@@ -26,7 +26,7 @@ moment.locale("id");
 
 import "daterangepicker";
 // comment jika ingin build
-let jp = $.noConflict(true);
+// let jp = $.noConflict(true);
 
 import ApexCharts from "apexcharts";
 window.ApexCharts = ApexCharts;

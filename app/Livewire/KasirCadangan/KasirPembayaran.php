@@ -122,7 +122,9 @@ class KasirPembayaran extends Component
             $this->validate([
                 'bayar'     => 'required|numeric',
                 'kembalian' => 'required|numeric',
+
             ]);
+            // dd($this->bayar, $this->kembalian);
             DB::beginTransaction();
 
             $this->pesanan_kasir->refresh()->loadMissing([
@@ -273,8 +275,8 @@ class KasirPembayaran extends Component
         foreach ($barang->stok_batch_barang as $stok_batch_barang) {
             if ($jumlah_sisa > $stok_batch_barang->jumlah) { //berarti stok batch barang info habis
                                                                  // kalau ada sisanya barang info saat ini delete
-                $tgl_expired[] = ['tgl' => $stok_batch_barang->tgl_expired, 'jumlah' => $stok_batch_barang->jumlah];
-                $jumlah_sisa -= $stok_batch_barang->jumlah;
+                $tgl_expired[]  = ['tgl' => $stok_batch_barang->tgl_expired, 'jumlah' => $stok_batch_barang->jumlah];
+                $jumlah_sisa   -= $stok_batch_barang->jumlah;
                 $stok_batch_barang->delete();
             } elseif ($jumlah_sisa < $stok_batch_barang->jumlah) { //berarti stok batch barang info cukup
                                                                        // jumlah keluar lebih kecil dari stok barang info

@@ -40,7 +40,7 @@ class ProfesiForm extends Component
     #[On('edit-profesi')]
     public function editFormSupplier(Profesi $profesi)
     {
-        if (! Auth::user()->can('profesi.update')) {
+        if (! Auth::user()->can('profesi.edit')) {
             return $this->dispatch('alert', status: 'error', message: 'Anda Tidak Memiliki Akses');
         }
         $this->isEdit  = true;
@@ -50,7 +50,7 @@ class ProfesiForm extends Component
 
     public function update()
     {
-        if (! Auth::user()->can('profesi.update')) {
+        if (! Auth::user()->can('profesi.edit')) {
             return $this->dispatch('alert', status: 'error', message: 'Anda Tidak Memiliki Akses');
         }
         $validate = $this->validate();

@@ -32,7 +32,7 @@
                     //mapping data ke option
                     option = item.map(item => ({
                         value: item.id,
-                        text: item.nama + ' [' + item.stok + ']'
+                        text: item.nama + ' [' + parseInt(item.stok) + ']'
                     }));
                     callback(option);
                 })

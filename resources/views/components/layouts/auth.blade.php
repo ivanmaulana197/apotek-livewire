@@ -16,9 +16,8 @@
                                         <img src="{{ asset('/assets/images/backgrounds/login-security.png') }}" alt="security" class="w-auto h-fit">
                                     </div>
                                     <div class="w-full lg:w-5/12 ">
-                                        <h2 class="mb-3 text-3xl font-bold">Welcome to Spike Admin</h2>
-                                        <p class="text-base font-medium text-dark dark:text-darklink mb-7">Your
-                                            Admin Dashboard</p>
+                                        <h2 class="mb-3 text-3xl font-bold">Welcome to Apotek Rajawali</h2>
+                                        <p class="text-base font-medium text-dark dark:text-darklink mb-7">Your Dashboard</p>
                                         {{ $slot }}
                                     </div>
                                 </div>
@@ -26,8 +25,7 @@
                             <!----Bottom Shape---->
                             <div class="absolute -bottom-24 -left-24 h-96 w-96 rounded-full bg-error -z-[1]"></div>
                             <!----Top Shape---->
-                            <img src="{{ asset('/assets/images/shaps/shap-login.png') }}" alt="shape"
-                                 class="absolute h-80 w-80 -right-20 -z-[1] -top-24 ">
+                            <img src="{{ asset('/assets/images/shaps/shap-login.png') }}" alt="shape" class="absolute h-80 w-80 -right-20 -z-[1] -top-24 ">
 
                         </div>
                     </div>
