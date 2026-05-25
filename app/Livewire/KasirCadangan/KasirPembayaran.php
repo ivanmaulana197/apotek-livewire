@@ -99,9 +99,8 @@ class KasirPembayaran extends Component
             DB::commit();
 
             $this->syncFrontEnd();
-
-            if ((empty($promo) || ($promo['status'] ?? null) === 'success')) {
-                $this->dispatch('alert', message: 'Barang berhasil ditambahkan.', status: 'success');
+            if (empty($promo) || (isset($promo['status']) && $promo['status'] == 'success')) {
+                $this->dispatch('alert',['message' => 'Barang berhasil ditambahkan.', 'status' => 'success']);
                 return ['status' => 'success'];
             }
         } catch (\Exception $e) {
@@ -192,7 +191,7 @@ class KasirPembayaran extends Component
 
             foreach ($this->pesanan_kasir->barang_pesanan_kasir as $barang_pesanan_kasir) {
                 if ($barang_pesanan_kasir->jumlah_dalam_satuan_utama > $barang_pesanan_kasir->barang->stok) {
-                    $this->dispatch('alert-info', message: 'Stok Barang [' . $barang_pesanan_kasir->barang->nama_barang . '] tidak mencukupi', status: 'warning', subtitle: 'silahkan ubah pesanan');
+                    $this->dispatch('alert-info', message : 'Stok Barang [' . $barang_pesanan_kasir->barang->nama_barang . '] tidak mencukupi', status : 'warning', subtitle : 'silahkan ubah pesanan');
                     DB::rollBack();
                     return;
                 }
@@ -212,7 +211,7 @@ class KasirPembayaran extends Component
             }
 
             $this->savePromoTransaksi($this->pesanan_kasir->promo_pesanan_kasir, $transaksi->id);
-            $this->dispatch('struk-pembayaran', id_transaksi: $transaksi->id);
+            $this->dispatch('struk-pembayaran', id_transaksi : $transaksi->id);
             $this->dispatch('delete-pesanan-kasir', id: $this->pesanan_kasir->id, message: 'Transaksi Berhasil Dilakukan');
             DB::commit();
 
